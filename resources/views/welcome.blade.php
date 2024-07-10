@@ -42,7 +42,7 @@
     </div>
     <div class="text-container">
       <h2>Emprende Sin Humo</h2>
-      <p>El unico lugar en donde realmente encontraras todo lo que necesitas para convertirte en un emprendedor</p>
+      <p>El unico lugar en donde realmente encontraras todo lo que necesitas para convertirte en un emprendedor.</p>
       <a href="{{ url('/app') }}"><button class="btn btn-custom">Acceder a la app</button></a>
     </div>
   </div>
