@@ -1,9 +1,7 @@
-require('./bootstrap');
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Importa Bootstrap CSS
 
-import Vue from 'vue';
 
-Vue.component('example-component', require('./components/Example.vue').default);
-
-const app = new Vue({
-  el: '#app',
-});
+createApp(App).use(router).mount('#app');

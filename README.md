@@ -6,17 +6,11 @@ Este es un proyecto que utiliza Laravel para el backend y Vue.js junto con Vite 
 
 - Node.js (versión 20.15.0 recomendada)
 - Composer
+- PHP
 
 ## Instalación
 
 Sigue los siguientes pasos para configurar el proyecto en tu entorno local:
-
-1. Clona el repositorio:
-
-    ```bash
-    git clone https://github.com/tu-usuario/tu-repo.git
-    cd tu-repo
-    ```
 
 2. Instala las dependencias de Node.js:
 
