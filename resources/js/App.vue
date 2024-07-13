@@ -1,39 +1,45 @@
 <template>
   <div id="app" class="d-flex flex-column" style="height: 100vh;">
-    <nav class="navbar navbar-expand"
-      style="background-color: #121212; padding: 0.5rem 1rem; position: relative; border-bottom: 1px solid #1e1e1e;">
+    <nav class="navbar navbar-expand" style="background-color: #121212; padding: 0.5rem 1rem; border-bottom: 1px solid #1e1e1e;">
       <div class="container-fluid">
         <img :src="imageSrc" alt="Logo" class="navbar-logo">
-        <form class="d-flex" role="search"
-          style="background-color: #1e1e1e; border-radius: 0.25rem; padding: 0.25rem; margin-left: 2rem;">
-          <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar"
-            style="max-width: 200px; background-color: #1e1e1e; border: none; color: #e0e0e0;">
+        <form class="d-flex" role="search" style="background-color: #1e1e1e; border-radius: 0.25rem; padding: 0.25rem; margin-left: 2rem;">
+          <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar" style="max-width: 200px; background-color: #1e1e1e; border: none; color: #e0e0e0;">
         </form>
-
-        <div class="navbar-nav ms-auto">
-        </div>
+        <div class="navbar-nav ms-auto"></div>
       </div>
     </nav>
     <div class="d-flex flex-grow-1">
-      <nav class="text-white d-flex flex-column"
-        style="background-color: #121212; width: 60px; padding: 0.5rem; border-right: 1px solid #1e1e1e;">
-        <div class="d-flex flex-column align-items-center" style="margin-top: 1rem;">
+      <nav class="text-white d-flex flex-column" style="background-color: #121212; width: 60px; padding: 0.5rem; border-right: 1px solid #1e1e1e;">
+        <div class="d-flex flex-column align-items-center flex-grow-1" style="margin-top: 1rem;">
           <router-link to="/" class="nav-link text-white d-flex flex-column align-items-center">
-            <i class="fas fa-home"></i> <!-- Icono de inicio -->
+            <i class="fas fa-home"></i>
             <span class="nav-text">Inicio</span>
           </router-link>
           <router-link to="/books" class="nav-link text-white d-flex flex-column align-items-center">
-            <i class="fas fa-book"></i> <!-- Icono de libros -->
+            <i class="fas fa-book"></i>
             <span class="nav-text">Libros</span>
           </router-link>
         </div>
+        <div class="d-flex flex-column align-items-center">
+          <router-link to="/settings" class="nav-link text-white d-flex flex-column align-items-center">
+            <i class="fas fa-cog"></i>
+            <span class="nav-text">Ajustes</span>
+          </router-link>
+        </div>
       </nav>
-      <div
-        style="background-color: #1e1e1e; width: 230px; display: flex; flex-direction: column; padding: 1rem; border-right: 1px solid #1e1e1e;">
-        <p class="text-white">Título Principal</p>
+      <div class="channels" style="background-color: #1e1e1e; width: 230px; display: flex; flex-direction: column; padding: 1rem; border-right: 1px solid #1e1e1e;">
+        <div class="channel-section" v-for="section in channelSections" :key="section.name">
+          <p class="section-title">{{ section.name }}</p>
+          <div class="channel" v-for="channel in section.channels" :key="channel.id">
+            <router-link :to="channel.link" class="channel-link">
+              <i :class="channel.icon"></i> {{ channel.name }}
+            </router-link>
+          </div>
+        </div>
       </div>
       <div class="flex-grow-1" style="background-color: #181818; padding: 1rem;">
-        <!-- MAIN -->
+        <router-view></router-view>
       </div>
     </div>
   </div>
@@ -44,7 +50,41 @@ export default {
   name: 'App',
   data() {
     return {
-      imageSrc: '/images/esh.jpg'
+      imageSrc: '/images/esh.jpg',
+      channelSections: [
+        {
+          name: 'Importante',
+          channels: [
+            { id: 1, name: 'Anuncios', link: '/channel/general', icon: 'fas fa-bullhorn' },
+            { id: 2, name: 'Reglas', link: '/channel/memes', icon: 'fa-solid fa-scroll' },
+            { id: 3, name: 'Directorio', link: '/channel/audio', icon: 'fa-solid fa-newspaper' }
+          ]
+        },
+        {
+          name: 'Emprende Sin Humo',
+          channels: [
+            { id: 4, name: 'Dev Preview', link: '/channel/dev-preview', icon: 'fas fa-bullhorn' },
+            { id: 5, name: 'Sugerencias', link: '/channel/sugerencias', icon: 'fas fa-lightbulb' },
+            { id: 6, name: 'Reporte de bugs', link: '/channel/bugs', icon: 'fas fa-bug' },
+            { id: 7, name: 'Github', link: '/channel/github', icon: 'fab fa-github' }
+          ]
+        },
+        {
+          name: 'Xev Team',
+          channels: [
+            { id: 8, name: 'Development', link: '/channel/development', icon: 'fas fa-laptop-code' },
+            { id: 9, name: 'Moderación', link: '/channel/moderacion', icon: 'fas fa-shield-alt' },
+            { id: 10, name: 'Consola', link: '/channel/consola', icon: 'fas fa-terminal' },
+            { id: 11, name: 'Server Log', link: '/channel/server-log', icon: 'fas fa-server' }
+          ]
+        },
+        {
+          name: 'Hikari IA',
+          channels: [
+            { id: 12, name: 'General', link: '/channel/hikari-general', icon: 'fas fa-hashtag' }
+          ]
+        }
+      ]
     };
   }
 };
@@ -57,6 +97,7 @@ body {
   height: 100%;
   margin: 0;
   background-color: #121212; /* Fondo de página general */
+  overflow-y: hidden;
 }
 
 #app {
@@ -88,10 +129,6 @@ body {
   color: #b0b0b0 !important;
 }
 
-.btn {
-  margin-left: 0.5rem;
-}
-
 .nav-link {
   display: flex;
   flex-direction: column;
@@ -101,16 +138,93 @@ body {
   color: #e0e0e0;
   text-decoration: none;
   margin-bottom: 1rem; /* Espacio entre iconos */
+  transition: color 0.3s, background-color 0.3s; /* Animación de transición */
+}
+
+.nav-link:hover {
+  color: #ffffff; /* Color de iconos y texto en hover */
+  background-color: #2c2c2c; /* Fondo de fondo en hover */
+  border-radius: 0.25rem; /* Bordes redondeados en hover */
 }
 
 .nav-link i {
   font-size: 1.5rem;
   color: #9e9e9e; /* Color de iconos ajustado para combinar mejor */
+  transition: color 0.3s; /* Animación de transición para el color del icono */
+}
+
+.nav-link:hover i {
+  color: #ffffff; /* Color del icono en hover */
 }
 
 .nav-text {
   font-size: 0.75rem;
   margin-top: 0.25rem;
   color: #e0e0e0;
+  transition: color 0.3s; /* Animación de transición para el texto */
+}
+
+.nav-link:hover .nav-text {
+  color: #ffffff; /* Color del texto en hover */
+}
+
+.channels {
+  height: calc(100vh - 60px); /* Ajusta según la altura de tu navbar y otros elementos */
+  overflow-y: auto; /* Habilita el scroll vertical */
+  padding: 0; /* Elimina cualquier padding */
+  margin: 0; /* Elimina cualquier margen */
+  scrollbar-width: thin; /* Firefox: scrollbar delgado */
+  scrollbar-color: #2c2c2c #121212; /* Firefox: color del scrollbar */
+}
+
+.channels::-webkit-scrollbar {
+  width: 8px; /* Ancho del scrollbar */
+}
+
+.channels::-webkit-scrollbar-track {
+  background: #121212; /* Color del track */
+  border-radius: 10px; /* Bordes redondeados */
+}
+
+.channels::-webkit-scrollbar-thumb {
+  background-color: #2c2c2c; /* Color del thumb */
+  border-radius: 10px; /* Bordes redondeados */
+}
+
+.channels::-webkit-scrollbar-thumb:hover {
+  background-color: #3a3a3a; /* Color del thumb en hover */
+}
+
+
+.channel-section {
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  color: #b0b0b0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.channel {
+  margin-bottom: 0.5rem;
+}
+
+.channel-link {
+  color: #e0e0e0;
+  text-decoration: none;
+  padding: 0.25rem 0.5rem;
+  display: flex;
+  align-items: center;
+  border-radius: 0.25rem;
+}
+
+.channel-link:hover {
+  background-color: #2c2c2c;
+}
+
+.channel-link i {
+  margin-right: 0.5rem;
 }
 </style>
