@@ -53,7 +53,6 @@
       <div class="right-sidebar"
         style="background-color: #1e1e1e; width: 200px; display: flex; flex-direction: column; padding: 1rem; border-left: 1px solid #1e1e1e;">
         <!-- Contenido del div derecho -->
-        <p>Contenido adicional</p>
       </div>
     </div>
   </div>

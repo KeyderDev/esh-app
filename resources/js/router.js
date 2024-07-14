@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import SettingsComponent from './components/SettingsComponent.vue';
+import SettingsComponent from './components/Settings.vue';
 import Register from './components/Register.vue';
 import Login from './components/Login.vue';
 import Libreria from './components/Libreria.vue'
