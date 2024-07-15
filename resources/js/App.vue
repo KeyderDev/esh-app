@@ -60,9 +60,14 @@
         style="background-color: #1e1e1e; width: 200px; display: flex; flex-direction: column; padding: 1rem; border-left: 1px solid #1e1e1e;">
         <h6 class="text-white small-text">En Linea</h6> <!-- Cambiado a h6 y agregado class -->
         <div v-for="user in users" :key="user.id" class="user-item d-flex align-items-center mb-2">
-          <img :src="user.profile_picture" alt="Profile" class="profile-pic" />
+          <div class="profile-container">
+            <img :src="user.profile_picture" alt="Profile" class="profile-pic" />
+            <div class="online-indicator"></div> <!-- Punto verde -->
+          </div>
           <span class="username text-white ms-2">{{ user.username }}</span>
         </div>
+
+
         <h6 class="text-white mt-4 small-text">Desconectado</h6> <!-- Cambiado a h6 y agregado class -->
         <div v-for="user in offlineUsers" :key="user.id" class="user-item d-flex align-items-center mb-2">
           <img :src="user.profile_picture" alt="Profile" class="profile-pic" />
@@ -155,20 +160,20 @@ export default {
       }
     },
     updateOnlineStatus(isOnline) {
-    console.log('Updating online status to:', isOnline); // Log para verificar el valor
-    const authToken = localStorage.getItem('auth_token');
-    axios.post('/api/update-online-status', { is_online: isOnline }, {
+      console.log('Updating online status to:', isOnline); // Log para verificar el valor
+      const authToken = localStorage.getItem('auth_token');
+      axios.post('/api/update-online-status', { is_online: isOnline }, {
         headers: {
-            'Authorization': `Bearer ${authToken}`
+          'Authorization': `Bearer ${authToken}`
         }
-    })
-    .then(response => {
-        console.log('Online status updated', response.data);
-    })
-    .catch(error => {
-        console.error('Error updating online status', error.response ? error.response.data : error);
-    });
-},
+      })
+        .then(response => {
+          console.log('Online status updated', response.data);
+        })
+        .catch(error => {
+          console.error('Error updating online status', error.response ? error.response.data : error);
+        });
+    },
 
     fetchOnlineUsers() {
       const authToken = localStorage.getItem('auth_token');
@@ -406,17 +411,43 @@ body {
 }
 
 .user-item {
-  padding: 0.5rem;
+  padding: 0.10rem;
+  /* Reducido para juntar más los usuarios */
+  margin-bottom: 0.5rem;
+  /* Reducido el margen inferior */
   border-radius: 0.25rem;
   transition: background-color 0.3s;
 }
 
 .user-item:hover {
   background-color: #2c2c2c;
+  cursor: pointer;
 }
+
 
 .small-text {
   font-size: 0.9rem;
   /* Ajusta el tamaño según necesites */
+}
+
+.profile-container {
+  position: relative;
+  /* Asegura que el punto esté en la posición correcta */
+}
+
+.online-indicator {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  /* Tamaño del punto */
+  height: 12px;
+  /* Tamaño del punto */
+  background-color: #23a55a;
+  /* Color del punto */
+  border-radius: 50%;
+  /* Forma circular */
+  border: 2px solid #181818;
+  /* Opcional: para destacar más */
 }
 </style>
