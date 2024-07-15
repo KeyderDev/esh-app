@@ -59,7 +59,7 @@
       <div class="right-sidebar"
         style="background-color: #1e1e1e; width: 200px; display: flex; flex-direction: column; padding: 1rem; border-left: 1px solid #1e1e1e;">
         <h6 class="text-white small-text">En Linea</h6> <!-- Cambiado a h6 y agregado class -->
-        <div v-for="user in users" :key="user.id" class="user-item d-flex align-items-center mb-2">
+        <div v-for="user in users" :key="user.id" class="user-item d-flex align-items-center mb-2 online-user">
           <div class="profile-container">
             <img :src="user.profile_picture" alt="Profile" class="profile-pic" />
             <div class="online-indicator"></div> <!-- Punto verde -->
@@ -67,16 +67,16 @@
           <span class="username text-white ms-2">{{ user.username }}</span>
         </div>
 
-
         <h6 class="text-white mt-4 small-text">Desconectado</h6> <!-- Cambiado a h6 y agregado class -->
-        <div v-for="user in offlineUsers" :key="user.id" class="user-item d-flex align-items-center mb-2">
+        <div v-for="user in offlineUsers" :key="user.id" class="user-item d-flex align-items-center mb-2 offline-user">
           <img :src="user.profile_picture" alt="Profile" class="profile-pic" />
-          <span class="username text-white ms-2">{{ user.username }}</span>
+          <span class="username offline-username ms-2">{{ user.username }}</span>
         </div>
       </div>
     </div>
   </div>
 </template>
+
 
 <script>
 import axios from 'axios';
@@ -131,12 +131,14 @@ export default {
     this.updateTime();
     this.updateOnlineStatus(true); // Marca como online al montar
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
+    window.addEventListener('beforeunload', this.handleBeforeUnload);
     this.fetchOnlineUsers();
     this.fetchOfflineUsers();
     setInterval(this.updateTime, 1000);
   },
   beforeDestroy() {
     document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+    window.removeEventListener('beforeunload', this.handleBeforeUnload);
   },
   methods: {
     loadProfilePicture() {
@@ -155,9 +157,13 @@ export default {
         this.updateOnlineStatus(true);  // Marca como online
       } else {
         console.log('User going offline'); // Este log te ayudará a confirmar que está llamando a esta parte
-
         this.updateOnlineStatus(false); // Marca como offline
       }
+    },
+    handleBeforeUnload(event) {
+      this.updateOnlineStatus(false);
+      // Se necesita devolver un valor para cancelar el cierre de la página en algunos navegadores
+      event.returnValue = '';
     },
     updateOnlineStatus(isOnline) {
       console.log('Updating online status to:', isOnline); // Log para verificar el valor
@@ -174,7 +180,6 @@ export default {
           console.error('Error updating online status', error.response ? error.response.data : error);
         });
     },
-
     fetchOnlineUsers() {
       const authToken = localStorage.getItem('auth_token');
       axios.get('/api/users/online', {
@@ -216,6 +221,7 @@ export default {
   }
 };
 </script>
+
 
 
 <style>
@@ -400,8 +406,8 @@ body {
 }
 
 .profile-pic {
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
 }
 
@@ -412,9 +418,7 @@ body {
 
 .user-item {
   padding: 0.10rem;
-  /* Reducido para juntar más los usuarios */
   margin-bottom: 0.5rem;
-  /* Reducido el margen inferior */
   border-radius: 0.25rem;
   transition: background-color 0.3s;
 }
@@ -427,12 +431,10 @@ body {
 
 .small-text {
   font-size: 0.9rem;
-  /* Ajusta el tamaño según necesites */
 }
 
 .profile-container {
   position: relative;
-  /* Asegura que el punto esté en la posición correcta */
 }
 
 .online-indicator {
@@ -440,14 +442,21 @@ body {
   bottom: 0;
   right: 0;
   width: 12px;
-  /* Tamaño del punto */
   height: 12px;
-  /* Tamaño del punto */
   background-color: #23a55a;
-  /* Color del punto */
   border-radius: 50%;
-  /* Forma circular */
   border: 2px solid #181818;
-  /* Opcional: para destacar más */
 }
+
+.offline-user .profile-pic {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  filter: grayscale(100%);
+}
+
+.offline-username {
+  color: #6c6c6c; /* Un gris más oscuro */
+}
+
 </style>
