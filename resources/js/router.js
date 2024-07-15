@@ -2,11 +2,11 @@ import { createRouter, createWebHistory } from 'vue-router';
 import SettingsComponent from './components/Settings.vue';
 import Register from './components/Register.vue';
 import Login from './components/Login.vue';
-import Libreria from './components/Libreria.vue'
+import Libreria from './components/Libreria.vue';
+import Dashboard from './components/Dashboard.vue';
 
-// Suponiendo que tienes un método para verificar la autenticación
 function isAuthenticated() {
-  return !!localStorage.getItem('auth_token'); // Devuelve true si hay un token
+  return !!localStorage.getItem('auth_token'); 
 }
 
 
@@ -15,7 +15,7 @@ const routes = [
   { path: '/register', component: Register },
   { path: '/login', component: Login },
   { path: '/libreria', component: Libreria },
-  // Otras rutas aquí
+  { path: '/dashboard', component: Dashboard },
 ];
 
 const router = createRouter({
@@ -23,14 +23,13 @@ const router = createRouter({
   routes,
 });
 
-// Guardia de navegación
 router.beforeEach((to, from, next) => {
-  const authRequired = to.path !== '/register' && to.path !== '/login'; // No requiere autenticación solo para /register y /login
+  const authRequired = to.path !== '/register' && to.path !== '/login';
 
   if (authRequired && !isAuthenticated()) {
-    next('/login'); // Redirige a /login si no está autenticado
+    next('/login'); 
   } else {
-    next(); // Permite la navegación
+    next(); 
   }
 });
 

@@ -59,9 +59,29 @@ export default {
         this.isUploading = false;
       }
     },
-    logout() {
-      localStorage.removeItem('auth_token'); // Elimina el token de autenticación
-      this.$router.push('/login'); // Redirige a la página de inicio de sesión
+    async logout() {
+      // Primero actualiza el estado a offline
+      await this.updateOnlineStatus(false); // Espera la actualización
+
+      // Luego elimina el token de autenticación
+      localStorage.removeItem('auth_token'); 
+
+      // Redirige a la página de inicio de sesión
+      this.$router.push('/login'); 
+    },
+    updateOnlineStatus(isOnline) {
+      const authToken = localStorage.getItem('auth_token');
+      axios.post('/api/update-online-status', { is_online: isOnline }, {
+          headers: {
+              'Authorization': `Bearer ${authToken}`
+          }
+      })
+      .then(response => {
+          console.log('Online status updated', response.data);
+      })
+      .catch(error => {
+          console.error('Error updating online status', error.response ? error.response.data : error);
+      });
     },
   },
 };

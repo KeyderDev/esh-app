@@ -2,14 +2,18 @@
   <div id="app" class="d-flex flex-column" style="height: 100vh;">
     <nav class="navbar navbar-expand"
       style="background-color: #121212; padding: 0.5rem 1rem; border-bottom: 1px solid #1e1e1e;">
-      <div class="container-fluid">
-        <img :src="imageSrc" alt="Logo" class="navbar-logo">
-        <form class="d-flex" role="search"
-          style="background-color: #1e1e1e; border-radius: 0.25rem; padding: 0.25rem; margin-left: 2rem;">
-          <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar"
-            style="max-width: 200px; background-color: #1e1e1e; border: none; color: #e0e0e0;">
-        </form>
-        <div class="navbar-nav ms-auto d-flex align-items-center">
+      <div class="container-fluid d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+          <img :src="imageSrc" alt="Logo" class="navbar-logo">
+          <form class="d-flex" role="search"
+            style="background-color: #1e1e1e; border-radius: 0.25rem; padding: 0.25rem; margin-left: 2rem;">
+            <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar"
+              style="max-width: 200px; background-color: #1e1e1e; border: none; color: #e0e0e0;">
+          </form>
+        </div>
+        <div class="navbar-brand mx-auto text-white"
+          style="position: absolute; left: 50%; transform: translateX(-50%);">{{ currentTime }}</div>
+        <div class="navbar-nav d-flex align-items-center">
           <span class="text-white ms-2 username">{{ username }}</span>
           <img :src="profilePicture" alt="Profile" class="profile-pic" v-if="profilePicture" />
         </div>
@@ -36,7 +40,7 @@
         </div>
       </nav>
       <div class="channels"
-        style="background-color: #1e1e1e; width: 230px; display: flex; flex-direction: column; padding: 1rem; border-right: 1px solid #1e1e1e;">
+        style="background-color: #1e1e1e; width: 230px; display: flex; flex-direction: column; padding: 1rem; border-right: 1px solid #1e1e1e; position: relative;">
         <div class="channel-section" v-for="section in channelSections" :key="section.name">
           <p class="section-title">{{ section.name }}</p>
           <div class="channel" v-for="channel in section.channels" :key="channel.id">
@@ -45,51 +49,65 @@
             </router-link>
           </div>
         </div>
+        <router-link to="/dashboard" class="settings-icon" style="position: absolute; top: 10px; right: 10px;">
+          <i class="fas fa-cog" style="color: #e0e0e0;"></i>
+        </router-link>
       </div>
       <div class="flex-grow-1" style="background-color: #181818; padding: 1rem;">
         <router-view></router-view>
       </div>
-      <!-- Nuevo div vertical a la derecha -->
       <div class="right-sidebar"
         style="background-color: #1e1e1e; width: 200px; display: flex; flex-direction: column; padding: 1rem; border-left: 1px solid #1e1e1e;">
-        <!-- Contenido del div derecho -->
+        <h6 class="text-white small-text">En Linea</h6> <!-- Cambiado a h6 y agregado class -->
+        <div v-for="user in users" :key="user.id" class="user-item d-flex align-items-center mb-2">
+          <img :src="user.profile_picture" alt="Profile" class="profile-pic" />
+          <span class="username text-white ms-2">{{ user.username }}</span>
+        </div>
+        <h6 class="text-white mt-4 small-text">Desconectado</h6> <!-- Cambiado a h6 y agregado class -->
+        <div v-for="user in offlineUsers" :key="user.id" class="user-item d-flex align-items-center mb-2">
+          <img :src="user.profile_picture" alt="Profile" class="profile-pic" />
+          <span class="username text-white ms-2">{{ user.username }}</span>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: 'App',
   data() {
     return {
       imageSrc: '/images/esh.jpg',
-      username: localStorage.getItem('username') || '', // Obtén el nombre de usuario de localStorage
+      username: localStorage.getItem('username') || '',
       profilePicture: localStorage.getItem('profile_picture') ? `http://127.0.0.1:8000/storage/${localStorage.getItem('profile_picture')}` : '',
+      users: [],
+      offlineUsers: [],
       channelSections: [
         {
           name: 'Importante',
           channels: [
             { id: 1, name: 'Anuncios', link: '/channel/general', icon: 'fas fa-bullhorn' },
             { id: 2, name: 'Reglas', link: '/channel/memes', icon: 'fa-solid fa-scroll' },
-            { id: 3, name: 'Directorio', link: '/channel/audio', icon: 'fa-solid fa-newspaper' }
+            { id: 3, name: 'Directorio', link: '/channel/audio', icon: 'fas fa-newspaper' }
           ]
         },
         {
           name: 'Emprende Sin Humo',
           channels: [
-            { id: 4, name: 'Chat', link: '/channel/dev-preview', icon: 'fa-solid fa-comment' },
-            { id: 5, name: 'Comandos', link: '/channel/sugerencias', icon: 'fa-solid fa-wrench' },
-            { id: 6, name: 'Presentate', link: '/channel/bugs', icon: 'fa-solid fa-user' },
-            { id: 7, name: 'Resultados', link: '/channel/github', icon: 'fa-solid fa-chart-line' }
+            { id: 4, name: 'Chat', link: '/channel/dev-preview', icon: 'fas fa-comment' },
+            { id: 5, name: 'Comandos', link: '/channel/sugerencias', icon: 'fas fa-wrench' },
+            { id: 6, name: 'Presentate', link: '/channel/bugs', icon: 'fas fa-user' },
+            { id: 7, name: 'Resultados', link: '/channel/github', icon: 'fas fa-chart-line' }
           ]
         },
         {
           name: 'Recreacion',
           channels: [
-            { id: 8, name: 'Hoy Aprendi', link: '/channel/development', icon: 'fa-solid fa-lightbulb' },
+            { id: 8, name: 'Hoy Aprendi', link: '/channel/development', icon: 'fas fa-lightbulb' },
             { id: 9, name: 'Moderación', link: '/channel/moderacion', icon: 'fas fa-shield-alt' },
-            { id: 10, name: 'Reunion Publica', link: '/channel/consola', icon: 'fa-solid fa-volume-high' },
+            { id: 10, name: 'Reunion Publica', link: '/channel/consola', icon: 'fas fa-volume-high' },
             { id: 11, name: 'Server Log', link: '/channel/server-log', icon: 'fas fa-server' }
           ]
         },
@@ -99,30 +117,109 @@ export default {
             { id: 12, name: 'General', link: '/channel/hikari-general', icon: 'fas fa-hashtag' }
           ]
         }
-      ]
+      ],
+      currentTime: ''
     };
   },
   mounted() {
-    console.log('Profile Picture URL:', this.profilePicture); // Verifica la URL de la imagen
+    this.updateTime();
+    this.updateOnlineStatus(true); // Marca como online al montar
+    document.addEventListener('visibilitychange', this.handleVisibilityChange);
+    this.fetchOnlineUsers();
+    this.fetchOfflineUsers();
+    setInterval(this.updateTime, 1000);
+  },
+  beforeDestroy() {
+    document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+  },
+  methods: {
+    updateTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      this.currentTime = `${hours}:${minutes}`;
+    },
+    handleVisibilityChange() {
+      console.log('Visibility changed:', document.visibilityState);
+      if (document.visibilityState === 'visible') {
+        this.updateOnlineStatus(true);  // Marca como online
+      } else {
+        console.log('User going offline'); // Este log te ayudará a confirmar que está llamando a esta parte
+
+        this.updateOnlineStatus(false); // Marca como offline
+      }
+    },
+    updateOnlineStatus(isOnline) {
+    console.log('Updating online status to:', isOnline); // Log para verificar el valor
+    const authToken = localStorage.getItem('auth_token');
+    axios.post('/api/update-online-status', { is_online: isOnline }, {
+        headers: {
+            'Authorization': `Bearer ${authToken}`
+        }
+    })
+    .then(response => {
+        console.log('Online status updated', response.data);
+    })
+    .catch(error => {
+        console.error('Error updating online status', error.response ? error.response.data : error);
+    });
+},
+
+    fetchOnlineUsers() {
+      const authToken = localStorage.getItem('auth_token');
+      axios.get('/api/users/online', {
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      })
+        .then(response => {
+          if (Array.isArray(response.data)) {
+            this.users = response.data.map(user => ({
+              ...user,
+              profile_picture: user.profile_picture ? `http://127.0.0.1:8000/storage/${user.profile_picture}` : '/path/to/default/profile_picture.jpg'
+            }));
+          } else {
+            console.error('Response data is not an array:', response.data);
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching online users', error.response ? error.response.data : error);
+        });
+    },
+    fetchOfflineUsers() {
+      const authToken = localStorage.getItem('auth_token');
+      axios.get('/api/users/offline', {
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      })
+        .then(response => {
+          this.offlineUsers = response.data.map(user => ({
+            ...user,
+            profile_picture: user.profile_picture ? `http://127.0.0.1:8000/storage/${user.profile_picture}` : '/path/to/default/profile_picture.jpg'
+          }));
+        })
+        .catch(error => {
+          console.error('Error fetching offline users', error.response ? error.response.data : error);
+        });
+    }
   }
 };
 </script>
 
+
 <style>
-/* Estilos globales */
 html,
 body {
   height: 100%;
   margin: 0;
   background-color: #121212;
-  /* Fondo de página general */
   overflow-y: hidden;
 }
 
 #app {
   height: 100vh;
   background-color: #181818;
-  /* Fondo principal de la aplicación */
 }
 
 .navbar {
@@ -138,6 +235,10 @@ body {
   height: 50px;
   z-index: 10;
   margin-right: 1rem;
+}
+
+.navbar-time {
+  font-size: 1.25rem;
 }
 
 .form-control {
@@ -158,31 +259,23 @@ body {
   color: #e0e0e0;
   text-decoration: none;
   margin-bottom: 1rem;
-  /* Espacio entre iconos */
   transition: color 0.3s, background-color 0.3s;
-  /* Animación de transición */
 }
 
 .nav-link:hover {
   color: #ffffff;
-  /* Color de iconos y texto en hover */
   background-color: #2c2c2c;
-  /* Fondo de fondo en hover */
   border-radius: 0.25rem;
-  /* Bordes redondeados en hover */
 }
 
 .nav-link i {
   font-size: 1.5rem;
   color: #9e9e9e;
-  /* Color de iconos ajustado para combinar mejor */
   transition: color 0.3s;
-  /* Animación de transición para el color del icono */
 }
 
 .nav-link:hover i {
   color: #ffffff;
-  /* Color del icono en hover */
 }
 
 .nav-text {
@@ -190,51 +283,37 @@ body {
   margin-top: 0.25rem;
   color: #e0e0e0;
   transition: color 0.3s;
-  /* Animación de transición para el texto */
 }
 
 .nav-link:hover .nav-text {
   color: #ffffff;
-  /* Color del texto en hover */
 }
 
 .channels {
   height: calc(100vh - 60px);
-  /* Ajusta según la altura de tu navbar y otros elementos */
   overflow-y: auto;
-  /* Habilita el scroll vertical */
   padding: 0;
-  /* Elimina cualquier padding */
   margin: 0;
-  /* Elimina cualquier margen */
   scrollbar-width: thin;
-  /* Firefox: scrollbar delgado */
   scrollbar-color: #2c2c2c #121212;
-  /* Firefox: color del scrollbar */
 }
 
 .channels::-webkit-scrollbar {
   width: 8px;
-  /* Ancho del scrollbar */
 }
 
 .channels::-webkit-scrollbar-track {
   background: #121212;
-  /* Color del track */
   border-radius: 10px;
-  /* Bordes redondeados */
 }
 
 .channels::-webkit-scrollbar-thumb {
   background-color: #2c2c2c;
-  /* Color del thumb */
   border-radius: 10px;
-  /* Bordes redondeados */
 }
 
 .channels::-webkit-scrollbar-thumb:hover {
   background-color: #3a3a3a;
-  /* Color del thumb en hover */
 }
 
 .channel-section {
@@ -269,59 +348,70 @@ body {
   margin-right: 0.5rem;
 }
 
-/* Estilo para el nuevo div vertical a la derecha */
+.settings-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1rem;
+  color: #e0e0e0;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.settings-icon:hover {
+  color: #ffffff;
+}
+
 .right-sidebar {
   height: calc(100vh - 60px);
-  /* Ajusta según la altura de tu navbar y otros elementos */
   overflow-y: auto;
-  /* Habilita el scroll vertical */
   padding: 0;
-  /* Elimina cualquier padding */
   margin: 0;
-  /* Elimina cualquier margen */
   scrollbar-width: thin;
-  /* Firefox: scrollbar delgado */
   scrollbar-color: #2c2c2c #121212;
-  /* Firefox: color del scrollbar */
 }
 
 .right-sidebar::-webkit-scrollbar {
   width: 8px;
-  /* Ancho del scrollbar */
 }
 
 .right-sidebar::-webkit-scrollbar-track {
   background: #121212;
-  /* Color del track */
   border-radius: 10px;
-  /* Bordes redondeados */
 }
 
 .right-sidebar::-webkit-scrollbar-thumb {
   background-color: #2c2c2c;
-  /* Color del thumb */
   border-radius: 10px;
-  /* Bordes redondeados */
 }
 
 .right-sidebar::-webkit-scrollbar-thumb:hover {
   background-color: #3a3a3a;
-  /* Color del thumb en hover
-   */
 }
 
 .profile-pic {
   width: 40px;
-  /* o cualquier tamaño que desees */
   height: 40px;
-  /* o cualquier tamaño que desees */
   border-radius: 50%;
-  /* para hacerla circular */
 }
 
 .username {
-  margin-right: 10px; /* Ajusta el valor según sea necesario */
-  color: #e0e0e0
+  margin-right: 10px;
+  color: #e0e0e0;
 }
 
+.user-item {
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.3s;
+}
+
+.user-item:hover {
+  background-color: #2c2c2c;
+}
+
+.small-text {
+  font-size: 0.9rem;
+  /* Ajusta el tamaño según necesites */
+}
 </style>
