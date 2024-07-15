@@ -81,7 +81,7 @@ export default {
     return {
       imageSrc: '/images/esh.jpg',
       username: localStorage.getItem('username') || '',
-      profilePicture: localStorage.getItem('profile_picture') ? `http://127.0.0.1:8000/storage/${localStorage.getItem('profile_picture')}` : '',
+      profilePicture: '',
       users: [],
       offlineUsers: [],
       channelSections: [
@@ -122,6 +122,7 @@ export default {
     };
   },
   mounted() {
+    this.loadProfilePicture(); // Carga la imagen de perfil al montar
     this.updateTime();
     this.updateOnlineStatus(true); // Marca como online al montar
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
@@ -133,6 +134,10 @@ export default {
     document.removeEventListener('visibilitychange', this.handleVisibilityChange);
   },
   methods: {
+    loadProfilePicture() {
+      const picture = localStorage.getItem('profile_picture');
+      this.profilePicture = picture ? `http://127.0.0.1:8000/storage/${picture}` : '/path/to/default/profile_picture.jpg';
+    },
     updateTime() {
       const now = new Date();
       const hours = String(now.getHours()).padStart(2, '0');
