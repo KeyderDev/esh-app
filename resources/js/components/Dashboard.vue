@@ -4,7 +4,6 @@
       <h1 class="text-white">Roles y Permisos</h1>
 
       <div class="user-role-assignment">
-        <h2>Asignar Rol a Usuario</h2>
         <select v-model="selectedUser">
           <option v-for="user in users" :key="user.id" :value="user.id">
             {{ user.username }}
@@ -22,7 +21,6 @@
       </div>
 
       <div class="create-role">
-        <h2>Crear Nuevo Rol</h2>
         <input v-model="newRoleName" placeholder="Nombre del nuevo rol" />
         <button @click="createRole">Crear Rol</button>
       </div>

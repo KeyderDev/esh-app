@@ -101,7 +101,7 @@
       <div v-if="selectedUser.roles && selectedUser.roles.length" style="text-align: center; margin-top: 1rem;">
         <h5 class="text-white" style="margin: 0;">Roles:</h5>
         <ul style="list-style-type: none; padding: 0; color: #bbb;">
-          <li v-for="role in selectedUser.roles" :key="role">{{ role }}</li>
+          <li v-for="role in selectedUser.roles" :key="role" class="role-item">{{ role }}</li>
         </ul>
       </div>
     </div>
@@ -546,5 +546,14 @@ body {
 .text-gray {
   color: #ffffff;
   /* Cambia a blanco para probar */
+}
+
+.role-item {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  margin: 0.25rem;
+  background-color: #333;
+  border-radius: 0.25rem;
+  color: #fff;
 }
 </style>
