@@ -19,4 +19,6 @@ Route::middleware('auth.api')->group(function () {
     Route::post('/profile/picture', [ProfileController::class, 'updateProfilePicture']);
     Route::get('/data', [ApiController::class, 'getData']);
     Route::get('/users/offline', [UserController::class, 'getOfflineUsers']);
+    Route::get('/user', [UserController::class, 'show']);
+    Route::post('/user', [UserController::class, 'update']);
 });

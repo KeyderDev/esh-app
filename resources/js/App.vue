@@ -58,24 +58,49 @@
       </div>
       <div class="right-sidebar"
         style="background-color: #1e1e1e; width: 200px; display: flex; flex-direction: column; padding: 1rem; border-left: 1px solid #1e1e1e;">
-        <h6 class="text-white small-text">En Linea</h6> <!-- Cambiado a h6 y agregado class -->
-        <div v-for="user in users" :key="user.id" class="user-item d-flex align-items-center mb-2 online-user">
-          <div class="profile-container">
-            <img :src="user.profile_picture" alt="Profile" class="profile-pic" />
-            <div class="online-indicator"></div> <!-- Punto verde -->
+        <h6 class="text-white small-text">En Línea</h6>
+        <div v-for="user in users" :key="user.id" class="user-item d-flex flex-column mb-2 online-user"
+          @click="showUserDetails(user)">
+          <div class="d-flex align-items-center">
+            <div class="profile-container">
+              <img :src="user.profile_picture" alt="Profile" class="profile-pic" />
+              <div class="online-indicator"></div>
+            </div>
+            <div class="d-flex flex-column ms-2">
+              <span class="username text-white">{{ user.username }}</span>
+              <span class="user-description" v-if="user.description">{{ user.description }}</span>
+            </div>
           </div>
-          <span class="username text-white ms-2">{{ user.username }}</span>
         </div>
 
-        <h6 class="text-white mt-4 small-text">Desconectado</h6> <!-- Cambiado a h6 y agregado class -->
-        <div v-for="user in offlineUsers" :key="user.id" class="user-item d-flex align-items-center mb-2 offline-user">
-          <img :src="user.profile_picture" alt="Profile" class="profile-pic" />
-          <span class="username offline-username ms-2">{{ user.username }}</span>
+        <h6 class="text-white mt-4 small-text">Desconectado</h6>
+        <div v-for="user in offlineUsers" :key="user.id" class="user-item d-flex flex-column mb-2 offline-user"
+          @click="showUserDetails(user)">
+          <div class="d-flex align-items-center">
+            <img :src="user.profile_picture" alt="Profile" class="profile-pic" />
+            <span class="username offline-username ms-2">{{ user.username }}</span>
+          </div>
         </div>
       </div>
+
+
     </div>
+    <div v-if="selectedUser" class="user-details"
+      style="position: absolute; top: 10%; right: 200px; background-color: #1e1e1e; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); width: 250px;">
+      <button @click="closeUserDetails"
+        style="background: none; border: none; color: #fff; font-size: 1.5rem; position: absolute; top: 0.5rem; right: 0.5rem;">&times;</button>
+      <div style="text-align: center; margin-bottom: 1rem;">
+        <img :src="selectedUser.profile_picture" alt="Profile" class="profile-pic"
+          style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 0.5rem;" />
+        <h4 class="text-white" style="margin: 0;">{{ selectedUser.username }}</h4>
+      </div>
+      <p class="user-description" v-if="selectedUser.description"
+        style="font-size: 0.9rem; color: #bbb; text-align: center;">{{ selectedUser.description }}</p>
+    </div>
+
   </div>
 </template>
+
 
 
 <script>
@@ -89,6 +114,7 @@ export default {
       profilePicture: '',
       users: [],
       offlineUsers: [],
+      selectedUser: null,
       channelSections: [
         {
           name: 'Importante',
@@ -127,9 +153,9 @@ export default {
     };
   },
   mounted() {
-    this.loadProfilePicture(); // Carga la imagen de perfil al montar
+    this.loadProfilePicture();
     this.updateTime();
-    this.updateOnlineStatus(true); // Marca como online al montar
+    this.updateOnlineStatus(true);
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
     window.addEventListener('beforeunload', this.handleBeforeUnload);
     this.fetchOnlineUsers();
@@ -154,19 +180,18 @@ export default {
     handleVisibilityChange() {
       console.log('Visibility changed:', document.visibilityState);
       if (document.visibilityState === 'visible') {
-        this.updateOnlineStatus(true);  // Marca como online
+        this.updateOnlineStatus(true);
       } else {
-        console.log('User going offline'); // Este log te ayudará a confirmar que está llamando a esta parte
-        this.updateOnlineStatus(false); // Marca como offline
+        console.log('User going offline');
+        this.updateOnlineStatus(false);
       }
     },
     handleBeforeUnload(event) {
       this.updateOnlineStatus(false);
-      // Se necesita devolver un valor para cancelar el cierre de la página en algunos navegadores
       event.returnValue = '';
     },
     updateOnlineStatus(isOnline) {
-      console.log('Updating online status to:', isOnline); // Log para verificar el valor
+      console.log('Updating online status to:', isOnline);
       const authToken = localStorage.getItem('auth_token');
       axios.post('/api/update-online-status', { is_online: isOnline }, {
         headers: {
@@ -189,18 +214,20 @@ export default {
       })
         .then(response => {
           if (Array.isArray(response.data)) {
-            this.users = response.data.map(user => ({
-              ...user,
-              profile_picture: user.profile_picture ? `http://127.0.0.1:8000/storage/${user.profile_picture}` : '/path/to/default/profile_picture.jpg'
-            }));
-          } else {
-            console.error('Response data is not an array:', response.data);
+            this.users = response.data.map(user => {
+              console.log('User description:', user.description); // Verifica la descripción
+              return {
+                ...user,
+                profile_picture: user.profile_picture ? `http://127.0.0.1:8000/storage/${user.profile_picture}` : '/path/to/default/profile_picture.jpg'
+              };
+            });
           }
         })
         .catch(error => {
           console.error('Error fetching online users', error.response ? error.response.data : error);
         });
     },
+
     fetchOfflineUsers() {
       const authToken = localStorage.getItem('auth_token');
       axios.get('/api/users/offline', {
@@ -217,12 +244,19 @@ export default {
         .catch(error => {
           console.error('Error fetching offline users', error.response ? error.response.data : error);
         });
-    }
+
+    },
+
+    showUserDetails(user) {
+      this.selectedUser = user;
+    },
+    closeUserDetails() {
+      this.selectedUser = null;
+    },
+
   }
 };
 </script>
-
-
 
 <style>
 html,
@@ -428,7 +462,6 @@ body {
   cursor: pointer;
 }
 
-
 .small-text {
   font-size: 0.9rem;
 }
@@ -456,7 +489,31 @@ body {
 }
 
 .offline-username {
-  color: #6c6c6c; /* Un gris más oscuro */
+  color: #6c6c6c;
 }
 
+.user-details {
+  position: absolute;
+  top: 10%;
+  right: 200px;
+  background-color: #1e1e1e;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  width: 200px;
+}
+
+.user-description {
+  font-size: 0.9rem;
+  /* Ajusta el tamaño según sea necesario */
+  color: #b0b0b0;
+  /* O el color que prefieras */
+}
+
+
+.text-gray {
+  color: #ffffff;
+  /* Cambia a blanco para probar */
+}
 </style>

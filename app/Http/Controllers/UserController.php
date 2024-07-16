@@ -19,17 +19,14 @@ class UserController extends Controller
         $saved = $user->save();
         \Log::info('User save result: ' . ($saved ? 'success' : 'failed'));
 
-        
         \Log::info('Online status updated for user: ' . $user->id . ' to ' . $user->is_online);
         
-    
         return response()->json(['message' => 'Status updated']);
     }
-    
 
     public function getOnlineUsers()
     {   
-        $users = User::where('is_online', true)->get(['id', 'username', 'profile_picture']);
+        $users = User::where('is_online', true)->get(['id', 'username', 'profile_picture', 'description']);
         return response()->json($users);
     }
 
@@ -37,5 +34,23 @@ class UserController extends Controller
     {
         $users = User::where('is_online', false)->get(['id', 'username', 'profile_picture']);
         return response()->json($users);
+    }
+
+    public function show(Request $request)
+    {
+        return response()->json($request->user());
+    }
+
+    public function update(Request $request)
+    {
+        $request->validate([
+            'description' => 'nullable|string',
+        ]);
+
+        $user = $request->user();
+        $user->description = $request->description;
+        $user->save();
+
+        return response()->json($user);
     }
 }
