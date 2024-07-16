@@ -15,7 +15,8 @@
           style="position: absolute; left: 50%; transform: translateX(-50%);">{{ currentTime }}</div>
         <div class="navbar-nav d-flex align-items-center">
           <span class="text-white ms-2 username">{{ username }}</span>
-          <img :src="profilePicture" alt="Profile" class="profile-pic" v-if="profilePicture" />
+          <img :src="selectedUser ? selectedUser.profile_picture : profilePicture" alt="Profile" class="profile-pic"
+            v-if="selectedUser || profilePicture" />
         </div>
       </div>
     </nav>
@@ -97,7 +98,14 @@
         style="font-size: 0.9rem; color: #bbb; text-align: center; white-space: normal; overflow: visible; text-overflow: clip;">
         {{ selectedUser.description }}
       </p>
+      <div v-if="selectedUser.roles && selectedUser.roles.length" style="text-align: center; margin-top: 1rem;">
+        <h5 class="text-white" style="margin: 0;">Roles:</h5>
+        <ul style="list-style-type: none; padding: 0; color: #bbb;">
+          <li v-for="role in selectedUser.roles" :key="role">{{ role }}</li>
+        </ul>
+      </div>
     </div>
+
   </div>
 </template>
 
@@ -174,6 +182,9 @@ export default {
     window.removeEventListener('keydown', this.resetInactivityTimeout);
   },
   methods: {
+    buildProfilePictureUrl(picture) {
+      return picture ? `http://127.0.0.1:8000/storage/${picture}` : '/path/to/default/profile_picture.jpg';
+    },
     resetInactivityTimeout() {
       clearTimeout(inactivityTimeout);
       inactivityTimeout = setTimeout(() => {
@@ -185,7 +196,7 @@ export default {
     },
     loadProfilePicture() {
       const picture = localStorage.getItem('profile_picture');
-      this.profilePicture = picture ? `http://127.0.0.1:8000/storage/${picture}` : '/path/to/default/profile_picture.jpg';
+      this.profilePicture = this.buildProfilePictureUrl(picture);
     },
     updateTime() {
       const now = new Date();
@@ -234,7 +245,7 @@ export default {
               console.log('User description:', user.description);
               return {
                 ...user,
-                profile_picture: user.profile_picture ? `http://127.0.0.1:8000/storage/${user.profile_picture}` : '/path/to/default/profile_picture.jpg'
+                profile_picture: this.buildProfilePictureUrl(user.profile_picture)
               };
             });
           }
@@ -254,7 +265,7 @@ export default {
         .then(response => {
           this.offlineUsers = response.data.map(user => ({
             ...user,
-            profile_picture: user.profile_picture ? `http://127.0.0.1:8000/storage/${user.profile_picture}` : '/path/to/default/profile_picture.jpg'
+            profile_picture: this.buildProfilePictureUrl(user.profile_picture)
           }));
         })
         .catch(error => {
@@ -265,7 +276,9 @@ export default {
 
     showUserDetails(user) {
       this.selectedUser = user;
+      console.log('Selected User:', this.selectedUser);
     },
+
     closeUserDetails() {
       this.selectedUser = null;
     },

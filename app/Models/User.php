@@ -1,5 +1,7 @@
 <?php
 
+// User.php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,5 +30,10 @@ class User extends Authenticatable
     protected $casts = [
         'api_token' => 'string',
     ];
-}
 
+    // Relación con roles
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class); // Cambia Role::class si tienes un namespace diferente
+    }
+}

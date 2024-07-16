@@ -84,7 +84,7 @@ export default {
   methods: {
     async fetchUser() {
       try {
-        const response = await axios.get('/api/user', {
+        const response = await axios.get('/api/users', {
           headers: { 'Authorization': `Bearer ${this.authToken}` }
         });
         this.description = response.data.description || '';

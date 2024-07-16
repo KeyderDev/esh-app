@@ -37,6 +37,7 @@ Sigue los siguientes pasos para configurar el proyecto en tu entorno local:
 
     ```bash
     php artisan migrate
+    php artisan db:seed
     ```
 
 ## Uso
