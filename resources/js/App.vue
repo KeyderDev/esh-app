@@ -105,6 +105,7 @@
 
 <script>
 import axios from 'axios';
+let inactivityTimeout;
 export default {
   name: 'App',
   data() {
@@ -158,15 +159,32 @@ export default {
     this.updateOnlineStatus(true);
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
     window.addEventListener('beforeunload', this.handleBeforeUnload);
+    window.addEventListener('unload', () => this.updateOnlineStatus(false)); // Agregar este evento
+    window.addEventListener('mousemove', this.resetInactivityTimeout);
+    window.addEventListener('keydown', this.resetInactivityTimeout);
+    this.startInactivityTimeout();
     this.fetchOnlineUsers();
     this.fetchOfflineUsers();
     setInterval(this.updateTime, 1000);
   },
+
   beforeDestroy() {
+    clearTimeout(inactivityTimeout); // Limpiar el timeout al destruir el componente
     document.removeEventListener('visibilitychange', this.handleVisibilityChange);
     window.removeEventListener('beforeunload', this.handleBeforeUnload);
+    window.removeEventListener('mousemove', this.resetInactivityTimeout);
+    window.removeEventListener('keydown', this.resetInactivityTimeout);
   },
   methods: {
+    resetInactivityTimeout() {
+      clearTimeout(inactivityTimeout);
+      inactivityTimeout = setTimeout(() => {
+        this.updateOnlineStatus(false); // Marcar como offline después de inactividad
+      }, 300000); // 5 minutos de inactividad
+    },
+    startInactivityTimeout() {
+      this.resetInactivityTimeout(); // Iniciar el temporizador
+    },
     loadProfilePicture() {
       const picture = localStorage.getItem('profile_picture');
       this.profilePicture = picture ? `http://127.0.0.1:8000/storage/${picture}` : '/path/to/default/profile_picture.jpg';

@@ -53,6 +53,8 @@
 <script>
 import axios from 'axios';
 
+let inactivityTimeout;
+
 export default {
   data() {
     return {
@@ -66,6 +68,14 @@ export default {
   },
   mounted() {
     this.fetchUser();
+    window.addEventListener('mousemove', this.resetInactivityTimeout);
+    window.addEventListener('keydown', this.resetInactivityTimeout);
+    this.startInactivityTimeout();
+  },
+  beforeDestroy() {
+    clearTimeout(inactivityTimeout);
+    window.removeEventListener('mousemove', this.resetInactivityTimeout);
+    window.removeEventListener('keydown', this.resetInactivityTimeout);
   },
   methods: {
     async fetchUser() {
@@ -79,6 +89,17 @@ export default {
       }
     },
     
+    resetInactivityTimeout() {
+      clearTimeout(inactivityTimeout);
+      inactivityTimeout = setTimeout(() => {
+        this.updateOnlineStatus(false); // Marcar como offline después de inactividad
+      }, 300000); // 5 minutos de inactividad
+    },
+    
+    startInactivityTimeout() {
+      this.resetInactivityTimeout(); // Iniciar el temporizador
+    },
+
     onFileChange(event) {
       this.profilePicture = event.target.files[0];
       if (this.profilePicture && this.profilePicture.size > 2 * 1024 * 1024) {

@@ -19,6 +19,8 @@
         "bootstrap": "^5.3.3",
         "laravel-echo": "^1.16.1",
         "pusher-js": "^8.4.0-rc2",
+        "socket.io": "^4.7.5",
+        "socket.io-client": "^4.7.5",
         "vue": "^3.4.31",
         "vue-router": "^4.0.13"
     }
