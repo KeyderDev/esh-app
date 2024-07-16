@@ -68,7 +68,7 @@
             </div>
             <div class="d-flex flex-column ms-2">
               <span class="username text-white">{{ user.username }}</span>
-              <span class="user-description" v-if="user.description">{{ user.description }}</span>
+              <span class="user-description text-truncate" v-if="user.description">{{ user.description }}</span>
             </div>
           </div>
         </div>
@@ -82,9 +82,8 @@
           </div>
         </div>
       </div>
-
-
     </div>
+
     <div v-if="selectedUser" class="user-details"
       style="position: absolute; top: 10%; right: 200px; background-color: #1e1e1e; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); width: 250px;">
       <button @click="closeUserDetails"
@@ -94,14 +93,13 @@
           style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 0.5rem;" />
         <h4 class="text-white" style="margin: 0;">{{ selectedUser.username }}</h4>
       </div>
-      <p class="user-description" v-if="selectedUser.description"
-        style="font-size: 0.9rem; color: #bbb; text-align: center;">{{ selectedUser.description }}</p>
+      <p v-if="selectedUser.description"
+        style="font-size: 0.9rem; color: #bbb; text-align: center; white-space: normal; overflow: visible; text-overflow: clip;">
+        {{ selectedUser.description }}
+      </p>
     </div>
-
   </div>
 </template>
-
-
 
 <script>
 import axios from 'axios';
@@ -159,7 +157,7 @@ export default {
     this.updateOnlineStatus(true);
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
     window.addEventListener('beforeunload', this.handleBeforeUnload);
-    window.addEventListener('unload', () => this.updateOnlineStatus(false)); // Agregar este evento
+    window.addEventListener('unload', () => this.updateOnlineStatus(false));
     window.addEventListener('mousemove', this.resetInactivityTimeout);
     window.addEventListener('keydown', this.resetInactivityTimeout);
     this.startInactivityTimeout();
@@ -169,7 +167,7 @@ export default {
   },
 
   beforeDestroy() {
-    clearTimeout(inactivityTimeout); // Limpiar el timeout al destruir el componente
+    clearTimeout(inactivityTimeout);
     document.removeEventListener('visibilitychange', this.handleVisibilityChange);
     window.removeEventListener('beforeunload', this.handleBeforeUnload);
     window.removeEventListener('mousemove', this.resetInactivityTimeout);
@@ -179,11 +177,11 @@ export default {
     resetInactivityTimeout() {
       clearTimeout(inactivityTimeout);
       inactivityTimeout = setTimeout(() => {
-        this.updateOnlineStatus(false); // Marcar como offline después de inactividad
-      }, 300000); // 5 minutos de inactividad
+        this.updateOnlineStatus(false);
+      }, 300000);
     },
     startInactivityTimeout() {
-      this.resetInactivityTimeout(); // Iniciar el temporizador
+      this.resetInactivityTimeout();
     },
     loadProfilePicture() {
       const picture = localStorage.getItem('profile_picture');
@@ -233,7 +231,7 @@ export default {
         .then(response => {
           if (Array.isArray(response.data)) {
             this.users = response.data.map(user => {
-              console.log('User description:', user.description); // Verifica la descripción
+              console.log('User description:', user.description);
               return {
                 ...user,
                 profile_picture: user.profile_picture ? `http://127.0.0.1:8000/storage/${user.profile_picture}` : '/path/to/default/profile_picture.jpg'
@@ -524,11 +522,13 @@ body {
 
 .user-description {
   font-size: 0.9rem;
-  /* Ajusta el tamaño según sea necesario */
   color: #b0b0b0;
-  /* O el color que prefieras */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+  /* Ajusta este valor según tus necesidades */
 }
-
 
 .text-gray {
   color: #ffffff;

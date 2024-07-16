@@ -13,13 +13,17 @@
 
       <div class="description-container">
         <textarea v-model="description" placeholder="Escribe tu descripción aquí..." class="description-input"></textarea>
-        <button @click="updateDescription" class="update-button">Actualizar Descripción</button>
+        <button @click="saveDescription" class="update-button">
+          {{ description ? 'Actualizar Descripción' : 'Agregar Descripción' }}
+        </button>
       </div>
 
-      <button @click="logout" class="logout-button">Cerrar Sesión</button>
-      <button @click="toggleDebugInfo" class="debug-button">
-        {{ showDebugInfo ? 'Ocultar Información de Depuración' : 'Ver Información de Depuración' }}
-      </button>
+      <div class="button-group">
+        <button @click="logout" class="logout-button">Cerrar Sesión</button>
+        <button @click="toggleDebugInfo" class="debug-button">
+          {{ showDebugInfo ? 'Ocultar Información de Depuración' : 'Ver Información de Depuración' }}
+        </button>
+      </div>
 
       <div v-if="showDebugInfo" class="debug-info">
         <h2 class="debug-title">Información de Depuración</h2>
@@ -88,14 +92,14 @@ export default {
         console.error('Error fetching user data:', error);
       }
     },
-    
+
     resetInactivityTimeout() {
       clearTimeout(inactivityTimeout);
       inactivityTimeout = setTimeout(() => {
-        this.updateOnlineStatus(false); // Marcar como offline después de inactividad
+        this.updateOnlineStatus(false);
       }, 300000); // 5 minutos de inactividad
     },
-    
+
     startInactivityTimeout() {
       this.resetInactivityTimeout(); // Iniciar el temporizador
     },
@@ -107,7 +111,7 @@ export default {
         this.profilePicture = null;
       }
     },
-    
+
     async upload() {
       if (!this.profilePicture) {
         alert('Por favor, selecciona una imagen.');
@@ -134,26 +138,26 @@ export default {
         this.isUploading = false;
       }
     },
-    
-    async updateDescription() {
+
+    async saveDescription() {
       try {
         const response = await axios.post('/api/user', { description: this.description }, {
           headers: { 'Authorization': `Bearer ${this.authToken}` },
         });
         this.description = response.data.description;
-        alert('Descripción actualizada correctamente.');
+        alert(this.description ? 'Descripción actualizada correctamente.' : 'Descripción agregada correctamente.');
       } catch (error) {
-        console.error('Error actualizando la descripción:', error);
-        alert('Error al actualizar la descripción.');
+        console.error('Error al actualizar/agregar la descripción:', error);
+        alert('Error al actualizar/agregar la descripción.');
       }
     },
-    
+
     async logout() {
       await this.updateOnlineStatus(false);
       localStorage.removeItem('auth_token');
       this.$router.push('/login');
     },
-    
+
     updateOnlineStatus(isOnline) {
       axios.post('/api/update-online-status', { is_online: isOnline }, {
         headers: { 'Authorization': `Bearer ${this.authToken}` }
@@ -211,23 +215,6 @@ export default {
   transform: translateY(-2px);
 }
 
-.logout-button {
-  margin-top: 10px;
-  padding: 10px 20px;
-  background-color: #c9302c;
-  border: none;
-  border-radius: 5px;
-  color: #fff;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s, transform 0.2s;
-}
-
-.logout-button:hover {
-  background-color: #a52a2a;
-  transform: translateY(-2px);
-}
-
 .upload-message {
   margin-top: 10px;
   color: #fff;
@@ -249,15 +236,30 @@ export default {
   padding: 10px;
 }
 
-.update-button {
+.update-button,
+.logout-button,
+.debug-button {
   padding: 10px 20px;
-  background-color: #555;
   border: none;
   border-radius: 5px;
   color: #fff;
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.3s, transform 0.2s;
+}
+
+.update-button {
+  background-color: #555;
+}
+
+.logout-button {
+  margin-top: 10px;
+  background-color: #c9302c;
+}
+
+.debug-button {
+  margin-top: 10px;
+  background-color: #555;
 }
 
 .update-button:hover {
@@ -265,16 +267,9 @@ export default {
   transform: translateY(-2px);
 }
 
-.debug-button {
-  padding: 10px 20px;
-  background-color: #555;
-  border: none;
-  border-radius: 5px;
-  color: #fff;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s, transform 0.2s;
-  margin-top: 10px;
+.logout-button:hover {
+  background-color: #a52a2a;
+  transform: translateY(-2px);
 }
 
 .debug-button:hover {
