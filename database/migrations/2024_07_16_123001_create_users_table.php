@@ -13,6 +13,9 @@ class CreateUsersTable extends Migration
             $table->string('username')->unique();
             $table->string('password');
             $table->string('api_token')->nullable(); // Añade esta línea
+            $table->string('profile_picture')->nullable();
+            $table->boolean('is_online')->default(false);
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }
