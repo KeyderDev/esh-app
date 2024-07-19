@@ -33,6 +33,22 @@ Sigue los siguientes pasos para configurar el proyecto en tu entorno local:
 
 5. Configura tu base de datos en el archivo `.env`.
 
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=root
+DB_PASSWORD=
+
+BROADCAST_DRIVER=redis
+CACHE_DRIVER=redis
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=redis
+SESSION_DRIVER=redis
+SESSION_LIFETIME=120
+```
+
 6. Ejecuta las migraciones de la base de datos:
 
     ```bash
@@ -47,3 +63,6 @@ Para iniciar el servidor de desarrollo, ejecuta:
 ```bash
 npm run dev
 php artisan serve
+laravel-echo-server start
+redis-server (Windows: .\redis-server)
+

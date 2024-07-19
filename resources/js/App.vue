@@ -64,7 +64,7 @@
           @click="showUserDetails(user)">
           <div class="d-flex align-items-center">
             <div class="profile-container">
-              <img :src="user.profile_picture" alt="Profile" class="profile-pic" />
+              <img :src="buildProfilePictureUrl(user.profile_picture)" alt="Profile" class="profile-pic" />
               <div class="online-indicator"></div>
             </div>
             <div class="d-flex flex-column ms-2">
@@ -78,7 +78,7 @@
         <div v-for="user in offlineUsers" :key="user.id" class="user-item d-flex flex-column mb-2 offline-user"
           @click="showUserDetails(user)">
           <div class="d-flex align-items-center">
-            <img :src="user.profile_picture" alt="Profile" class="profile-pic" />
+            <img :src="buildProfilePictureUrl(user.profile_picture)" alt="Profile" class="profile-pic" />
             <span class="username offline-username ms-2">{{ user.username }}</span>
           </div>
         </div>
@@ -90,7 +90,7 @@
       <button @click="closeUserDetails"
         style="background: none; border: none; color: #fff; font-size: 1.5rem; position: absolute; top: 0.5rem; right: 0.5rem;">&times;</button>
       <div style="text-align: center; margin-bottom: 1rem;">
-        <img :src="selectedUser.profile_picture" alt="Profile" class="profile-pic"
+        <img :src="buildProfilePictureUrl(selectedUser.profile_picture)" alt="Profile" class="profile-pic"
           style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 0.5rem;" />
         <h4 class="text-white" style="margin: 0;">{{ selectedUser.username }}</h4>
       </div>
@@ -110,8 +110,22 @@
 </template>
 
 <script>
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import Echo from "laravel-echo";
+import Pusher from 'pusher-js';
+
+window.Pusher = Pusher;
+
+window.Echo = new Echo({
+  broadcaster: 'pusher',
+  key: import.meta.env.VITE_PUSHER_APP_KEY,
+  cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
+  encrypted: true
+});
+
 let inactivityTimeout;
+
 export default {
   name: 'App',
   data() {
@@ -172,8 +186,16 @@ export default {
     this.fetchOnlineUsers();
     this.fetchOfflineUsers();
     setInterval(this.updateTime, 1000);
-  },
+    this.loadUsers();
 
+    // Register Echo listener inside mounted hook to ensure `this` context is correct
+    window.Echo.channel('user-status')
+      .listen('UserStatusChanged', (event) => {
+        console.log('Event received:', event);
+        this.handleUserStatusChange(event);
+      });
+
+  },
   beforeDestroy() {
     clearTimeout(inactivityTimeout);
     document.removeEventListener('visibilitychange', this.handleVisibilityChange);
@@ -182,8 +204,62 @@ export default {
     window.removeEventListener('keydown', this.resetInactivityTimeout);
   },
   methods: {
+    async loadUsers() {
+      try {
+        const response = await axios.get('/api/users');
+        this.users = response.data.filter(user => user.is_online);
+        this.offlineUsers = response.data.filter(user => !user.is_online);
+      } catch (error) {
+        console.error('Error al cargar usuarios:', error);
+      }
+    },
     buildProfilePictureUrl(picture) {
-      return picture ? `http://127.0.0.1:8000/storage/${picture}` : '/path/to/default/profile_picture.jpg';
+      const url = picture ? `http://localhost:8000/storage/${picture}` : '/path/to/default/profile_picture.jpg';
+      console.log('Profile picture URL:', url); // Verifica la URL generada
+      return url;
+    },
+    handleUserStatusChange(event) {
+      if (!event || typeof event.id === 'undefined' || typeof event.is_online === 'undefined') {
+        console.error('Invalid event data:', event);
+        return;
+      }
+
+      console.log('Event received in handleUserStatusChange:', event);
+
+      const onlineUserIndex = this.users.findIndex(user => user.id === event.id);
+      const offlineUserIndex = this.offlineUsers.findIndex(user => user.id === event.id);
+
+      if (event.is_online) {
+        if (offlineUserIndex !== -1) {
+          console.log('Removing user from offlineUsers:', this.offlineUsers[offlineUserIndex]);
+          this.offlineUsers.splice(offlineUserIndex, 1);
+        }
+
+        if (onlineUserIndex === -1) {
+          console.log('Adding user to onlineUsers:', event);
+          this.users.push(event);
+        } else {
+          console.log('Updating user in onlineUsers:', event);
+          this.users[onlineUserIndex] = { ...this.users[onlineUserIndex], ...event };
+        }
+      } else {
+        if (onlineUserIndex !== -1) {
+          console.log('Removing user from onlineUsers:', this.users[onlineUserIndex]);
+          this.users.splice(onlineUserIndex, 1);
+        }
+
+        if (offlineUserIndex === -1) {
+          console.log('Adding user to offlineUsers:', event);
+          this.offlineUsers.push(event);
+        } else {
+          console.log('Updating user in offlineUsers:', event);
+          this.offlineUsers[offlineUserIndex] = { ...this.offlineUsers[offlineUserIndex], ...event };
+        }
+      }
+    },
+
+    showUserDetails(user) {
+      console.log(user);
     },
     resetInactivityTimeout() {
       clearTimeout(inactivityTimeout);
@@ -254,7 +330,6 @@ export default {
           console.error('Error fetching online users', error.response ? error.response.data : error);
         });
     },
-
     fetchOfflineUsers() {
       const authToken = localStorage.getItem('auth_token');
       axios.get('/api/users/offline', {
@@ -271,21 +346,21 @@ export default {
         .catch(error => {
           console.error('Error fetching offline users', error.response ? error.response.data : error);
         });
-
     },
-
     showUserDetails(user) {
       this.selectedUser = user;
       console.log('Selected User:', this.selectedUser);
     },
-
     closeUserDetails() {
       this.selectedUser = null;
     },
-
   }
 };
+
+const auth_token = localStorage.getItem('auth_token');
+axios.defaults.headers.common['Authorization'] = `Bearer ${auth_token}`;
 </script>
+
 
 <style>
 html,

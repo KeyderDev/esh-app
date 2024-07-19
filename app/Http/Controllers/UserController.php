@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Events\UserStatusChanged; // Asegúrate de incluir el evento
+
 
 class UserController extends Controller
 {
@@ -12,57 +14,57 @@ class UserController extends Controller
     public function updateOnlineStatus(Request $request)
     {
         $request->validate(['is_online' => 'required|boolean']);
-
+    
         $user = Auth::user();
+        if (!$user instanceof User) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+    
         \Log::info('Attempting to update online status for user: ' . $user->id . ' to ' . $request->input('is_online'));
-
-        $user->is_online = $request->input('is_online');
-        \Log::info('User before save: ', $user->toArray());
-
+        $user->is_online = $request->is_online;
+        \Log::info('Valor recibido para is_online:', ['is_online' => $request->input('is_online')]);
+    
         $saved = $user->save();
         \Log::info('User save result: ' . ($saved ? 'success' : 'failed'));
-
+    
+        \Log::info('Broadcasting UserStatusChanged event for user: ', $user->toArray());
+        broadcast(new UserStatusChanged($user))->toOthers();
+    
         \Log::info('Online status updated for user: ' . $user->id . ' to ' . $user->is_online);
+    
+        return response()->json(['message' => 'Estado Real time actualizado']);
+    }
+    
+    
+    
+    public function getOnlineUsers()
+    {
+        $users = User::where('is_online', true)
+            ->with('roles:id,name') // Cargar solo id y name de roles
+            ->get(['id', 'username', 'profile_picture', 'description']);
 
-        return response()->json(['message' => 'Status updated']);
+        $formattedUsers = $users->map(function ($user) {
+            $user->roles = $user->roles->pluck('name'); // Extraer solo los nombres
+            return $user->only(['id', 'username', 'profile_picture', 'description', 'roles']); // Solo devolver campos relevantes
+        });
+
+        return response()->json($formattedUsers);
     }
 
-    // Get online users// Get online users
-// Get online users
-// Get online users// Get online users
-// Get online users
-// Get online users// Get online users
-// Get online users
-// Get online users
-// Get online users
-public function getOnlineUsers()
-{
-    $users = User::where('is_online', true)
-        ->with('roles:id,name') // Cargar solo id y name de roles
-        ->get(['id', 'username', 'profile_picture', 'description']);
+    // Get offline users
+    public function getOfflineUsers()
+    {
+        $users = User::where('is_online', false)
+            ->with('roles:id,name') // Cargar solo id y name de roles
+            ->get(['id', 'username', 'profile_picture']);
 
-    $formattedUsers = $users->map(function ($user) {
-        $user->roles = $user->roles->pluck('name'); // Extraer solo los nombres
-        return $user->only(['id', 'username', 'profile_picture', 'description', 'roles']); // Solo devolver campos relevantes
-    });
+        $formattedUsers = $users->map(function ($user) {
+            $user->roles = $user->roles->pluck('name'); // Extraer solo los nombres
+            return $user->only(['id', 'username', 'profile_picture', 'roles']); // Solo devolver campos relevantes
+        });
 
-    return response()->json($formattedUsers);
-}
-
-// Get offline users
-public function getOfflineUsers()
-{
-    $users = User::where('is_online', false)
-        ->with('roles:id,name') // Cargar solo id y name de roles
-        ->get(['id', 'username', 'profile_picture']);
-
-    $formattedUsers = $users->map(function ($user) {
-        $user->roles = $user->roles->pluck('name'); // Extraer solo los nombres
-        return $user->only(['id', 'username', 'profile_picture', 'roles']); // Solo devolver campos relevantes
-    });
-
-    return response()->json($formattedUsers);
-}
+        return response()->json($formattedUsers);
+    }
 
     public function show($id)
     {
@@ -97,8 +99,9 @@ public function getOfflineUsers()
     // Get all users with roles
     public function getAllUsers()
     {
-        $users = User::with('roles')->get(['id', 'username', 'profile_picture', 'description']);
+        $users = User::with('roles')->get(['id', 'username', 'profile_picture', 'description', 'is_online']);
         return response()->json($users);
     }
+    
 
 }

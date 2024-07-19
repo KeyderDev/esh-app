@@ -36,4 +36,10 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Role::class); // Cambia Role::class si tienes un namespace diferente
     }
+
+    // Accesor para obtener solo los nombres de los roles
+    public function getRoleNamesAttribute()
+    {
+        return $this->roles->pluck('name');
+    }
 }

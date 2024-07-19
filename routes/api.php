@@ -1,7 +1,4 @@
 <?php
-
-// routes/api.php
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
@@ -34,6 +31,5 @@ Route::middleware('auth.api')->group(function () {
 
 Route::middleware('throttle:60,1')->group(function () {
     Route::get('/api/roles', 'RoleController@index');
-    // otras rutas
 });
 

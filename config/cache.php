@@ -91,6 +91,10 @@ return [
         'octane' => [
             'driver' => 'octane',
         ],
+        'FILESYSTEM_DISK' => [
+            'driver' => 'file',
+            'path' => storage_path('framework/cache/data'),
+        ],
 
     ],
 
