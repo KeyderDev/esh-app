@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
@@ -9,27 +10,36 @@ use App\Http\Controllers\RolesController;
 // Rutas públicas
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::get('/roles', [RolesController::class, 'index']);
-Route::get('/roles/{id}/permissions', [RolesController::class, 'showPermissions']);
-Route::post('/roles/{id}/permissions', [RolesController::class, 'assignPermission']);
-Route::post('/roles', [RolesController::class, 'store']); // Para crear roles
-Route::delete('/roles/{id}/permissions', [RolesController::class, 'removePermission']);
-Route::post('/users/{user}/roles', [UserController::class, 'assignRole']);
-Route::delete('/roles/{id}', [RolesController::class, 'destroy']);
 
 // Rutas protegidas
 Route::middleware('auth.api')->group(function () {
+    Route::prefix('profile')->group(function () {
+        Route::post('/picture', [ProfileController::class, 'updateProfilePicture']);
+    });
+
+    Route::prefix('users')->group(function () {
+        Route::get('/online', [UserController::class, 'getOnlineUsers']);
+        Route::get('/offline', [UserController::class, 'getOfflineUsers']);
+        Route::get('/', [UserController::class, 'getAllUsers']);
+        Route::get('/{user}', [UserController::class, 'show']);
+        Route::post('/{user}/roles', [UserController::class, 'assignRole']);
+        Route::post('/', [UserController::class, 'update']);
+    });
     Route::post('/update-online-status', [UserController::class, 'updateOnlineStatus']);
-    Route::get('/users/online', [UserController::class, 'getOnlineUsers']);
-    Route::post('/profile/picture', [ProfileController::class, 'updateProfilePicture']);
+
+    Route::prefix('roles')->group(function () {
+        Route::get('/', [RolesController::class, 'index']);
+        Route::get('/{id}/permissions', [RolesController::class, 'showPermissions']);
+        Route::post('/{id}/permissions', [RolesController::class, 'assignPermission']);
+        Route::post('/', [RolesController::class, 'store']);
+        Route::delete('/{id}/permissions', [RolesController::class, 'removePermission']);
+        Route::delete('/{id}', [RolesController::class, 'destroy']);
+    });
+
     Route::get('/data', [ApiController::class, 'getData']);
-    Route::get('/users/offline', [UserController::class, 'getOfflineUsers']);
-    Route::get('/user', [UserController::class, 'show']);
-    Route::post('/user', [UserController::class, 'update']);
-    Route::get('/users', [UserController::class, 'getAllUsers']);
 });
 
+// Rutas con límite de tasa
 Route::middleware('throttle:60,1')->group(function () {
-    Route::get('/api/roles', 'RoleController@index');
+    Route::get('/api/roles', [RolesController::class, 'index']); // Suponiendo que RoleController es un error tipográfico
 });
-

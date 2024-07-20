@@ -289,7 +289,7 @@ export default {
 .debug-title {
   margin-bottom: 10px;
   font-size: 20px;
-  color: #c9302c;
+  color: #23a55a;
 }
 
 .debug-row {

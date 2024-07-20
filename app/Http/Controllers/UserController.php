@@ -99,9 +99,10 @@ class UserController extends Controller
     // Get all users with roles
     public function getAllUsers()
     {
-        $users = User::with('roles')->get(['id', 'username', 'profile_picture', 'description', 'is_online']);
+        $users = User::with('roles')->get(['id', 'username', 'profile_picture', 'description', 'is_online', 'created_at']);
         return response()->json($users);
     }
+    
     
 
 }
