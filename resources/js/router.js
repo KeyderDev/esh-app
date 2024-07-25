@@ -5,6 +5,7 @@ import Login from './components/Login.vue';
 import Libreria from './components/Libreria.vue';
 import Dashboard from './components/Dashboard.vue';
 import Users from './components/Users.vue';
+import Roles from './components/Roles.vue';
 
 function isAuthenticated() {
   return !!localStorage.getItem('auth_token'); 
@@ -17,7 +18,8 @@ const routes = [
   { path: '/login', component: Login },
   { path: '/libreria', component: Libreria },
   { path: '/dashboard', component: Dashboard },
-  { path: '/users', component: Users },
+  { path: '/dashboard/users', component: Users },
+  { path: '/dashboard/roles', component: Roles },
 ];
 
 const router = createRouter({
