@@ -63,6 +63,5 @@ Para iniciar el servidor de desarrollo, ejecuta:
 ```bash
 npm run dev
 php artisan serve
-laravel-echo-server start
-redis-server (Windows: .\redis-server)
+
 
