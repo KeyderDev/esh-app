@@ -32,6 +32,10 @@
             <i class="fas fa-book"></i>
             <span class="nav-text">Libreria</span>
           </router-link>
+          <router-link to="/libreria" class="nav-link text-white d-flex flex-column align-items-center">
+            <i class="fa-solid fa-video"></i>
+            <span class="nav-text">undefined</span>
+          </router-link>
         </div>
         <div class="d-flex flex-column align-items-center">
           <router-link to="/settings" class="nav-link text-white d-flex flex-column align-items-center">
