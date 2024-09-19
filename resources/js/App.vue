@@ -218,7 +218,7 @@ export default {
       }
     },
     buildProfilePictureUrl(picture) {
-      const url = picture ? `http://localhost:8000/storage/${picture}` : '/path/to/default/profile_picture.jpg';
+      const url = picture ? `http://localhost:90/storage/${picture}` : '/path/to/default/profile_picture.jpg';
       console.log('Profile picture URL:', url); // Verifica la URL generada
       return url;
     },

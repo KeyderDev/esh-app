@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log; 
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
@@ -41,6 +42,7 @@ class AuthController extends Controller
             $token = Str::random(60);
             $user->api_token = $token;
             $user->save();
+            \Log::info('Token generated: ' . $token); // Agrega este log para verificar el token generado
 
             return response()->json([
                 'message' => 'Login successful!',
@@ -50,7 +52,7 @@ class AuthController extends Controller
         }
 
         // Agregar logs para depuración
-        \Log::info('Login failed for username: ' . $request->username);
+        \Log::error('Login failed for username: ' . $request->username . ' with IP: ' . $request->ip());
 
         return response()->json(['message' => 'Invalid credentials'], 401);
     }
