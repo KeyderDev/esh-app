@@ -1,52 +1,121 @@
 <template>
-  <div id="app" class="d-flex flex-column" style="height: 100vh;">
-    <nav class="navbar navbar-expand"
-      style="background-color: #121212; padding: 0.5rem 1rem; border-bottom: 1px solid #1e1e1e;">
+  <div id="app" class="d-flex flex-column" style="height: 100vh">
+    <nav
+      class="navbar navbar-expand"
+      style="
+        background-color: #121212;
+        padding: 0.5rem 1rem;
+        border-bottom: 1px solid #1e1e1e;
+      "
+    >
       <div class="container-fluid d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
-          <img :src="imageSrc" alt="Logo" class="navbar-logo">
-          <form class="d-flex" role="search"
-            style="background-color: #1e1e1e; border-radius: 0.25rem; padding: 0.25rem; margin-left: 2rem;">
-            <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar"
-              style="max-width: 200px; background-color: #1e1e1e; border: none; color: #e0e0e0;">
+          <img :src="imageSrc" alt="Logo" class="navbar-logo" />
+          <form
+            class="d-flex"
+            role="search"
+            style="
+              background-color: #1e1e1e;
+              border-radius: 0.25rem;
+              padding: 0.25rem;
+              margin-left: 2rem;
+            "
+          >
+            <input
+              class="form-control me-2"
+              type="search"
+              placeholder="Buscar"
+              aria-label="Buscar"
+              style="
+                max-width: 200px;
+                background-color: #1e1e1e;
+                border: none;
+                color: #e0e0e0;
+              "
+            />
           </form>
         </div>
-        <div class="navbar-brand mx-auto text-white"
-          style="position: absolute; left: 50%; transform: translateX(-50%);">{{ currentTime }}</div>
+        <div
+          class="navbar-brand mx-auto text-white"
+          style="position: absolute; left: 50%; transform: translateX(-50%)"
+        >
+          {{ currentTime }}
+        </div>
         <div class="navbar-nav d-flex align-items-center">
           <span class="text-white ms-2 username">{{ username }}</span>
-          <img :src="selectedUser ? selectedUser.profile_picture : profilePicture" alt="Profile" class="profile-pic"
-            v-if="selectedUser || profilePicture" />
+          <img
+            :src="selectedUser ? selectedUser.profile_picture : profilePicture"
+            alt="Profile"
+            class="profile-pic"
+            v-if="selectedUser || profilePicture"
+          />
         </div>
       </div>
     </nav>
     <div class="d-flex flex-grow-1">
-      <nav class="text-white d-flex flex-column"
-        style="background-color: #121212; width: 60px; padding: 0.5rem; border-right: 1px solid #1e1e1e;">
-        <div class="d-flex flex-column align-items-center flex-grow-1" style="margin-top: 1rem;">
-          <router-link to="/" class="nav-link text-white d-flex flex-column align-items-center">
+      <nav
+        class="text-white d-flex flex-column"
+        style="
+          background-color: #121212;
+          width: 60px;
+          padding: 0.5rem;
+          border-right: 1px solid #1e1e1e;
+        "
+      >
+        <div
+          class="d-flex flex-column align-items-center flex-grow-1"
+          style="margin-top: 1rem"
+        >
+          <router-link
+            to="/"
+            class="nav-link text-white d-flex flex-column align-items-center"
+          >
             <i class="fas fa-home"></i>
             <span class="nav-text">Inicio</span>
           </router-link>
-          <router-link to="/libreria" class="nav-link text-white d-flex flex-column align-items-center">
+          <router-link
+            to="/libreria"
+            class="nav-link text-white d-flex flex-column align-items-center"
+          >
             <i class="fas fa-book"></i>
             <span class="nav-text">Libreria</span>
           </router-link>
-          <router-link to="/libreria" class="nav-link text-white d-flex flex-column align-items-center">
+          <!-- Eliminar este duplicado -->
+          <router-link
+            to="/libreria"
+            class="nav-link text-white d-flex flex-column align-items-center"
+          >
             <i class="fa-solid fa-video"></i>
             <span class="nav-text">undefined</span>
           </router-link>
         </div>
         <div class="d-flex flex-column align-items-center">
-          <router-link to="/settings" class="nav-link text-white d-flex flex-column align-items-center">
+          <router-link
+            to="/settings"
+            class="nav-link text-white d-flex flex-column align-items-center"
+          >
             <i class="fas fa-cog"></i>
             <span class="nav-text">Ajustes</span>
           </router-link>
         </div>
       </nav>
-      <div class="channels"
-        style="background-color: #1e1e1e; width: 230px; display: flex; flex-direction: column; padding: 1rem; border-right: 1px solid #1e1e1e; position: relative;">
-        <div class="channel-section" v-for="section in channelSections" :key="section.name">
+      <div
+        class="channels"
+        style="
+          background-color: #1e1e1e;
+          width: 230px;
+          display: flex;
+          flex-direction: column;
+          padding: 1rem;
+          border-right: 1px solid #1e1e1e;
+          position: relative;
+        "
+      >
+        <div
+          class="channel-section"
+          v-for="section in channelSections"
+          :key="section.name"
+        >
           <p class="section-title">{{ section.name }}</p>
           <div class="channel" v-for="channel in section.channels" :key="channel.id">
             <router-link :to="channel.link" class="channel-link">
@@ -54,138 +123,263 @@
             </router-link>
           </div>
         </div>
-        <router-link to="/dashboard" class="settings-icon" style="position: absolute; top: 10px; right: 10px;">
-          <i class="fas fa-cog" style="color: #e0e0e0;"></i>
+        <router-link
+          to="/dashboard"
+          class="settings-icon"
+          style="position: absolute; top: 10px; right: 10px"
+        >
+          <i class="fas fa-cog" style="color: #e0e0e0"></i>
         </router-link>
       </div>
-      <div class="flex-grow-1" style="background-color: #181818; padding: 1rem;">
+      <div class="flex-grow-1" style="background-color: #181818; padding: 1rem">
         <router-view></router-view>
+        <div
+          class="ticker-tape-container"
+          style="
+            background-color: #2c2c2c;
+            padding: 0.5rem;
+            border-bottom: 1px solid #1e1e1e;
+          "
+        >
+          <div v-if="stockPrices.length" class="ticker-tape d-flex align-items-center">
+            <div
+              v-for="stock in stockPrices"
+              :key="stock.symbol"
+              class="stock-item d-flex align-items-center me-4"
+            >
+              <span class="stock-symbol text-white">{{ stock.symbol }}</span>
+              <span :class="getStockChangeClass(stock.changePercent)" class="stock-change"
+                >{{ stock.changePercent }}%</span
+              >
+            </div>
+          </div>
+          <div v-else class="text-white">Cargando...</div>
+        </div>
       </div>
-      <div class="right-sidebar"
-        style="background-color: #1e1e1e; width: 200px; display: flex; flex-direction: column; padding: 1rem; border-left: 1px solid #1e1e1e;">
+
+      <div
+        class="right-sidebar"
+        style="
+          background-color: #1e1e1e;
+          width: 200px;
+          display: flex;
+          flex-direction: column;
+          padding: 1rem;
+          border-left: 1px solid #1e1e1e;
+        "
+      >
         <h6 class="text-white small-text">En Línea</h6>
-        <div v-for="user in users" :key="user.id" class="user-item d-flex flex-column mb-2 online-user"
-          @click="showUserDetails(user)">
+        <div
+          v-for="user in users"
+          :key="user.id"
+          class="user-item d-flex flex-column mb-2 online-user"
+          @click="showUserDetails(user)"
+        >
           <div class="d-flex align-items-center">
             <div class="profile-container">
-              <img :src="buildProfilePictureUrl(user.profile_picture)" alt="Profile" class="profile-pic" />
+              <img
+                :src="buildProfilePictureUrl(user.profile_picture)"
+                alt="Profile"
+                class="profile-pic"
+              />
               <div class="online-indicator"></div>
             </div>
             <div class="d-flex flex-column ms-2">
               <span class="username text-white">{{ user.username }}</span>
-              <span class="user-description text-truncate" v-if="user.description">{{ user.description }}</span>
+              <span class="user-description text-truncate" v-if="user.description">{{
+                user.description
+              }}</span>
             </div>
           </div>
         </div>
 
         <h6 class="text-white mt-4 small-text">Desconectado</h6>
-        <div v-for="user in offlineUsers" :key="user.id" class="user-item d-flex flex-column mb-2 offline-user"
-          @click="showUserDetails(user)">
+        <div
+          v-for="user in offlineUsers"
+          :key="user.id"
+          class="user-item d-flex flex-column mb-2 offline-user"
+          @click="showUserDetails(user)"
+        >
           <div class="d-flex align-items-center">
-            <img :src="buildProfilePictureUrl(user.profile_picture)" alt="Profile" class="profile-pic" />
+            <img
+              :src="buildProfilePictureUrl(user.profile_picture)"
+              alt="Profile"
+              class="profile-pic"
+            />
             <span class="username offline-username ms-2">{{ user.username }}</span>
           </div>
         </div>
       </div>
     </div>
 
-    <div v-if="selectedUser" class="user-details"
-      style="position: absolute; top: 10%; right: 200px; background-color: #1e1e1e; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); width: 250px;">
-      <button @click="closeUserDetails"
-        style="background: none; border: none; color: #fff; font-size: 1.5rem; position: absolute; top: 0.5rem; right: 0.5rem;">&times;</button>
-      <div style="text-align: center; margin-bottom: 1rem;">
-        <img :src="buildProfilePictureUrl(selectedUser.profile_picture)" alt="Profile" class="profile-pic"
-          style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 0.5rem;" />
-        <h4 class="text-white" style="margin: 0;">{{ selectedUser.username }}</h4>
-      </div>
-      <p v-if="selectedUser.description"
-        style="font-size: 0.9rem; color: #bbb; text-align: center; white-space: normal; overflow: visible; text-overflow: clip;">
-        {{ selectedUser.description }}
-      </p>
-      <div v-if="selectedUser.roles && selectedUser.roles.length" style="text-align: center; margin-top: 1rem;">
-        <h5 class="text-white" style="margin: 0;">Roles:</h5>
-        <ul style="list-style-type: none; padding: 0; color: #bbb;">
-          <li v-for="role in selectedUser.roles" :key="role" class="role-item">{{ role }}</li>
-        </ul>
+    <div
+      v-if="selectedUser"
+      class="user-details"
+      style="
+        position: absolute;
+        top: 10%;
+        right: 200px;
+        background-color: #1e1e1e;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        width: 250px;
+      "
+    >
+      <button
+        @click="closeUserDetails"
+        style="
+          background: none;
+          border: none;
+          color: #fff;
+          font-size: 1.5rem;
+          position: absolute;
+          top: 0.5rem;
+          right: 0.5rem;
+        "
+      >
+        &times;
+      </button>
+      <div style="text-align: center; margin-bottom: 1rem">
+        <img
+          :src="buildProfilePictureUrl(selectedUser.profile_picture)"
+          alt="Profile"
+          class="profile-pic"
+        />
+        <h5 class="username">{{ selectedUser.username }}</h5>
+        <p class="description" v-if="selectedUser.description">
+          {{ selectedUser.description }}
+        </p>
       </div>
     </div>
-
   </div>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import Settings from "./components/Settings.vue"; // Asegúrate de que la ruta sea correcta
+import { ref, onMounted } from "vue";
+import axios from "axios";
 import Echo from "laravel-echo";
-import Pusher from 'pusher-js';
+import Pusher from "pusher-js";
 
 window.Pusher = Pusher;
 
 window.Echo = new Echo({
-  broadcaster: 'pusher',
+  broadcaster: "pusher",
   key: import.meta.env.VITE_PUSHER_APP_KEY,
   cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
-  encrypted: true
+  encrypted: true,
 });
 
 let inactivityTimeout;
 
 export default {
-  name: 'App',
+  name: "App",
+  components: { Settings },
+
   data() {
     return {
-      imageSrc: '/images/esh.jpg',
-      username: localStorage.getItem('username') || '',
-      profilePicture: '',
+      imageSrc: "/images/esh.jpg",
+      username: localStorage.getItem("username") || "",
+      profilePicture: "",
       users: [],
+      desiredSymbols: ["AAPL", "GOOGL", "MSFT", "PLTR"],
+      stockPrices: [],
       offlineUsers: [],
       selectedUser: null,
       channelSections: [
         {
-          name: 'Importante',
+          name: "Importante",
           channels: [
-            { id: 1, name: 'Anuncios', link: '/channel/general', icon: 'fas fa-bullhorn' },
-            { id: 2, name: 'Reglas', link: '/channel/memes', icon: 'fa-solid fa-scroll' },
-            { id: 3, name: 'Directorio', link: '/channel/audio', icon: 'fas fa-newspaper' }
-          ]
+            {
+              id: 1,
+              name: "Anuncios",
+              link: "/channel/general",
+              icon: "fas fa-bullhorn",
+            },
+            { id: 2, name: "Reglas", link: "/channel/memes", icon: "fa-solid fa-scroll" },
+            {
+              id: 3,
+              name: "Directorio",
+              link: "/channel/audio",
+              icon: "fas fa-newspaper",
+            },
+          ],
         },
         {
-          name: 'Emprende Sin Humo',
+          name: "Emprende Sin Humo",
           channels: [
-            { id: 4, name: 'Chat', link: '/channel/dev-preview', icon: 'fas fa-comment' },
-            { id: 5, name: 'Comandos', link: '/channel/sugerencias', icon: 'fas fa-wrench' },
-            { id: 6, name: 'Presentate', link: '/channel/bugs', icon: 'fas fa-user' },
-            { id: 7, name: 'Resultados', link: '/channel/github', icon: 'fas fa-chart-line' }
-          ]
+            { id: 4, name: "Chat", link: "/channel/dev-preview", icon: "fas fa-comment" },
+            {
+              id: 5,
+              name: "Comandos",
+              link: "/channel/sugerencias",
+              icon: "fas fa-wrench",
+            },
+            { id: 6, name: "Presentate", link: "/channel/bugs", icon: "fas fa-user" },
+            {
+              id: 7,
+              name: "Resultados",
+              link: "/channel/github",
+              icon: "fas fa-chart-line",
+            },
+          ],
         },
         {
-          name: 'Recreacion',
+          name: "Recreacion",
           channels: [
-            { id: 8, name: 'Hoy Aprendi', link: '/channel/development', icon: 'fas fa-lightbulb' },
-            { id: 9, name: 'Moderación', link: '/channel/moderacion', icon: 'fas fa-shield-alt' },
-            { id: 10, name: 'Reunion Publica', link: '/channel/consola', icon: 'fas fa-volume-high' },
-            { id: 11, name: 'Server Log', link: '/channel/server-log', icon: 'fas fa-server' }
-          ]
+            {
+              id: 8,
+              name: "Hoy Aprendi",
+              link: "/channel/development",
+              icon: "fas fa-lightbulb",
+            },
+            {
+              id: 9,
+              name: "Moderación",
+              link: "/channel/moderacion",
+              icon: "fas fa-shield-alt",
+            },
+            {
+              id: 10,
+              name: "Reunion Publica",
+              link: "/channel/consola",
+              icon: "fas fa-volume-high",
+            },
+            {
+              id: 11,
+              name: "Server Log",
+              link: "/channel/server-log",
+              icon: "fas fa-server",
+            },
+          ],
         },
         {
-          name: 'Hikari IA',
+          name: "Hikari IA",
           channels: [
-            { id: 12, name: 'General', link: '/channel/hikari-general', icon: 'fas fa-hashtag' }
-          ]
-        }
+            {
+              id: 12,
+              name: "General",
+              link: "/channel/hikari-general",
+              icon: "fas fa-hashtag",
+            },
+          ],
+        },
       ],
-      currentTime: ''
+      currentTime: "",
     };
   },
   mounted() {
     this.loadProfilePicture();
     this.updateTime();
     this.updateOnlineStatus(true);
-    document.addEventListener('visibilitychange', this.handleVisibilityChange);
-    window.addEventListener('beforeunload', this.handleBeforeUnload);
-    window.addEventListener('unload', () => this.updateOnlineStatus(false));
-    window.addEventListener('mousemove', this.resetInactivityTimeout);
-    window.addEventListener('keydown', this.resetInactivityTimeout);
+    this.fetchStockPrices();
+
+    document.addEventListener("visibilitychange", this.handleVisibilityChange);
+    window.addEventListener("beforeunload", this.handleBeforeUnload);
+    window.addEventListener("unload", () => this.updateOnlineStatus(false));
+    window.addEventListener("mousemove", this.resetInactivityTimeout);
+    window.addEventListener("keydown", this.resetInactivityTimeout);
     this.startInactivityTimeout();
     this.fetchOnlineUsers();
     this.fetchOfflineUsers();
@@ -193,76 +387,126 @@ export default {
     this.loadUsers();
 
     // Register Echo listener inside mounted hook to ensure `this` context is correct
-    window.Echo.channel('user-status')
-      .listen('UserStatusChanged', (event) => {
-        console.log('Event received:', event);
-        this.handleUserStatusChange(event);
-      });
-
+    window.Echo.channel("user-status").listen("UserStatusChanged", (event) => {
+      console.log("Event received:", event);
+      this.handleUserStatusChange(event);
+    });
   },
   beforeDestroy() {
     clearTimeout(inactivityTimeout);
-    document.removeEventListener('visibilitychange', this.handleVisibilityChange);
-    window.removeEventListener('beforeunload', this.handleBeforeUnload);
-    window.removeEventListener('mousemove', this.resetInactivityTimeout);
-    window.removeEventListener('keydown', this.resetInactivityTimeout);
+    document.removeEventListener("visibilitychange", this.handleVisibilityChange);
+    window.removeEventListener("beforeunload", this.handleBeforeUnload);
+    window.removeEventListener("mousemove", this.resetInactivityTimeout);
+    window.removeEventListener("keydown", this.resetInactivityTimeout);
   },
   methods: {
     async loadUsers() {
       try {
-        const response = await axios.get('/api/users');
-        this.users = response.data.filter(user => user.is_online);
-        this.offlineUsers = response.data.filter(user => !user.is_online);
+        const response = await axios.get("/api/users");
+        this.users = response.data.filter((user) => user.is_online);
+        this.offlineUsers = response.data.filter((user) => !user.is_online);
       } catch (error) {
-        console.error('Error al cargar usuarios:', error);
+        console.error("Error al cargar usuarios:", error);
+      }
+    },
+    updateSymbols(newSymbols) {
+      this.desiredSymbols = newSymbols;
+      this.fetchStockPrices();
+    },
+    getStockChangeClass(changePercent) {
+      if (changePercent > 0) {
+        return "text-success"; // Verde para aumento
+      } else if (changePercent < 0) {
+        return "text-danger"; // Rojo para disminución
+      } else {
+        return "text-neutral"; // Color neutral para sin cambio
+      }
+    },
+    async fetchStockPrices() {
+      try {
+        const response = await axios.get(
+          "https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/2024-09-17",
+          {
+            headers: {
+              Authorization: "Bearer lUB79pJEZzFhNeoeRpFnsssVuArIHZJV", // Reemplaza con tu clave de API de Polygon
+            },
+          }
+        );
+
+        this.stockPrices = response.data.results
+          .filter((stock) => this.desiredSymbols.includes(stock.T))
+          .map((stock) => {
+            const changePercent = ((stock.c - stock.h) / stock.h) * 100;
+            return {
+              symbol: stock.T,
+              changePercent: changePercent.toFixed(2),
+            };
+          });
+      } catch (error) {
+        console.error("Error fetching stock prices:", error);
       }
     },
     buildProfilePictureUrl(picture) {
-      const url = picture ? `http://localhost:90/storage/${picture}` : '/path/to/default/profile_picture.jpg';
-      console.log('Profile picture URL:', url); // Verifica la URL generada
+      const url = picture
+        ? `http://192.168.0.10:90/storage/${picture}`
+        : "/path/to/default/profile_picture.jpg";
+      console.log("Profile picture URL:", url); // Verifica la URL generada
       return url;
     },
     handleUserStatusChange(event) {
-      if (!event || typeof event.id === 'undefined' || typeof event.is_online === 'undefined') {
-        console.error('Invalid event data:', event);
+      if (
+        !event ||
+        typeof event.id === "undefined" ||
+        typeof event.is_online === "undefined"
+      ) {
+        console.error("Invalid event data:", event);
         return;
       }
 
-      console.log('Event received in handleUserStatusChange:', event);
+      console.log("Event received in handleUserStatusChange:", event);
 
-      const onlineUserIndex = this.users.findIndex(user => user.id === event.id);
-      const offlineUserIndex = this.offlineUsers.findIndex(user => user.id === event.id);
+      const onlineUserIndex = this.users.findIndex((user) => user.id === event.id);
+      const offlineUserIndex = this.offlineUsers.findIndex(
+        (user) => user.id === event.id
+      );
 
       if (event.is_online) {
         if (offlineUserIndex !== -1) {
-          console.log('Removing user from offlineUsers:', this.offlineUsers[offlineUserIndex]);
+          console.log(
+            "Removing user from offlineUsers:",
+            this.offlineUsers[offlineUserIndex]
+          );
           this.offlineUsers.splice(offlineUserIndex, 1);
         }
 
         if (onlineUserIndex === -1) {
-          console.log('Adding user to onlineUsers:', event);
+          console.log("Adding user to onlineUsers:", event);
           this.users.push(event);
         } else {
-          console.log('Updating user in onlineUsers:', event);
+          console.log("Updating user in onlineUsers:", event);
           this.users[onlineUserIndex] = { ...this.users[onlineUserIndex], ...event };
         }
       } else {
         if (onlineUserIndex !== -1) {
-          console.log('Removing user from onlineUsers:', this.users[onlineUserIndex]);
+          console.log("Removing user from onlineUsers:", this.users[onlineUserIndex]);
           this.users.splice(onlineUserIndex, 1);
         }
 
         if (offlineUserIndex === -1) {
-          console.log('Adding user to offlineUsers:', event);
+          console.log("Adding user to offlineUsers:", event);
           this.offlineUsers.push(event);
         } else {
-          console.log('Updating user in offlineUsers:', event);
-          this.offlineUsers[offlineUserIndex] = { ...this.offlineUsers[offlineUserIndex], ...event };
+          console.log("Updating user in offlineUsers:", event);
+          this.offlineUsers[offlineUserIndex] = {
+            ...this.offlineUsers[offlineUserIndex],
+            ...event,
+          };
         }
       }
     },
 
     showUserDetails(user) {
+      this.selectedUser = user;
       console.log(user);
     },
     resetInactivityTimeout() {
@@ -275,96 +519,114 @@ export default {
       this.resetInactivityTimeout();
     },
     loadProfilePicture() {
-      const picture = localStorage.getItem('profile_picture');
+      const picture = localStorage.getItem("profile_picture");
       this.profilePicture = this.buildProfilePictureUrl(picture);
     },
     updateTime() {
       const now = new Date();
-      const hours = String(now.getHours()).padStart(2, '0');
-      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, "0");
+      const minutes = String(now.getMinutes()).padStart(2, "0");
       this.currentTime = `${hours}:${minutes}`;
     },
     handleVisibilityChange() {
-      console.log('Visibility changed:', document.visibilityState);
-      if (document.visibilityState === 'visible') {
+      console.log("Visibility changed:", document.visibilityState);
+      if (document.visibilityState === "visible") {
         this.updateOnlineStatus(true);
       } else {
-        console.log('User going offline');
+        console.log("User going offline");
         this.updateOnlineStatus(false);
       }
     },
     handleBeforeUnload(event) {
       this.updateOnlineStatus(false);
-      event.returnValue = '';
+      event.returnValue = "";
     },
     updateOnlineStatus(isOnline) {
-      console.log('Updating online status to:', isOnline);
-      const authToken = localStorage.getItem('auth_token');
-      axios.post('/api/update-online-status', { is_online: isOnline }, {
-        headers: {
-          'Authorization': `Bearer ${authToken}`
-        }
-      })
-        .then(response => {
-          console.log('Online status updated', response.data);
+      console.log("Updating online status to:", isOnline);
+      const authToken = localStorage.getItem("auth_token");
+      axios
+        .post(
+          "/api/update-online-status",
+          { is_online: isOnline },
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+        .then((response) => {
+          console.log("Online status updated", response.data);
         })
-        .catch(error => {
-          console.error('Error updating online status', error.response ? error.response.data : error);
+        .catch((error) => {
+          console.error(
+            "Error updating online status",
+            error.response ? error.response.data : error
+          );
         });
     },
     fetchOnlineUsers() {
-      const authToken = localStorage.getItem('auth_token');
-      axios.get('/api/users/online', {
-        headers: {
-          'Authorization': `Bearer ${authToken}`
-        }
-      })
-        .then(response => {
+      const authToken = localStorage.getItem("auth_token");
+      axios
+        .get("/api/users/online", {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        })
+        .then((response) => {
           if (Array.isArray(response.data)) {
-            this.users = response.data.map(user => {
-              console.log('User description:', user.description);
+            this.users = response.data.map((user) => {
+              console.log("User description:", user.description);
               return {
                 ...user,
-                profile_picture: this.buildProfilePictureUrl(user.profile_picture)
+                profile_picture: this.buildProfilePictureUrl(user.profile_picture),
               };
             });
           }
         })
-        .catch(error => {
-          console.error('Error fetching online users', error.response ? error.response.data : error);
+        .catch((error) => {
+          console.error(
+            "Error fetching online users",
+            error.response ? error.response.data : error
+          );
         });
     },
     fetchOfflineUsers() {
-      const authToken = localStorage.getItem('auth_token');
-      axios.get('/api/users/offline', {
-        headers: {
-          'Authorization': `Bearer ${authToken}`
-        }
-      })
-        .then(response => {
-          this.offlineUsers = response.data.map(user => ({
+      const authToken = localStorage.getItem("auth_token");
+      axios
+        .get("/api/users/offline", {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        })
+        .then((response) => {
+          this.offlineUsers = response.data.map((user) => ({
             ...user,
-            profile_picture: this.buildProfilePictureUrl(user.profile_picture)
+            profile_picture: this.buildProfilePictureUrl(user.profile_picture),
           }));
         })
-        .catch(error => {
-          console.error('Error fetching offline users', error.response ? error.response.data : error);
+        .catch((error) => {
+          console.error(
+            "Error fetching offline users",
+            error.response ? error.response.data : error
+          );
         });
+    },
+    getStockPriceClass(price) {
+      return price > 0 ? "text-success" : "text-danger";
     },
     showUserDetails(user) {
       this.selectedUser = user;
-      console.log('Selected User:', this.selectedUser);
+      console.log("Selected User:", this.selectedUser);
     },
     closeUserDetails() {
       this.selectedUser = null;
     },
-  }
+  },
 };
 
-const auth_token = localStorage.getItem('auth_token');
-axios.defaults.headers.common['Authorization'] = `Bearer ${auth_token}`;
+const auth_token = localStorage.getItem("auth_token");
+axios.defaults.headers.common["Authorization"] = `Bearer ${auth_token}`;
 </script>
-
 
 <style>
 html,
@@ -559,7 +821,7 @@ body {
 }
 
 .user-item {
-  padding: 0.10rem;
+  padding: 0.1rem;
   margin-bottom: 0.5rem;
   border-radius: 0.25rem;
   transition: background-color 0.3s;
@@ -634,5 +896,67 @@ body {
   background-color: #333;
   border-radius: 0.25rem;
   color: #fff;
+}
+
+/* Ticker Tape Styles */
+.ticker-tape-container {
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+}
+
+.ticker-tape {
+  display: flex;
+  flex-direction: row;
+  animation: ticker 20s linear infinite;
+}
+
+.stock-item {
+  display: flex;
+  align-items: center;
+  margin-right: 2rem;
+}
+
+.stock-symbol {
+  font-weight: bold;
+}
+
+.stock-price {
+  font-size: 1rem;
+}
+
+.stock-price.positive {
+  color: #4caf50;
+  /* Green for positive changes */
+}
+
+.stock-price.negative {
+  color: #f44336;
+  /* Red for negative changes */
+}
+
+.text-success {
+  color: #00ff00;
+  /* Verde */
+}
+
+.text-danger {
+  color: #ff0000;
+  /* Rojo */
+}
+
+.text-neutral {
+  color: #ffffff;
+  /* Blanco o color neutro */
+}
+
+@keyframes ticker {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
 }
 </style>

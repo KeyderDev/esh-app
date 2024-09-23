@@ -6,10 +6,14 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RolesController;
+use App\Http\Controllers\FinanceController;
+
 
 // Rutas públicas
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/stocks', [FinanceController::class, 'getStockPrices']);
+
 
 // Rutas protegidas
 Route::middleware('auth.api')->group(function () {
@@ -23,7 +27,7 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/', [UserController::class, 'getAllUsers']);
         Route::get('/{user}', [UserController::class, 'show']);
         Route::post('/{user}/roles', [UserController::class, 'assignRole']);
-        Route::post('/', [UserController::class, 'update']);
+        Route::post('/{user}', [UserController::class, 'update']);
     });
     Route::post('/update-online-status', [UserController::class, 'updateOnlineStatus']);
 
