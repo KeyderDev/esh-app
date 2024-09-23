@@ -43,6 +43,7 @@
         </div>
         <div class="navbar-nav d-flex align-items-center">
           <span class="text-white ms-2 username">{{ username }}</span>
+          <!--Aqui hay un problema-->
           <img
             :src="selectedUser ? selectedUser.profile_picture : profilePicture"
             alt="Profile"
@@ -212,46 +213,21 @@
       </div>
     </div>
 
-    <div
-      v-if="selectedUser"
-      class="user-details"
-      style="
-        position: absolute;
-        top: 10%;
-        right: 200px;
-        background-color: #1e1e1e;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-        width: 250px;
-      "
-    >
-      <button
-        @click="closeUserDetails"
-        style="
-          background: none;
-          border: none;
-          color: #fff;
-          font-size: 1.5rem;
-          position: absolute;
-          top: 0.5rem;
-          right: 0.5rem;
-        "
-      >
-        &times;
-      </button>
-      <div style="text-align: center; margin-bottom: 1rem">
-        <img
-          :src="buildProfilePictureUrl(selectedUser.profile_picture)"
-          alt="Profile"
-          class="profile-pic"
-        />
-        <h5 class="username">{{ selectedUser.username }}</h5>
-        <p class="description" v-if="selectedUser.description">
-          {{ selectedUser.description }}
-        </p>
-      </div>
-    </div>
+    <div v-if="selectedUser" class="user-details">
+  <button @click="closeUserDetails" class="close-button" aria-label="Cerrar detalles del usuario">
+    &times;
+  </button>
+  <div class="profile-info-details">
+    <img
+      :src="buildProfilePictureUrl(selectedUser.profile_picture)"
+      alt="Profile Picture"
+      class="profile-pic"
+    />
+    <h5 class="username">{{ selectedUser.username }}</h5>
+    <p class="description-details" v-if="selectedUser.description">{{ selectedUser.description }}</p>
+  </div>
+</div>
+
   </div>
 </template>
 
@@ -506,7 +482,6 @@ export default {
     },
 
     showUserDetails(user) {
-      this.selectedUser = user;
       console.log(user);
     },
     resetInactivityTimeout() {
@@ -867,11 +842,54 @@ body {
   top: 10%;
   right: 200px;
   background-color: #1e1e1e;
-  padding: 1rem;
+  padding: 1.5rem;
   border-radius: 0.5rem;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
   z-index: 1000;
-  width: 200px;
+  width: 250px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  opacity: 0.95; /* Slightly transparent for a softer look */
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.close-button:hover {
+  color: #ff6b6b; /* Change color on hover */
+}
+
+.profile-info {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.profile-pic-details {
+  border-radius: 50%;
+  width: 70px; /* Adjust size as needed */
+  height: 70px; /* Adjust size as needed */
+  object-fit: cover; /* Ensure the image fits nicely */
+  border: 2px solid #fff; /* Optional border for emphasis */
+}
+
+.username-details {
+  font-size: 1.25rem; /* Adjust font size as needed */
+  color: #ffffff; /* White color for contrast */
+  margin: 0.5rem 0 0.25rem; /* Spacing adjustments */
+}
+
+.description-details {
+  color: #b3b3b3; /* Lighter color for description */
+  font-size: 0.9rem; /* Smaller font for description */
+  margin: 0; /* Reset margin */
 }
 
 .user-description {
