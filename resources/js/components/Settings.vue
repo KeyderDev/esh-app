@@ -5,8 +5,7 @@
       <ul class="menu">
         <li :class="{ active: activeTab === 'cuenta' }" @click="setActiveTab('cuenta')">Cuenta</li>
         <li :class="{ active: activeTab === 'apariencia' }" @click="setActiveTab('apariencia')">Apariencia</li>
-        <li :class="{ active: activeTab === 'privacidad' }" @click="setActiveTab('privacidad')">Privacidad</li>
-        <li :class="{ active: activeTab === 'seguridad' }" @click="setActiveTab('seguridad')">Seguridad</li>
+        <li :class="{ active: activeTab === 'privacidadyseguridad' }" @click="setActiveTab('privacidadyseguridad')">Privacidad y Seguridad</li>
         <li @click="logout" class="logout red">Cerrar Sesión</li>
         <!-- <button @click="logout">Logout</button> -->
       </ul>
