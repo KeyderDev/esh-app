@@ -66,6 +66,30 @@ class UserController extends Controller
         return response()->json($formattedUsers);
     }
 
+    public function logout(Request $request)
+    {
+        // Obtén el usuario autenticado
+        $user = Auth::user();
+        
+        // Actualiza el estado del usuario a offline
+        if ($user) {
+            $user->is_online = 0;
+            $user->save();
+        }
+    
+        Auth::logout(); // Cierra la sesión del usuario autenticado
+    
+        return response()->json(['message' => 'Usuario desconectado.']);
+    }
+    
+    
+    
+    
+    
+    
+    
+
+
     public function show($id)
     {
         $user = User::with('roles')->findOrFail($id);
@@ -103,6 +127,17 @@ class UserController extends Controller
         return response()->json($users);
     }
     
+    public function destroy($userId)
+    {
+        $user = User::find($userId);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
     
+        $user->delete();
+        return response()->json(['message' => 'User deleted successfully'], 200);
+    }
+    
+
 
 }

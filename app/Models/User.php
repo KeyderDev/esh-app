@@ -1,7 +1,5 @@
 <?php
 
-// User.php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -41,5 +39,11 @@ class User extends Authenticatable
     public function getRoleNamesAttribute()
     {
         return $this->roles->pluck('name');
+    }
+
+    // Relación muchos a muchos entre User y Badge
+    public function badges()
+    {
+        return $this->belongsToMany(Badge::class, 'user_badges');
     }
 }

@@ -3,28 +3,12 @@
     <!-- Sidebar -->
     <aside class="sidebar">
       <ul class="menu">
-        <li :class="{ active: activeTab === 'cuenta' }" @click="setActiveTab('cuenta')">
-          Cuenta
-        </li>
-        <li
-          :class="{ active: activeTab === 'apariencia' }"
-          @click="setActiveTab('apariencia')"
-        >
-          Apariencia
-        </li>
-        <li
-          :class="{ active: activeTab === 'privacidad' }"
-          @click="setActiveTab('privacidad')"
-        >
-          Privacidad
-        </li>
-        <li
-          :class="{ active: activeTab === 'seguridad' }"
-          @click="setActiveTab('seguridad')"
-        >
-          Seguridad
-        </li>
+        <li :class="{ active: activeTab === 'cuenta' }" @click="setActiveTab('cuenta')">Cuenta</li>
+        <li :class="{ active: activeTab === 'apariencia' }" @click="setActiveTab('apariencia')">Apariencia</li>
+        <li :class="{ active: activeTab === 'privacidad' }" @click="setActiveTab('privacidad')">Privacidad</li>
+        <li :class="{ active: activeTab === 'seguridad' }" @click="setActiveTab('seguridad')">Seguridad</li>
         <li @click="logout" class="logout red">Cerrar Sesión</li>
+        <!-- <button @click="logout">Logout</button> -->
       </ul>
     </aside>
 
@@ -37,13 +21,7 @@
         <template v-if="activeTab === 'cuenta'">
           <div class="input-container">
             <label for="profile-upload" class="input-label">Foto de perfil:</label>
-            <input
-              type="file"
-              id="profile-upload"
-              @change="onFileChange"
-              accept="image/*"
-              class="file-input"
-            />
+            <input type="file" id="profile-upload" @change="onFileChange" accept="image/*" class="file-input"/>
             <button @click="upload" :disabled="isUploading" class="upload-button">
               <span v-if="isUploading">Subiendo...</span>
               <span v-else>Subir Foto de Perfil</span>
@@ -53,12 +31,7 @@
 
           <div class="description-container">
             <label for="description" class="input-label">Descripción:</label>
-            <textarea
-              id="description"
-              v-model="description"
-              placeholder="Escribe tu descripción aquí..."
-              class="description-input"
-            ></textarea>
+            <textarea id="description" v-model="description" placeholder="Escribe tu descripción aquí..." class="description-input"></textarea>
             <button @click="saveDescription" class="update-button">
               {{ description ? "Actualizar Descripción" : "Agregar Descripción" }}
             </button>
@@ -66,115 +39,23 @@
         </template>
 
         <template v-if="activeTab === 'apariencia'">
+          <div class="reward-container">
+            <div class="reward-header">
+              <h3>Fondo ESH</h3>
+                <div class="toggle-switch">
+                  <input type="checkbox" id="reward-toggle">
+                  <label for="reward-toggle" class="toggle-label"></label>
+                </div>
+            </div>
+            <p>Esta opcion hace que la app tenga un estilo transparente, con el fondo de Emprende Sin Humo.</p>
+          </div>
         </template>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-import axios from "axios";
-export default {
-  props: {
-    desiredSymbols: Array,
-  },
-  data() {
-    return {
-      profilePicture: null,
-      isUploading: false,
-      uploadMessage: "",
-      description: "",
-      authToken: localStorage.getItem("auth_token"),
-      activeTab: "cuenta", // Default tab
-    };
-  },
-  mounted() {
-    this.fetchUser();
-  },
-  methods: {
-    async fetchUser() {
-      try {
-        const response = await axios.get("/api/users", {
-          headers: { Authorization: `Bearer ${this.authToken}` },
-        });
-        this.description = response.data.description || "";
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    },
-    logout() {
-      // Eliminar el token de localStorage
-      localStorage.removeItem("auth_token");
-
-      // Redirigir al usuario a la página de inicio o login
-      this.$router.push("/login");
-    },
-    updateSymbols() {
-      const newSymbols = this.desiredSymbolsInput
-        .split(",")
-        .map((symbol) => symbol.trim());
-      this.$emit("update-symbols", newSymbols); // Emite el evento con los nuevos símbolos
-    },
-    onFileChange(event) {
-      this.profilePicture = event.target.files[0];
-      if (this.profilePicture && this.profilePicture.size > 2 * 1024 * 1024) {
-        alert("El archivo es demasiado grande. Debe ser menor a 2MB.");
-        this.profilePicture = null;
-      }
-    },
-    async upload() {
-      if (!this.profilePicture) {
-        alert("Por favor, selecciona una imagen.");
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append("profile_picture", this.profilePicture);
-      this.isUploading = true;
-      this.uploadMessage = "";
-
-      try {
-        const response = await axios.post("/api/profile/picture", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${this.authToken}`,
-          },
-        });
-        this.uploadMessage =
-          response.data.success || "Foto de perfil subida correctamente.";
-      } catch (error) {
-        console.error(error);
-        this.uploadMessage = error.response?.data?.error || "Error en la subida.";
-      } finally {
-        this.isUploading = false;
-      }
-    },
-    async saveDescription() {
-      try {
-        const response = await axios.post(
-          "/api/users",
-          { description: this.description },
-          {
-            headers: { Authorization: `Bearer ${this.authToken}` },
-          }
-        );
-        this.description = response.data.description;
-        alert(
-          this.description
-            ? "Descripción actualizada correctamente."
-            : "Descripción agregada correctamente."
-        );
-      } catch (error) {
-        console.error("Error al actualizar/agregar la descripción:", error);
-        alert("Error al actualizar/agregar la descripción.");
-      }
-    },
-    setActiveTab(tab) {
-      this.activeTab = tab;
-    },
-  },
-};
-</script>
+<script src="./Settings.js"></script>
 
 <style scoped>
 .settings-container {
@@ -300,5 +181,73 @@ export default {
 
 .content-scroll::-webkit-scrollbar-thumb:hover {
   background-color: #7289da;
+}
+
+.reward-container {
+    background-color: #2b2d31; /* Dark background like Discord */
+    padding: 0.75rem; /* Reduced padding */
+    border-radius: 6px; /* Slightly smaller border radius */
+    margin-bottom: 0.75rem; /* Reduced margin */
+    color: #e3e5e8; /* Light text */
+}
+
+.reward-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.3rem; /* Smaller margin */
+}
+
+h3 {
+    font-size: 1rem; /* Smaller title */
+    margin: 0;
+}
+
+p {
+    font-size: 0.875rem; /* Smaller paragraph text */
+    margin: 0;
+}
+
+.toggle-switch {
+    position: relative;
+}
+
+.toggle-switch input {
+    display: none;
+}
+
+.toggle-label {
+    width: 30px; /* Smaller switch */
+    height: 16px; /* Smaller height */
+    background-color: #d3d3d3;
+    border-radius: 999px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.toggle-label::before {
+    content: '';
+    position: absolute;
+    width: 14px; /* Smaller knob */
+    height: 14px;
+    background-color: #fff;
+    border-radius: 50%;
+    top: 1px;
+    left: 1px;
+    transition: transform 0.3s ease;
+}
+
+input:checked + .toggle-label {
+    background-color: #4caf50;
+}
+
+input:checked + .toggle-label::before {
+    transform: translateX(14px); /* Adjust for the smaller switch */
+}
+
+a {
+    color: #00b0f4; /* Discord-like link color */
+    font-size: 0.875rem; /* Smaller link text */
 }
 </style>
