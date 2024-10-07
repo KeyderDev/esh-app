@@ -24,38 +24,48 @@ export default {
       password: '',
     };
   },
+  mounted() {
+  const token = localStorage.getItem('auth_token');
+  if (token) {
+    // Si ya hay un token en localStorage, redirige fuera de la página de login
+    this.$router.push('/');
+  }
+  },
   methods: {
-    async login() {
-      try {
-        const response = await axios.post('/api/login', {
-          username: this.username,
-          password: this.password,
-        });
+  async login() {
+    try {
+      const response = await axios.post('/api/login', {
+        username: this.username,
+        password: this.password,
+      });
 
-        const token = response.data.token;
-        const userProfile = response.data.user;
+      const token = response.data.token;
+      const userProfile = response.data.user;
 
-        if (token) {
-          localStorage.setItem('auth_token', token);
-          localStorage.setItem('username', userProfile.username);
-          localStorage.setItem('profile_picture', userProfile.profile_picture);
-          alert(response.data.message);
-          this.$router.push('/'); // Redirige a la raíz
-        } else {
-          alert('No se recibió un token.');
-        }
-      } catch (error) {
-        if (error.response) {
-          alert(error.response.data.message || 'Login failed.');
-        } else {
-          alert('Error en el proceso de inicio de sesión.');
-        }
+      if (token) {
+        localStorage.setItem('auth_token', token);
+        localStorage.setItem('username', userProfile.username);
+        localStorage.setItem('profile_picture', userProfile.profile_picture);
+        alert(response.data.message);
+
+        // Recargar la página solo si el token ha sido almacenado
+        window.location.reload();
+      } else {
+        alert('No se recibió un token.');
       }
-    },
-    goToRegister() {
-      this.$router.push('/register'); // Redirige a la página de registro
+    } catch (error) {
+      if (error.response) {
+        alert(error.response.data.message || 'Login failed.');
+      } else {
+        alert('Error en el proceso de inicio de sesión.');
+      }
     }
   },
+  goToRegister() {
+    this.$router.push('/register'); // Redirige a la página de registro
+  }
+}
+
 };
 </script>
 
