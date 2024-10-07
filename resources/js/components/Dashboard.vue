@@ -9,9 +9,6 @@
         <li :class="{ active: activeTab === 'canales' }" @click="setActiveTab('canales')">
           Canales
         </li>
-        <li :class="{ active: activeTab === 'roles' }" @click="setActiveTab('roles')">
-          Roles
-        </li>
         <li :class="{ active: activeTab === 'seguridad' }" @click="setActiveTab('insignias')">
           Insignias
         </li>
@@ -66,48 +63,6 @@
               <li v-for="channel in channels" :key="channel.id" class="channel-item">
                 <span>{{ channel.name }}</span>
                 <button @click="deleteChannel(channel.id)" class="btn-delete-channel">Borrar</button>
-              </li>
-            </ul>
-          </div>
-        </template>
-
-        <template v-if="activeTab === 'roles'">
-          <div class="user-role-assignment">
-            <select v-model="selectedUser">
-              <option v-for="user in users" :key="user.id" :value="user.id">
-                {{ user.username }}
-              </option>
-            </select>
-            <select v-model="selectedRole">
-              <option v-for="role in roles" :key="role.id" :value="role">
-                {{ role.name }}
-              </option>
-            </select>
-            <button @click="assignRole">Asignar Rol</button>
-          </div>
-          <div class="create-role">
-            <input v-model="newRoleName" placeholder="Nombre del nuevo rol" />
-            <button @click="createRole">Crear Rol</button>
-          </div>
-          <div class="roles-list">
-            <h2>Roles</h2>
-            <ul>
-              <li v-for="role in roles" :key="role.id" class="role-item" @click="fetchPermissions(role.id)">
-                {{ role.name }}
-                <button @click.stop="deleteRole(role.id)" class="delete-role-button">X</button>
-              </li>
-            </ul>
-          </div>
-          <div v-if="selectedRole" class="permissions-list">
-            <h2>Permisos para {{ selectedRole.name }}</h2>
-            <ul>
-              <li v-for="permission in permissions" :key="permission.id" class="permission-item">
-                <label class="switch">
-                  <input type="checkbox" :checked="permissionAssigned(permission.id)"
-                    @change="togglePermission(permission.id)" />
-                  <span class="slider"></span>
-                </label>
-                {{ permission.name }}
               </li>
             </ul>
           </div>

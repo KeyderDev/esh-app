@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use App\Events\UserStatusChanged; // Asegúrate de incluir el evento
-
+use App\Events\UserStatusChanged;
 
 class UserController extends Controller
 {
@@ -35,43 +34,26 @@ class UserController extends Controller
         return response()->json(['message' => 'Estado Real time actualizado']);
     }
     
-    
-    
     public function getOnlineUsers()
     {
         $users = User::where('is_online', true)
-            ->with('roles:id,name') // Cargar solo id y name de roles
             ->get(['id', 'username', 'profile_picture', 'description']);
 
-        $formattedUsers = $users->map(function ($user) {
-            $user->roles = $user->roles->pluck('name'); // Extraer solo los nombres
-            return $user->only(['id', 'username', 'profile_picture', 'description', 'roles']); // Solo devolver campos relevantes
-        });
-
-        return response()->json($formattedUsers);
+        return response()->json($users);
     }
 
     // Get offline users
     public function getOfflineUsers()
     {
         $users = User::where('is_online', false)
-            ->with('roles:id,name') // Cargar solo id y name de roles
             ->get(['id', 'username', 'profile_picture']);
 
-        $formattedUsers = $users->map(function ($user) {
-            $user->roles = $user->roles->pluck('name'); // Extraer solo los nombres
-            return $user->only(['id', 'username', 'profile_picture', 'roles']); // Solo devolver campos relevantes
-        });
-
-        return response()->json($formattedUsers);
+        return response()->json($users);
     }
 
     public function logout(Request $request)
     {
-        // Obtén el usuario autenticado
         $user = Auth::user();
-        
-        // Actualiza el estado del usuario a offline
         if ($user) {
             $user->is_online = 0;
             $user->save();
@@ -81,18 +63,10 @@ class UserController extends Controller
     
         return response()->json(['message' => 'Usuario desconectado.']);
     }
-    
-    
-    
-    
-    
-    
-    
-
 
     public function show($id)
     {
-        $user = User::with('roles')->findOrFail($id);
+        $user = User::findOrFail($id);
         return response()->json($user);
     }
 
@@ -110,20 +84,10 @@ class UserController extends Controller
         return response()->json($user);
     }
 
-    // Assign role to a user
-    public function assignRole(Request $request, User $user)
-    {
-        $request->validate(['role_id' => 'required|exists:roles,id']);
-
-        $user->roles()->attach($request->role_id);
-
-        return response()->json(['message' => 'Role assigned successfully.']);
-    }
-
-    // Get all users with roles
+    // Get all users
     public function getAllUsers()
     {
-        $users = User::with('roles')->get(['id', 'username', 'profile_picture', 'description', 'is_online', 'created_at']);
+        $users = User::get(['id', 'username', 'profile_picture', 'description', 'is_online', 'created_at']);
         return response()->json($users);
     }
     
@@ -137,7 +101,4 @@ class UserController extends Controller
         $user->delete();
         return response()->json(['message' => 'User deleted successfully'], 200);
     }
-    
-
-
 }

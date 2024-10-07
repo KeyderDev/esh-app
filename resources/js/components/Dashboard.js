@@ -19,7 +19,6 @@ export default {
       users: [], // Define users array
       activeMenu: null, // Define activeMenu for the dropdown
       authToken: '', // Aquí se asignará el token de autorización
-      roles: [],
       permissions: [],
       users: [],
       selectedUser: null,
@@ -32,7 +31,7 @@ export default {
     };
   },
   created() {
-    this.fetchRoles();
+    // this.fetchRoles();
     // this.fetchUsers();
   },
   watch: {
@@ -90,14 +89,6 @@ export default {
         this.activeMenu = null; // Close the menu after deleting
       } catch (error) {
         console.error('Error deleting user:', error);
-      }
-    },
-    async fetchRoles() {
-      try {
-        const response = await axios.get('/api/roles');
-        this.roles = response.data;
-      } catch (error) {
-        console.error('Error fetching roles:', error);
       }
     },
     async fetchBadges() {
@@ -162,105 +153,7 @@ export default {
         console.error(error);
       }
     },
-    async fetchPermissions(roleId) {
-      try {
-        const response = await axios.get(`/api/roles/${roleId}/permissions`);
-        this.permissions = response.data.permissions;
-        this.selectedRole = response.data.role;
-      } catch (error) {
-        console.error('Error fetching permissions:', error);
-      }
-    },
-    async assignRole() {
-      if (!this.selectedUser || !this.selectedRole) return;
 
-      try {
-        await axios.post(`/api/users/${this.selectedUser}/roles`, { role_id: this.selectedRole.id });
-        alert('Rol asignado correctamente');
-      } catch (error) {
-        console.error('Error asignando rol:', error);
-        alert('Error al asignar rol. Intenta de nuevo.');
-      } finally {
-        this.selectedUser = null;
-        this.selectedRole = null;
-      }
-    },
-    async createRole() {
-      if (!this.newRoleName) return;
-
-      try {
-        await axios.post('/api/roles', { name: this.newRoleName });
-        alert('Rol creado correctamente');
-        this.newRoleName = '';
-        this.fetchRoles();
-      } catch (error) {
-        console.error('Error creando rol:', error);
-      }
-    },
-    async deleteRole(roleId) {
-      const confirmDelete = confirm('¿Estás seguro de que deseas eliminar este rol?');
-      if (!confirmDelete) return;
-
-      try {
-        await axios.delete(`/api/roles/${roleId}`);
-        alert('Rol eliminado correctamente');
-        this.fetchRoles();
-      } catch (error) {
-        console.error('Error eliminando rol:', error);
-      }
-    },
-    permissionAssigned(permissionId) {
-      return this.selectedRole && this.selectedRole.permissions && this.selectedRole.permissions.some(permission => permission.id === permissionId);
-    },
-    async togglePermission(permissionId) {
-      const isAssigned = this.permissionAssigned(permissionId);
-      const method = isAssigned ? 'delete' : 'post';
-      const url = `/api/roles/${this.selectedRole.id}/permissions`;
-
-      try {
-        await axios({
-          method,
-          url,
-          data: { permission_id: permissionId },
-        });
-        this.fetchPermissions(this.selectedRole.id);
-      } catch (error) {
-        console.error('Error toggling permission:', error);
-      }
-    },
-    fetchChannels() {
-      axios.get('/api/channels')
-        .then(response => {
-          this.channels = response.data;
-        })
-        .catch(error => {
-          console.error("Error al cargar los canales:", error);
-        });
-    },
-    createChannel() {
-      if (this.newChannelName === '') {
-        alert('El nombre del canal no puede estar vacío');
-        return;
-      }
-
-      axios.post('/api/channels', {
-        name: this.newChannelName
-      }).then(response => {
-        this.channels.push(response.data);
-        this.newChannelName = ''; // Limpiar el campo de texto
-      }).catch(error => {
-        console.error("Error al crear el canal:", error);
-      });
-    },
-    deleteChannel(channelId) {
-      axios.delete(`/api/channels/${channelId}`)
-        .then(response => {
-          this.channels = this.channels.filter(channel => channel.id !== channelId);
-        })
-        .catch(error => {
-          console.error("Error al borrar el canal:", error);
-        });
-    },
     formatDate(dateString) {
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
       return new Date(dateString).toLocaleDateString(undefined, options);
