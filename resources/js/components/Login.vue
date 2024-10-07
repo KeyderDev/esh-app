@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import axios from '../axios'; // Importa tu configuración de axios aquí
+import axios from '../axios';
 
 export default {
   data() {
@@ -27,7 +27,6 @@ export default {
   mounted() {
   const token = localStorage.getItem('auth_token');
   if (token) {
-    // Si ya hay un token en localStorage, redirige fuera de la página de login
     this.$router.push('/');
   }
   },
@@ -47,8 +46,6 @@ export default {
         localStorage.setItem('username', userProfile.username);
         localStorage.setItem('profile_picture', userProfile.profile_picture);
         alert(response.data.message);
-
-        // Recargar la página solo si el token ha sido almacenado
         window.location.reload();
       } else {
         alert('No se recibió un token.');
@@ -62,7 +59,7 @@ export default {
     }
   },
   goToRegister() {
-    this.$router.push('/register'); // Redirige a la página de registro
+    this.$router.push('/register'); 
   }
 }
 
