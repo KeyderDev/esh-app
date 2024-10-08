@@ -86,12 +86,10 @@ export default {
   border-radius: 12px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
   width: 300px;
-  /* Ancho fijo para el contenedor */
 }
 
 .login-title {
   color: #ccc;
-  /* Color gris elegante para el título */
   margin-bottom: 20px;
   text-align: center;
 }
@@ -113,7 +111,6 @@ input {
 
 input:focus {
   border-color: #ccc;
-  /* Cambio de borde al enfocar */
 }
 
 input::placeholder {
@@ -123,7 +120,6 @@ input::placeholder {
 button {
   padding: 12px;
   background-color: #444;
-  /* Color oscuro elegante para el botón */
   color: white;
   border: none;
   border-radius: 6px;
@@ -135,16 +131,13 @@ button {
 
 button:hover {
   background-color: #555;
-  /* Color más claro al pasar el mouse */
 }
 
 .register-button {
   background-color: #333;
-  /* Color oscuro elegante para el botón de registro */
 }
 
 .register-button:hover {
   background-color: #444;
-  /* Color más claro al pasar el mouse */
 }
 </style>

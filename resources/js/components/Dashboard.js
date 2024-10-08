@@ -8,17 +8,17 @@ export default {
     return {
       badge: {
         name: '',
-        icon: null, // Cambia el valor inicial a null
+        icon: null, 
       },
-      channels: [], // Lista de canales existentes
-      newChannelName: '', // Nombre del nuevo canal a crear
+      channels: [], 
+      newChannelName: '', 
       profilePicture: null,
       description: "",
       authToken: localStorage.getItem("auth_token"),
       activeTab: "usuarios", // Default tab
-      users: [], // Define users array
-      activeMenu: null, // Define activeMenu for the dropdown
-      authToken: '', // Aquí se asignará el token de autorización
+      users: [], 
+      activeMenu: null, 
+      authToken: '', 
       permissions: [],
       users: [],
       selectedUser: null,
@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     onFileChange(event) {
-      this.badge.icon = event.target.files[0]; // Guarda el archivo seleccionado
+      this.badge.icon = event.target.files[0]; 
     },
     async fetchUsers() {
       try {
@@ -68,6 +68,49 @@ export default {
         console.error('Error fetching users:', error);
       }
     },
+    async fetchChannels() {
+      try {
+        const response = await axios.get('/api/channels'); // Llamada a la API para obtener los canales
+        this.channels = response.data; // Asigna los canales a la variable
+      } catch (error) {
+        console.error('Error al obtener los canales:', error);
+      }
+    },
+    async createChannel() {
+      if (!this.newChannelName) return; // Validar que el nombre del canal no esté vacío
+      try {
+        const response = await axios.post('/api/channels', {
+          name: this.newChannelName,
+        });
+        this.channels.push(response.data); // Agrega el nuevo canal a la lista
+        this.newChannelName = ''; // Limpiar el input
+      } catch (error) {
+        console.error('Error al crear el canal:', error);
+      }
+    },
+    async deleteChannel(channelId) {
+      try {
+          // Make the API call to delete the channel
+          const response = await axios.delete(`/api/channels/${channelId}`);
+  
+          // Check if the response indicates success
+          if (response.status === 200) {
+              // Remove the channel from the local state
+              this.channels = this.channels.filter(channel => channel.id !== channelId);
+              console.log('Canal eliminado con éxito:', response.data);
+          } else {
+              console.error('Error al eliminar el canal:', response.data.message);
+          }
+      } catch (error) {
+          // Handle error from the API
+          if (error.response) {
+              console.error('Error al borrar el canal:', error.response.data.message);
+          } else {
+              console.error('Error al borrar el canal:', error.message);
+          }
+      }
+  },
+  
     async deleteUser(userId) {
       if (!confirm('Are you sure you want to delete this user?')) {
         return;
@@ -86,24 +129,24 @@ export default {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         this.users = this.users.filter(user => user.id !== userId);
-        this.activeMenu = null; // Close the menu after deleting
+        this.activeMenu = null; 
       } catch (error) {
         console.error('Error deleting user:', error);
       }
     },
     async fetchBadges() {
       try {
-          const response = await axios.get('/api/badges', {
-              headers: {
-                  Authorization: `Bearer ${localStorage.getItem('auth_token')}` // Asegúrate de incluir el token
-              }
-          });
-          this.badges = response.data; // Asigna las insignias a la propiedad 'badges'
-          console.log("Badges fetched:", this.badges);
+        const response = await axios.get('/api/badges', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+          }
+        });
+        this.badges = response.data;
+        console.log('Insignias cargadas:', this.badges);  // Verifica que los datos están aquí
       } catch (error) {
-          console.error("Error fetching badges:", error);
+        console.error("Error fetching badges:", error);
       }
-  },
+    },
     
 
 
@@ -125,11 +168,10 @@ export default {
         const response = await axios.post('http://192.168.0.10:90/api/badges', formData, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-            'Content-Type': 'multipart/form-data', // Asegúrate de que el tipo de contenido es el correcto
+            'Content-Type': 'multipart/form-data', 
           },
         });
         console.log('Insignia creada:', response.data);
-        // Resetea el formulario si es necesario
       } catch (error) {
         console.error('Error al crear la insignia:', error.response ? error.response.data : error.message);
       }

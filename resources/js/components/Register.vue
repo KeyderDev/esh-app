@@ -40,7 +40,6 @@
           });
           console.log('Response received:', response);
           alert(response.data.message);
-          // Redirigir a la página de inicio de sesión o otra página después del registro
           this.$router.push('/login');
         } catch (error) {
           if (error.response) {

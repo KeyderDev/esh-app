@@ -1,4 +1,4 @@
-import Settings from "../components/Settings.vue"; // Asegúrate de que la ruta sea correcta
+import Settings from "../components/Settings.vue"; 
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import Echo from "laravel-echo";
@@ -32,92 +32,17 @@ export default {
             username: localStorage.getItem("username") || "",
             profilePicture: "",
             users: [],
+            channels: [],
             userBadges: [],
             desiredSymbols: ["AAPL", "GOOGL", "MSFT", "PLTR"],
             stockPrices: [],
-            marketNews: [], // Arreglo para almacenar noticias del mercado
             offlineUsers: [],
             badges: [],
             selectedUser: null,
-            channelSections: [{
-                name: "Importante",
-                channels: [{
-                    id: 1,
-                    name: "Anuncios",
-                    link: "/channel/general",
-                    icon: "fas fa-bullhorn",
-                },
-                { id: 2, name: "Reglas", link: "/channel/memes", icon: "fa-solid fa-scroll" },
-                {
-                    id: 3,
-                    name: "Directorio",
-                    link: "/channel/audio",
-                    icon: "fas fa-newspaper",
-                },
-                ],
-            },
-            {
-                name: "Emprende Sin Humo",
-                channels: [
-                    { id: 4, name: "Chat", link: "/channel/dev-preview", icon: "fas fa-comment" },
-                    {
-                        id: 5,
-                        name: "Comandos",
-                        link: "/channel/sugerencias",
-                        icon: "fas fa-wrench",
-                    },
-                    { id: 6, name: "Presentate", link: "/channel/bugs", icon: "fas fa-user" },
-                    {
-                        id: 7,
-                        name: "Resultados",
-                        link: "/channel/github",
-                        icon: "fas fa-chart-line",
-                    },
-                ],
-            },
-            {
-                name: "Recreacion",
-                channels: [{
-                    id: 8,
-                    name: "Hoy Aprendi",
-                    link: "/channel/development",
-                    icon: "fas fa-lightbulb",
-                },
-                {
-                    id: 9,
-                    name: "Moderación",
-                    link: "/channel/moderacion",
-                    icon: "fas fa-shield-alt",
-                },
-                {
-                    id: 10,
-                    name: "Reunion Publica",
-                    link: "/channel/consola",
-                    icon: "fas fa-volume-high",
-                },
-                {
-                    id: 11,
-                    name: "Server Log",
-                    link: "/channel/server-log",
-                    icon: "fas fa-server",
-                },
-                ],
-            },
-            {
-                name: "Hikari IA",
-                channels: [{
-                    id: 12,
-                    name: "General",
-                    link: "/channel/hikari-general",
-                    icon: "fas fa-hashtag",
-                },],
-            },
-            ],
             currentTime: "",
         };
     },
     computed: {
-        // Filtra y cuenta los usuarios en línea
         onlineUsersCount() {
             return this.users.filter(user => user.is_online).length;
         },
@@ -131,7 +56,6 @@ export default {
         this.updateTime();
         this.updateOnlineStatus(true);
         this.fetchStockPrices();
-        this.fetchMarketNews(); // Llamada a la función para obtener noticias
         document.addEventListener("visibilitychange", this.handleVisibilityChange);
         window.addEventListener("beforeunload", this.handleBeforeUnload);
         window.addEventListener("unload", () => this.updateOnlineStatus(false));
@@ -142,13 +66,17 @@ export default {
         this.fetchOfflineUsers();
         setInterval(this.updateTime, 1000);
         this.loadUsers();
+        this.loadChannels();
 
-        // Register Echo listener inside mounted hook to ensure `this` context is correct
         window.Echo.channel("user-status").listen("UserStatusChanged", (event) => {
             console.log("Event received:", event);
             this.handleUserStatusChange(event);
         });
     },
+    created() {
+        this.loadChannels();
+      },
+      
     beforeDestroy() {
         clearTimeout(inactivityTimeout);
         document.removeEventListener("visibilitychange", this.handleVisibilityChange);
@@ -167,47 +95,49 @@ export default {
             }
         },
         buildBadgeUrl(badgeIcon) {
-            // Agrega un console.log para verificar el contenido de import.meta.env
-        
             const url = `http://192.168.0.10:90/storage/badges/${badgeIcon}`;
-            console.log("Generated Badge URL:", url); // Para depuración
+            console.log("Generated Badge URL:", url); 
             return url;
         },
+        async loadChannels() {
+            try {
+              const token = localStorage.getItem('auth_token');
+              const response = await fetch('/api/channels', {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`
+                }
+              });
         
+              if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+              }
         
-        
-        
+              const data = await response.json();
+              console.log(data); 
+              this.channels = data; 
+            } catch (error) {
+              console.error('Error loading channels:', error);
+            }
+          },
         
         formatDate(dateString) {
-            // Verifica si dateString es undefined o nulo
             if (!dateString) {
-                return 'Fecha no disponible'; // Mensaje alternativo
+                return 'Fecha no disponible'; 
             }
 
-            // Elimina espacios en blanco al inicio y al final
             const cleanedDateString = dateString.trim();
 
-            // Crea un nuevo objeto Date
             const date = new Date(cleanedDateString);
 
-            // Verifica si la fecha es válida
+            
             if (isNaN(date.getTime())) {
                 return 'Fecha no válida';
             }
 
-            // Formato deseado
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             return date.toLocaleDateString('es-ES', options);
-        },
-        fetchMarketNews() {
-            axios.get('http://192.168.0.10:90/api/news')
-                .then(response => {
-                    console.log('Noticias:', response.data);
-                })
-                .catch(error => {
-                    console.error('Error al obtener las noticias:', error.response ? error.response : error.message);
-                });
-
         },
         updateSymbols(newSymbols) {
             this.desiredSymbols = newSymbols;
@@ -215,11 +145,11 @@ export default {
         },
         getStockChangeClass(changePercent) {
             if (changePercent > 0) {
-                return "text-success"; // Verde para aumento
+                return "text-success"; 
             } else if (changePercent < 0) {
-                return "text-danger"; // Rojo para disminución
+                return "text-danger"; 
             } else {
-                return "text-neutral"; // Color neutral para sin cambio
+                return "text-neutral"; 
             }
         },
         async fetchStockPrices() {
@@ -227,7 +157,7 @@ export default {
                 const response = await axios.get(
                     "https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/2024-09-17", {
                     headers: {
-                        Authorization: "Bearer lUB79pJEZzFhNeoeRpFnsssVuArIHZJV", // Reemplaza con tu clave de API de Polygon
+                        Authorization: "Bearer lUB79pJEZzFhNeoeRpFnsssVuArIHZJV", 
                     },
                 }
                 );
@@ -249,7 +179,7 @@ export default {
             const url = picture ?
                 `http://192.168.0.10:90/storage/${picture}` :
                 "/path/to/default/profile_picture.jpg";
-            console.log("Profile picture URL:", url); // Verifica la URL generada
+            console.log("Profile picture URL:", url); 
             return url;
         },
         fetchUserBadges(userId) {
@@ -260,7 +190,7 @@ export default {
                         this.userBadges = response.data.badges.map(badge => {
                             return {
                                 ...badge,
-                                icon: badge.icon.trim() // Limpia los espacios en el nombre del icono
+                                icon: badge.icon.trim() 
                             };
                         });
                         console.log("User badges:", this.userBadges);
@@ -390,11 +320,11 @@ export default {
                     }
                 });
         
-                // Asegúrate de que la respuesta contiene los datos correctos
-                console.log("Fetched user badges:", response.data); // Imprimir datos
+                
+                console.log("Fetched user badges:", response.data); 
         
-                this.selectedUser = response.data; // Suponiendo que response.data incluye el usuario
-                this.userBadges = response.data.badges || []; // Asegúrate de que badges sea un array
+                this.selectedUser = response.data; 
+                this.userBadges = response.data.badges || []; 
             } catch (error) {
                 console.error("Error fetching user badges:", error);
             }
@@ -461,7 +391,7 @@ export default {
     watch: {
         selectedUser(newUser) {
             if (newUser) {
-                this.fetchUserBadges(newUser.id); // Llama a la función para obtener insignias del usuario seleccionado
+                this.fetchUserBadges(newUser.id); 
             }
         },
     },

@@ -7,7 +7,8 @@ use App\Http\Controllers\ApiController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\BadgeController;
-// use App\Http\Controllers\ChannelController;
+use App\Http\Controllers\ChannelController;
+use App\Http\Controllers\MessageController;
 
 
 // Rutas públicas
@@ -15,6 +16,19 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/stocks', [FinanceController::class, 'getStockPrices']);
 Route::middleware('auth.api')->post('/logout', [UserController::class, 'logout']);
+Route::get('channels', [ChannelController::class, 'index']);
+Route::post('channels', [ChannelController::class, 'store']);
+Route::get('channels/{channel}', [ChannelController::class, 'show']);
+Route::post('channels/{channel}/messages', [MessageController::class, 'store']);
+
+// Obtener mensajes de un canal específico
+Route::middleware(['auth.api'])->group(function () {
+    Route::get('/channels/{channel}/messages', [MessageController::class, 'index']);
+    Route::post('/channels/{channel}/messages', [MessageController::class, 'store']);
+    Route::delete('/channels/{channel}', [ChannelController::class, 'destroy']);
+
+});
+
 
 // Rutas protegidas
 Route::middleware('auth.api')->group(function () {

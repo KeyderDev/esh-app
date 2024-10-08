@@ -43,18 +43,17 @@
 
             <!-- Sidebar de canales -->
             <div class="channels" style="background-color: #1e1e1e;width: 230px;display: flex;flex-direction: column;padding: 1rem;border-right: 1px solid #1e1e1e;position: relative;">
-                <div class="channel-section" v-for="section in channelSections" :key="section.name">
-                    <p class="section-title">{{ section.name }}</p>
-                    <div class="channel" v-for="channel in section.channels" :key="channel.id">
-                        <router-link :to="channel.link" class="channel-link">
-                            <i :class="channel.icon"></i> {{ channel.name }}
-                        </router-link>
-                    </div>
-                </div>
-                <router-link to="/dashboard" class="settings-icon" style="position: absolute; top: 10px; right: 10px">
-                    <i class="fas fa-cog" style="color: #e0e0e0"></i>
-                </router-link>
-            </div>
+    <h2 class="channel-title">Canales</h2>
+    <div class="channel" v-for="channel in channels" :key="channel.id">
+        <router-link :to="{ name: 'channel', params: { id: channel.id } }" class="channel-link">
+  {{ channel.name }}
+</router-link>
+
+    </div>
+    <router-link to="/dashboard" class="settings-icon" style="position: absolute; top: 10px; right: 10px">
+      <i class="fas fa-cog" style="color: #e0e0e0"></i>
+    </router-link>
+  </div>
 
             <!-- Contenido principal -->
             <div class="flex-grow-1" style="background-color: #181818; padding: 1rem">
@@ -64,7 +63,7 @@
                 <!-- Aquí siempre se muestra el ticker de precios y las noticias del mercado -->
                 <div>
                     <!-- Ticker tape de precios -->
-                    <div class="ticker-tape-container" style="background-color: #2c2c2c;padding: 0.5rem;border-bottom: 1px solid #1e1e1e;">
+                    <!-- <div class="ticker-tape-container" style="background-color: #2c2c2c;padding: 0.5rem;border-bottom: 1px solid #1e1e1e;">
                         <div v-if="stockPrices && stockPrices.length" class="ticker-tape d-flex align-items-center">
                             <div v-for="stock in stockPrices" :key="stock.symbol"
                                 class="stock-item d-flex align-items-center me-4">
@@ -73,7 +72,7 @@
                             </div>
                         </div>
                         <div v-else class="text-white">Cargando...</div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
 

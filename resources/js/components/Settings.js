@@ -36,10 +36,7 @@ export default {
     })
     .then(response => {
         console.log('Logout successful:', response.data);
-        // Limpiar el token del localStorage
         localStorage.removeItem('auth_token');
-        
-        // Redirigir a la página de inicio de sesión
         this.$router.push({ name: 'login' });
     })
     .catch(error => {
@@ -50,7 +47,7 @@ export default {
       const newSymbols = this.desiredSymbolsInput
         .split(",")
         .map((symbol) => symbol.trim());
-      this.$emit("update-symbols", newSymbols); // Emite el evento con los nuevos símbolos
+      this.$emit("update-symbols", newSymbols); 
     },
     onFileChange(event) {
       this.profilePicture = event.target.files[0];
@@ -85,11 +82,12 @@ export default {
       } finally {
         this.isUploading = false;
       }
+      window.location.reload();
     },
     async saveDescription() {
       try {
         const response = await axios.post(
-          `/api/users/description/${this.userId}`,  // Add the user ID to the URL
+          `/api/users/description/${this.userId}`,  
           { description: this.description },
           {
             headers: { Authorization: `Bearer ${this.authToken}` },
@@ -105,6 +103,7 @@ export default {
         console.error("Error al actualizar/agregar la descripción:", error);
         alert("Error al actualizar/agregar la descripción.");
       }
+      window.location.reload();
     },
     setActiveTab(tab) {
       this.activeTab = tab;

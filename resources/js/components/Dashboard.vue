@@ -36,37 +36,42 @@
           <div class="custom-user-list">
             <div v-for="user in users" :key="user.id" class="custom-user-item">
               <img :src="`/storage/${user.profile_picture}`" alt="Profile Picture" class="custom-profile-picture" />
-              <div class="custom-user-details">
-                <h3 class="custom-username">{{ user.username }}</h3>
-                <p class="custom-description">{{ user.description || 'No description available' }}</p>
-                <p class="custom-creation-date">Joined: {{ formatDate(user.created_at) }}</p>
+                <div class="custom-user-details">
+                  <h3 class="custom-username">{{ user.username }}</h3>
+                  <p class="custom-description">{{ user.description || 'No description available' }}</p>
+                  <p class="custom-creation-date">Joined: {{ formatDate(user.created_at) }}</p>
+                    <div class="custom-badges">
+                      <span v-for="badge in user.badges" :key="badge.id" class="custom-badge">
+                      {{ badge.name }}</span>
+                    </div>
+                  </div>
+                    <div class="custom-menu-container" @click="toggleMenu(user.id)">
+                      <span class="custom-menu-icon">⋮</span>
+                        <div v-if="activeMenu === user.id" class="custom-menu-dropdown">
+                          <button @click="deleteUser(user.id)">Delete</button>
+                      </div>
+                  </div>
               </div>
-              <div class="custom-menu-container" @click="toggleMenu(user.id)">
-                <span class="custom-menu-icon">⋮</span>
-                <div v-if="activeMenu === user.id" class="custom-menu-dropdown">
-                  <button @click="deleteUser(user.id)">Delete</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </template>
+         </div>
+          </template>
 
-        <template v-if="activeTab === 'canales'">
-          <div class="channel-container">
-            <h2>Gestionar Canales</h2>
-            <div class="create-channel">
-              <input v-model="newChannelName" type="text" placeholder="Nombre del canal" class="channel-input" />
-              <button @click="createChannel" class="btn-create-channel">Crear Canal</button>
-            </div>
 
-            <ul class="channel-list">
-              <li v-for="channel in channels" :key="channel.id" class="channel-item">
-                <span>{{ channel.name }}</span>
-                <button @click="deleteChannel(channel.id)" class="btn-delete-channel">Borrar</button>
-              </li>
-            </ul>
-          </div>
-        </template>
+          <template v-if="activeTab === 'canales'">
+  <div class="channel-container">
+    <h2>Gestionar Canales</h2>
+    <div class="create-channel">
+      <input v-model="newChannelName" type="text" placeholder="Nombre del canal" class="channel-input" />
+      <button @click="createChannel" class="btn-create-channel">Crear Canal</button>
+    </div>
+
+    <ul class="channel-list">
+      <li v-for="channel in channels" :key="channel.id" class="channel-item">
+        <span>{{ channel.name }}</span>
+        <button @click="deleteChannel(channel.id)" class="btn-delete-channel">Borrar</button>
+      </li>
+    </ul>
+  </div>
+</template>
 
         <template v-if="activeTab === 'debug'">
           <div class="debug-info">
@@ -78,33 +83,34 @@
 
         <template v-if="activeTab === 'insignias'">
           <div class="insignias-container">
-            <h2>Crear nueva insignia</h2>
+            <!-- <div class="insignias-header">
+              <h2>Crear nueva insignia</h2>
+            </div> -->
             <form @submit.prevent="createBadge" class="insignias-form">
-              <input v-model="badge.name" placeholder="Nombre de la insignia" required />
-              <input type="file" @change="onFileChange" required />
+              <label for="badgeName">Nombre de la insignia</label>
+              <input v-model="badge.name" id="badgeName" placeholder="Nombre de la insignia" required />
+              <label for="badgeIcon">Icono de la insignia</label>
+              <input type="file" @change="onFileChange" id="badgeIcon" required />
               <button type="submit">Crear Insignia</button>
             </form>
 
-            <h2>Asignar Insignia a Usuario</h2>
-            <select v-model="selectedUser">
-              <option v-for="user in users" :value="user.id" :key="user.id">{{ user.username }}</option>
-            </select>
-
-            <select v-model="selectedBadge">
-              <option v-for="badge in badges" :value="badge.id" :key="badge.id">{{ badge.name }}</option>
-            </select>
-
-            <button @click="assignBadge">Asignar Insignia</button>
-
-            <h2>Insignias del Usuario</h2>
-            <ul class="insignias-list">
-              <li v-for="badge in userBadges" :key="badge.id">
-                <img :src="badge.icon" alt="badge icon" width="20" height="20" />
-                {{ badge.name }}
-              </li>
-            </ul>
+            <!-- <div class="insignias-header">
+              <h2>Asignar Insignia a Usuario</h2>
+            </div> -->
+            <div class="insignias-assign">
+              <label for="selectUser">Seleccionar Usuario</label>
+              <select v-model="selectedUser" id="selectUser">
+                <option v-for="user in users" :value="user.id" :key="user.id">{{ user.username }}</option>
+              </select>
+              <label for="selectBadge">Seleccionar Insignia</label>
+              <select v-model="selectedBadge" id="selectBadge">
+                <option v-for="badge in badges" :value="badge.id" :key="badge.id">{{ badge.name }}</option>
+              </select>
+              <button @click="assignBadge">Asignar Insignia</button>
+            </div>
           </div>
-        </template>
+          </template>
+
 
       </div>
     </div>
@@ -541,137 +547,177 @@ input:checked+.slider:before {
   transform: translateX(20px);
 }
 
-/* Estilos generales para la sección de insignias */
 .insignias-container {
-  background-color: #2a2a2a;
+  background-color: #1f1f1f;
   color: #ffffff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-/* Títulos */
-.insignias-container h2 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: #f5f5f5;
-}
-
-/* Formulario para crear insignias */
-.insignias-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.insignias-header {
   margin-bottom: 20px;
 }
 
+.insignias-header h2 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #444;
+  padding-bottom: 5px;
+  color: #e5e5e5;
+}
+
+/* Formulario de creación de insignias */
+.insignias-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.insignias-form label {
+  font-size: 1rem;
+  color: #b5b5b5;
+}
+
 .insignias-form input {
-  padding: 10px;
-  background-color: #3a3a3a;
-  border: 1px solid #4a4a4a;
-  border-radius: 4px;
+  padding: 12px;
+  background-color: #2d2d2d;
+  border: 1px solid #3e3e3e;
+  border-radius: 5px;
   color: #ffffff;
 }
 
 .insignias-form input::placeholder {
-  color: #b5b5b5;
+  color: #a5a5a5;
 }
 
 .insignias-form button {
-  background-color: #4CAF50;
-  color: white;
+  background-color: #3a8f47;
+  color: #ffffff;
+  padding: 12px;
+  font-size: 1.1rem;
   border: none;
-  padding: 10px 20px;
-  font-size: 1rem;
+  border-radius: 5px;
   cursor: pointer;
-  border-radius: 4px;
   transition: background-color 0.3s ease;
 }
 
 .insignias-form button:hover {
-  background-color: #45a049;
+  background-color: #349140;
 }
 
-/* Selectores para asignar insignias */
+/* Asignación de insignias */
 .insignias-assign {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 15px;
+}
+
+.insignias-assign label {
+  font-size: 1rem;
+  color: #b5b5b5;
 }
 
 .insignias-assign select {
-  padding: 10px;
-  background-color: #3a3a3a;
-  border: 1px solid #4a4a4a;
-  border-radius: 4px;
+  padding: 12px;
+  background-color: #2d2d2d;
+  border: 1px solid #3e3e3e;
+  border-radius: 5px;
   color: #ffffff;
 }
 
-/* Botón para asignar insignias */
 .insignias-assign button {
-  background-color: #1E90FF;
-  color: white;
+  background-color: #1d78e2;
+  color: #ffffff;
+  padding: 12px;
+  font-size: 1.1rem;
   border: none;
-  padding: 10px 20px;
-  font-size: 1rem;
+  border-radius: 5px;
   cursor: pointer;
-  border-radius: 4px;
   transition: background-color 0.3s ease;
 }
 
 .insignias-assign button:hover {
-  background-color: #1C86EE;
+  background-color: #1569c7;
 }
 
-/* Lista de insignias de usuario */
-.insignias-list ul {
-  list-style: none;
-  padding: 0;
+/* Lista de insignias */
+.insignias-list {
+  margin-top: 20px;
 }
 
-.insignias-list li {
+.badge-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px;
-  background-color: #3a3a3a;
+  gap: 15px;
+  padding: 15px;
+  background-color: #2a2a2a;
+  border-radius: 5px;
   margin-bottom: 10px;
-  border-radius: 4px;
+  transition: transform 0.2s ease;
 }
 
-.insignias-list li img {
-  width: 40px;
-  height: 40px;
+.badge-item:hover {
+  transform: translateY(-3px);
+}
+
+.badge-item img {
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  border: 2px solid #4CAF50;
-  /* Añade un borde de color verde alrededor del icono */
+  border: 2px solid #4caf50;
 }
 
-.insignias-list li span {
-  font-size: 1rem;
-  color: #ffffff;
+.badge-item span {
+  font-size: 1.2rem;
+  color: #e0e0e0;
 }
 
-/* Ajustes de responsividad */
+/* Responsividad */
 @media (max-width: 768px) {
   .insignias-container {
-    padding: 15px;
+    padding: 20px;
+  }
+
+  .insignias-header h2 {
+    font-size: 1.5rem;
   }
 
   .insignias-form input,
   .insignias-assign select {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
   }
 
-  .insignias-list li img {
-    width: 30px;
-    height: 30px;
+  .badge-item img {
+    width: 40px;
+    height: 40px;
   }
 
   .insignias-form button,
   .insignias-assign button {
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
+}
+
+.channel-container {
+  padding: 20px;
+}
+.channel-input {
+  margin-right: 10px;
+}
+.btn-create-channel, .btn-delete-channel {
+  cursor: pointer;
+}
+.channel-list {
+  list-style: none;
+  padding: 0;
+}
+.channel-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
 </style>

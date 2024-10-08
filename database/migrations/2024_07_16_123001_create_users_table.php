@@ -12,7 +12,7 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('username')->unique();
             $table->string('password');
-            $table->string('api_token')->nullable(); // Añade esta línea
+            $table->string('api_token')->nullable(); // Adds the API token
             $table->string('profile_picture')->nullable();
             $table->boolean('is_online')->default(false);
             $table->text('description')->nullable();
@@ -22,6 +22,13 @@ class CreateUsersTable extends Migration
 
     public function down()
     {
+        // Disable foreign key checks
+        Schema::disableForeignKeyConstraints();
+
+        // Drop the table
         Schema::dropIfExists('users');
+
+        // Enable foreign key checks
+        Schema::enableForeignKeyConstraints();
     }
 }
