@@ -200,7 +200,6 @@ export default {
 <style scoped>
 .channel-container {
   padding: 1rem;
-  background-color: #1e1e1e;
   color: #fff;
 }
 
