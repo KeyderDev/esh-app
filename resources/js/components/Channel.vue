@@ -14,10 +14,10 @@
       </div>
     </div>
 
-    <form @submit.prevent="sendMessage">
-      <input ref="messageInput" v-model="newMessage" placeholder="Escribe tu mensaje..." required class="message-input" />
-      <button type="submit" class="send-button">Enviar</button>
-    </form>
+    <div class="input-container">
+      <input ref="messageInput" v-model="newMessage" placeholder="Escribe tu mensaje..." required class="message-input"
+        @keydown.enter="sendMessage" />
+    </div>
   </div>
 </template>
 
@@ -53,7 +53,7 @@ export default {
     await this.loadMessages();
   },
   mounted() {
-    this.$refs.messageInput.focus(); 
+    this.$refs.messageInput.focus();
   },
   methods: {
     renderMarkdown(content) {
@@ -109,7 +109,7 @@ export default {
         });
 
         this.newMessage = '';
-        this.$refs.messageInput.focus(); 
+        this.$refs.messageInput.focus();
         this.scrollToBottom();
       } catch (error) {
         console.error('Error sending message:', error);
@@ -193,34 +193,25 @@ form {
   display: flex;
 }
 
+.input-container {
+  display: flex;
+  width: 100%;
+}
+
 .message-input {
   flex: 1;
   padding: 0.5rem;
-  margin-right: 0.5rem;
   border: 1px solid #444;
   border-radius: 5px;
   background-color: #2a2a2a;
   color: #fff;
   transition: border-color 0.3s;
+  width: 100%;
 }
 
 .message-input:focus {
   border-color: #007bff;
   outline: none;
-}
-
-.send-button {
-  padding: 0.5rem 1rem;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.send-button:hover {
-  background-color: #0056b3;
 }
 
 .messages::-webkit-scrollbar {
