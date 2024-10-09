@@ -7,10 +7,12 @@
         <div class="message-header">
           <img :src="buildProfilePictureUrl(group.user.profile_picture)" alt="Profile Picture"
             class="profile-picture" />
-          <strong>{{ group.user.username }}</strong>
-          <span class="message-timestamp">{{ formatTimestamp(group.timestamp) }}</span>
+          <div class="user-info">
+            <strong>{{ group.user.username }}</strong>
+            <span class="message-timestamp">{{ formatTimestamp(group.timestamp) }}</span>
+          </div>
         </div>
-        <div v-for="(message, i) in group.messages" :key="i" class="message-content"
+        <div class="message-content" v-for="(message, i) in group.messages" :key="i"
           v-html="renderMarkdown(message.content)"></div>
       </div>
     </div>
@@ -130,10 +132,20 @@ export default {
       if (isNaN(date.getTime())) {
         return 'Invalid Date';
       }
-      const options = {
-        year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false
-      };
-      return date.toLocaleString('en-US', options).replace(',', '');
+
+      const now = new Date();
+      const isToday = date.getDate() === now.getDate() &&
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear();
+
+      if (isToday) {
+        return `hoy a las ${date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false })}`;
+      } else {
+        const options = {
+          year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false
+        };
+        return date.toLocaleString('es-ES', options).replace(',', '');
+      }
     },
 
     scrollToBottom() {
@@ -175,7 +187,6 @@ export default {
         }
       });
     }
-
   },
 
   beforeDestroy() {
@@ -200,7 +211,7 @@ export default {
 }
 
 .message-group {
-  margin: 0.5rem 0;
+  margin: 0;
 }
 
 .message-header {
@@ -215,13 +226,20 @@ export default {
   margin-right: 0.5rem;
 }
 
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
 .message-content {
-  margin-top: 0.2rem;
+  margin-top: 0;
+  margin-left: 2.5rem;
 }
 
 .message-timestamp {
   font-size: 0.8rem;
   margin-left: 0.5rem;
+  color: #ccc;
 }
 
 form {
