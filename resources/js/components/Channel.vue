@@ -3,7 +3,7 @@
     <h2>{{ channelName }}</h2>
 
     <div class="messages" ref="messagesContainer">
-      <div v-for="(group, index) in groupedMessages" :key="index" class="message-group">
+      <div v-for="(group, groupIndex) in groupedMessages" :key="groupIndex" class="message-group">
         <div class="message-header">
           <img :src="buildProfilePictureUrl(group.user.profile_picture)" alt="Profile Picture"
             class="profile-picture" />
@@ -12,12 +12,22 @@
             <span class="message-timestamp">{{ formatTimestamp(group.timestamp) }}</span>
           </div>
         </div>
-        <div class="message-content" v-for="(message, i) in group.messages" :key="i"
-          v-html="renderMarkdown(message.content)"></div>
+        <div v-for="(message, messageIndex) in group.messages" :key="message.id || messageIndex"
+          class="message-content-wrapper" @mouseover="showHoverMenu(groupIndex, messageIndex)"
+          @mouseleave="hideHoverMenu">
+          <div class="message-content" v-html="renderMarkdown(message.content)"></div>
+          <div v-if="hoveredMessage === `${groupIndex}-${messageIndex}`" class="hover-menu">
+            <button @click="replyToMessage(message)">Responder</button>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="input-container">
+      <div v-if="replyingTo" class="reply-preview">
+        Respondiendo a <strong>{{ replyingTo.user.username }}</strong>: "{{ replyingTo.content }}"
+        <button @click="cancelReply">Cancelar</button>
+      </div>
       <input ref="messageInput" v-model="newMessage" placeholder="Escribe tu mensaje..." required class="message-input"
         @keydown.enter="sendMessage" />
     </div>
@@ -38,6 +48,8 @@ export default {
       newMessage: '',
       socket: null,
       md: new MarkdownIt(),
+      hoveredMessage: null,
+      replyingTo: null,
     };
   },
   async created() {
@@ -50,11 +62,12 @@ export default {
 
     this.socket.on('message-received', (message) => {
       console.log('Message received:', message);
+      message.created_at = message.created_at || new Date().toISOString(); 
       this.messages.push(message);
       this.groupMessages();
       this.scrollToBottom();
     });
-
+    
     await this.loadMessages();
   },
   mounted() {
@@ -72,7 +85,7 @@ export default {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -91,14 +104,26 @@ export default {
 
     async sendMessage() {
       try {
+        let content = this.newMessage.trim();
+        let replyingToId = null;
+
+        if (this.replyingTo && this.replyingTo.content) {
+          content = `> ${this.replyingTo.content}\n\n${content}`;
+          replyingToId = this.replyingTo.id;
+        }
+
+        if (content === '') {
+          return;
+        }
+
         const token = localStorage.getItem('auth_token');
         const response = await fetch(`/api/channels/${this.channelId}/messages`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ content: this.newMessage }),
+          body: JSON.stringify({ content: content, replyingTo: replyingToId }),
         });
 
         if (!response.ok) {
@@ -112,9 +137,12 @@ export default {
           content: message.content,
           channelId: this.channelId,
           user: message.user,
+          created_at: message.created_at
         });
 
+
         this.newMessage = '';
+        this.replyingTo = null;
         this.$refs.messageInput.focus();
         this.scrollToBottom();
       } catch (error) {
@@ -123,7 +151,9 @@ export default {
     },
 
     buildProfilePictureUrl(picture) {
-      const url = picture ? `http://192.168.0.10:90/storage/${picture}` : "/path/to/default/profile_picture.jpg";
+      const url = picture
+        ? `http://192.168.0.10:90/storage/${picture}`
+        : '/path/to/default/profile_picture.jpg';
       return url;
     },
 
@@ -134,15 +164,25 @@ export default {
       }
 
       const now = new Date();
-      const isToday = date.getDate() === now.getDate() &&
+      const isToday =
+        date.getDate() === now.getDate() &&
         date.getMonth() === now.getMonth() &&
         date.getFullYear() === now.getFullYear();
 
       if (isToday) {
-        return `hoy a las ${date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false })}`;
+        return `hoy a las ${date.toLocaleTimeString('es-ES', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        })}`;
       } else {
         const options = {
-          year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
         };
         return date.toLocaleString('es-ES', options).replace(',', '');
       }
@@ -164,8 +204,11 @@ export default {
 
       this.messages.forEach((message, index) => {
         const messageTime = new Date(message.created_at);
-        const isNewGroup = !currentGroup || currentGroup.user.id !== message.user.id ||
-          messageTime - new Date(currentGroup.timestamp) > 5 * 60 * 1000 || messageCount >= 5;
+        const isNewGroup =
+          !currentGroup ||
+          currentGroup.user.id !== message.user.id ||
+          messageTime - new Date(currentGroup.timestamp) > 5 * 60 * 1000 ||
+          messageCount >= 5;
 
         if (isNewGroup) {
           if (currentGroup) {
@@ -174,7 +217,7 @@ export default {
           currentGroup = {
             user: message.user,
             timestamp: message.created_at,
-            messages: [message]
+            messages: [message],
           };
           messageCount = 1;
         } else {
@@ -186,14 +229,31 @@ export default {
           this.groupedMessages.push(currentGroup);
         }
       });
-    }
+    },
+
+    showHoverMenu(groupIndex, messageIndex) {
+      this.hoveredMessage = `${groupIndex}-${messageIndex}`;
+    },
+
+    hideHoverMenu() {
+      this.hoveredMessage = null;
+    },
+
+    replyToMessage(message) {
+      this.replyingTo = message;
+      this.$refs.messageInput.focus();
+    },
+
+    cancelReply() {
+      this.replyingTo = null;
+    },
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.socket) {
       this.socket.disconnect();
     }
-  }
+  },
 };
 </script>
 
@@ -230,9 +290,14 @@ export default {
   align-items: center;
 }
 
-.message-content {
-  margin-top: 0;
+.message-content-wrapper {
+  position: relative;
   margin-left: 2.5rem;
+  padding: 0;
+}
+
+.message-content {
+  margin: 0.25rem 0;
 }
 
 .message-timestamp {
@@ -241,12 +306,9 @@ export default {
   color: #ccc;
 }
 
-form {
-  display: flex;
-}
-
 .input-container {
   display: flex;
+  flex-direction: column;
   width: 100%;
 }
 
@@ -277,5 +339,54 @@ form {
 
 .messages::-webkit-scrollbar-thumb:hover {
   background-color: #777;
+}
+
+.hover-menu {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: #333;
+  border: 1px solid #555;
+  border-radius: 5px;
+  padding: 0.3rem 0.5rem;
+  color: #fff;
+  font-size: 0.9rem;
+  display: flex;
+  gap: 5px;
+}
+
+.hover-menu button {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.9rem;
+}
+
+.hover-menu button:hover {
+  text-decoration: underline;
+}
+
+.reply-preview {
+  margin-bottom: 0.5rem;
+  background-color: #444;
+  padding: 0.5rem;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.reply-preview button {
+  background: none;
+  border: none;
+  color: #ff4d4d;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.reply-preview button:hover {
+  text-decoration: underline;
 }
 </style>
