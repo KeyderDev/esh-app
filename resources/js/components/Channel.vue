@@ -15,7 +15,7 @@
     </div>
 
     <form @submit.prevent="sendMessage">
-      <input v-model="newMessage" placeholder="Escribe tu mensaje..." required class="message-input" />
+      <input ref="messageInput" v-model="newMessage" placeholder="Escribe tu mensaje..." required class="message-input" />
       <button type="submit" class="send-button">Enviar</button>
     </form>
   </div>
@@ -52,7 +52,9 @@ export default {
 
     await this.loadMessages();
   },
-
+  mounted() {
+    this.$refs.messageInput.focus(); 
+  },
   methods: {
     renderMarkdown(content) {
       return this.md.render(content);
@@ -107,6 +109,7 @@ export default {
         });
 
         this.newMessage = '';
+        this.$refs.messageInput.focus(); 
         this.scrollToBottom();
       } catch (error) {
         console.error('Error sending message:', error);
