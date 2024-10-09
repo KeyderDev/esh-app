@@ -4,10 +4,10 @@
     <aside class="sidebar">
       <ul class="menu">
         <li :class="{ active: activeTab === 'cuenta' }" @click="setActiveTab('cuenta')">Cuenta</li>
+        <li :class="{ active: activeTab === 'conexiones' }" @click="setActiveTab('conexiones')">Conexiones</li>
         <li :class="{ active: activeTab === 'apariencia' }" @click="setActiveTab('apariencia')">Apariencia</li>
-        <li :class="{ active: activeTab === 'privacidadyseguridad' }" @click="setActiveTab('privacidadyseguridad')">Privacidad y Seguridad</li>
+        <li :class="{ active: activeTab === 'accesibilidad' }" @click="setActiveTab('accesibilidad')">Accesibilidad</li>
         <li @click="logout" class="logout red">Cerrar Sesión</li>
-        <!-- <button @click="logout">Logout</button> -->
       </ul>
     </aside>
 
@@ -37,6 +37,9 @@
           </div>
         </template>
 
+        <template v-if="activeTab === 'conexiones'">
+        </template>
+
         <template v-if="activeTab === 'apariencia'">
           <div class="reward-container">
             <div class="reward-header">
@@ -49,6 +52,10 @@
             <p>Esta opcion hace que la app tenga un estilo transparente, con el fondo de Emprende Sin Humo.</p>
           </div>
         </template>
+
+        <template v-if="activeTab === 'Accesibilidad'">
+        </template>
+        
       </div>
     </div>
   </div>
@@ -145,15 +152,15 @@
 }
 
 .red {
-  color: red; /* Cambia a tu tono de rojo preferido */
+  color: red;
 }
 
 .logout {
-  cursor: pointer; /* Cambia el cursor a pointer para indicar que es clicable */
+  cursor: pointer; 
 }
 
 .logout.red:hover {
-  text-decoration: underline; /* O cualquier otro efecto que prefieras */
+  text-decoration: underline; 
 }
 
 .content-scroll {
@@ -183,27 +190,27 @@
 }
 
 .reward-container {
-    background-color: #2b2d31; /* Dark background like Discord */
-    padding: 0.75rem; /* Reduced padding */
-    border-radius: 6px; /* Slightly smaller border radius */
-    margin-bottom: 0.75rem; /* Reduced margin */
-    color: #e3e5e8; /* Light text */
+    background-color: #2b2d31; 
+    padding: 0.75rem; 
+    border-radius: 6px; 
+    margin-bottom: 0.75rem; 
+    color: #e3e5e8; 
 }
 
 .reward-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.3rem; /* Smaller margin */
+    margin-bottom: 0.3rem; 
 }
 
 h3 {
-    font-size: 1rem; /* Smaller title */
+    font-size: 1rem; 
     margin: 0;
 }
 
 p {
-    font-size: 0.875rem; /* Smaller paragraph text */
+    font-size: 0.875rem; 
     margin: 0;
 }
 
@@ -216,8 +223,8 @@ p {
 }
 
 .toggle-label {
-    width: 30px; /* Smaller switch */
-    height: 16px; /* Smaller height */
+    width: 30px;
+    height: 16px; 
     background-color: #d3d3d3;
     border-radius: 999px;
     position: relative;
@@ -228,7 +235,7 @@ p {
 .toggle-label::before {
     content: '';
     position: absolute;
-    width: 14px; /* Smaller knob */
+    width: 14px; 
     height: 14px;
     background-color: #fff;
     border-radius: 50%;
@@ -242,11 +249,11 @@ input:checked + .toggle-label {
 }
 
 input:checked + .toggle-label::before {
-    transform: translateX(14px); /* Adjust for the smaller switch */
+    transform: translateX(14px); 
 }
 
 a {
-    color: #00b0f4; /* Discord-like link color */
-    font-size: 0.875rem; /* Smaller link text */
+    color: #00b0f4; 
+    font-size: 0.875rem; 
 }
 </style>
