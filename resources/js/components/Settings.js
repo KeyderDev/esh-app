@@ -28,21 +28,22 @@ export default {
       }
     },
     logout() {
-    console.log("click");
-    axios.post('/api/logout', {}, {
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-        }
-    })
-    .then(response => {
-        console.log('Logout successful:', response.data);
-        localStorage.removeItem('auth_token');
-        this.$router.push({ name: 'login' });
-    })
-    .catch(error => {
-        console.error('Logout error:', error);
-    });
-},
+      console.log("click");
+      axios.post('/api/logout', {}, {
+          headers: {
+              'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+          }
+      })
+      .then(response => {
+          console.log('Logout successful:', response.data);
+          localStorage.removeItem('auth_token');      
+          window.location.href = '/login';  
+      })
+      .catch(error => {
+          console.error('Logout error:', error);
+      });
+  },
+  
     updateSymbols() {
       const newSymbols = this.desiredSymbolsInput
         .split(",")

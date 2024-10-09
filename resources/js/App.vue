@@ -43,17 +43,15 @@
 
             <!-- Sidebar de canales -->
             <div class="channels" style="background-color: #1e1e1e;width: 230px;display: flex;flex-direction: column;padding: 1rem;border-right: 1px solid #1e1e1e;position: relative;">
-    <h2 class="channel-title">Canales</h2>
-    <div class="channel" v-for="channel in channels" :key="channel.id">
-        <router-link :to="{ name: 'channel', params: { id: channel.id } }" class="channel-link">
-  {{ channel.name }}
-</router-link>
-
-    </div>
-    <router-link to="/dashboard" class="settings-icon" style="position: absolute; top: 10px; right: 10px">
-      <i class="fas fa-cog" style="color: #e0e0e0"></i>
-    </router-link>
-  </div>
+                    <div class="channel" v-for="channel in channels" :key="channel.id">
+                        <router-link :to="{ name: 'channel', params: { id: channel.id } }" class="channel-link">
+                        {{ channel.name }}
+                        </router-link>
+                    </div>
+                <router-link to="/dashboard" class="settings-icon" style="position: absolute; top: 10px; right: 10px">
+                    <i class="fas fa-cog" style="color: #e0e0e0"></i>
+                </router-link>
+            </div>
 
             <!-- Contenido principal -->
             <div class="flex-grow-1" style="background-color: #181818; padding: 1rem">
@@ -124,14 +122,7 @@
                 <p class="description-details" v-if="selectedUser.description">{{ selectedUser.description }}</p>
             </div>
         </div>
-
-
-
-
-
     </div>
-
-
 </template>
 
 
