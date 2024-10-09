@@ -3,14 +3,15 @@
     <h2>{{ channelName }}</h2>
 
     <div class="messages" ref="messagesContainer">
-      <div v-for="message in messages" :key="message.id" class="message">
+      <div v-for="(group, index) in groupedMessages" :key="index" class="message-group">
         <div class="message-header">
-          <img :src="buildProfilePictureUrl(message.user.profile_picture)" alt="Profile Picture"
+          <img :src="buildProfilePictureUrl(group.user.profile_picture)" alt="Profile Picture"
             class="profile-picture" />
-          <strong>{{ message.user.username }}</strong>
-          <span class="message-timestamp">{{ formatTimestamp(message.created_at) }}</span>
+          <strong>{{ group.user.username }}</strong>
+          <span class="message-timestamp">{{ formatTimestamp(group.timestamp) }}</span>
         </div>
-        <p class="message-content" v-html="renderMarkdown(message.content)"></p>
+        <div v-for="(message, i) in group.messages" :key="i" class="message-content"
+          v-html="renderMarkdown(message.content)"></div>
       </div>
     </div>
 
@@ -31,6 +32,7 @@ export default {
       channelId: this.$route.params.id,
       channelName: '',
       messages: [],
+      groupedMessages: [],
       newMessage: '',
       socket: null,
       md: new MarkdownIt(),
@@ -47,6 +49,7 @@ export default {
     this.socket.on('message-received', (message) => {
       console.log('Message received:', message);
       this.messages.push(message);
+      this.groupMessages();
       this.scrollToBottom();
     });
 
@@ -77,6 +80,7 @@ export default {
 
         const data = await response.json();
         this.messages = data;
+        this.groupMessages();
         this.scrollToBottom();
       } catch (error) {
         console.error('Error loading messages:', error);
@@ -141,6 +145,37 @@ export default {
       });
     },
 
+    groupMessages() {
+      this.groupedMessages = [];
+      let currentGroup = null;
+      let messageCount = 0;
+
+      this.messages.forEach((message, index) => {
+        const messageTime = new Date(message.created_at);
+        const isNewGroup = !currentGroup || currentGroup.user.id !== message.user.id ||
+          messageTime - new Date(currentGroup.timestamp) > 5 * 60 * 1000 || messageCount >= 5;
+
+        if (isNewGroup) {
+          if (currentGroup) {
+            this.groupedMessages.push(currentGroup);
+          }
+          currentGroup = {
+            user: message.user,
+            timestamp: message.created_at,
+            messages: [message]
+          };
+          messageCount = 1;
+        } else {
+          currentGroup.messages.push(message);
+          messageCount++;
+        }
+
+        if (index === this.messages.length - 1 && currentGroup) {
+          this.groupedMessages.push(currentGroup);
+        }
+      });
+    }
+
   },
 
   beforeDestroy() {
@@ -164,7 +199,7 @@ export default {
   margin-bottom: 1rem;
 }
 
-.message {
+.message-group {
   margin: 0.5rem 0;
 }
 
