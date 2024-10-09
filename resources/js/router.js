@@ -4,8 +4,7 @@ import Register from './components/Register.vue';
 import Login from './components/Login.vue';
 import Libreria from './components/Libreria.vue';
 import Dashboard from './components/Dashboard.vue';
-import Roles from './components/Roles.vue';
-import Channel from './components/Channel.vue'; // Importa el componente Channel
+import Channel from './components/Channel.vue'; 
 
 const routes = [
   { path: '/settings', component: SettingsComponent },
@@ -13,8 +12,7 @@ const routes = [
   { path: '/login', component: Login },
   { path: '/libreria', component: Libreria },
   { path: '/dashboard', component: Dashboard },
-  { path: '/dashboard/roles', component: Roles },
-  { path: '/channel/:id', component: Channel, name: 'channel' }, // Añade la ruta del canal
+  { path: '/channel/:id', component: Channel, name: 'channel' }, 
 ];
 
 function isAuthenticated() {
