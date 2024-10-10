@@ -38,11 +38,10 @@ class AuthController extends Controller
 
         if (Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
             $user = Auth::user();
-            // Generar un token aleatorio
             $token = Str::random(60);
             $user->api_token = $token;
             $user->save();
-            \Log::info('Token generated: ' . $token); // Agrega este log para verificar el token generado
+            \Log::info('Token generated: ' . $token); 
 
             return response()->json([
                 'message' => 'Login successful!',
@@ -51,7 +50,6 @@ class AuthController extends Controller
             ]);
         }
 
-        // Agregar logs para depuración
         \Log::error('Login failed for username: ' . $request->username . ' with IP: ' . $request->ip());
 
         return response()->json(['message' => 'Invalid credentials'], 401);

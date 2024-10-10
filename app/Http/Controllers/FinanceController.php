@@ -1,6 +1,5 @@
 <?php
 
-// app/Http/Controllers/FinanceController.php
 
 namespace App\Http\Controllers;
 
@@ -12,7 +11,7 @@ class FinanceController extends Controller
     public function getStockPrices()
     {
         $yahooFinance = new YahooFinanceAPI();
-        $stocks = ['AAPL', 'GOOGL', 'AMZN']; // Aquí puedes poner los símbolos que quieras
+        $stocks = ['AAPL', 'GOOGL', 'AMZN']; 
         $data = [];
 
         foreach ($stocks as $stock) {

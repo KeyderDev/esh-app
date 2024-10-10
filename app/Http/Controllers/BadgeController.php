@@ -12,18 +12,17 @@ class BadgeController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'icon' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Validación para imagen
+            'icon' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-    
+
         try {
-            // Almacena la imagen y obtén la ruta
-            $path = $request->file('icon')->store('badges', 'public'); // Almacena en storage/app/public/badges
-    
+            $path = $request->file('icon')->store('badges', 'public');
+
             $badge = Badge::create([
                 'name' => $request->name,
-                'icon' => $path, // Guarda la ruta de la imagen
+                'icon' => $path,
             ]);
-    
+
             return response()->json([
                 'message' => 'Badge created successfully',
                 'badge' => $badge,
@@ -31,19 +30,17 @@ class BadgeController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Error creating badge: ' . $e->getMessage(),
-            ], 500); // Internal Server Error
+            ], 500);
         }
     }
-    
-    // Obtener todas las insignias
-public function getAllBadges()
-{
-    $badges = Badge::all(); // Obtiene todas las insignias de la base de datos
-    return response()->json($badges, 200);
-}
+
+    public function getAllBadges()
+    {
+        $badges = Badge::all();
+        return response()->json($badges, 200);
+    }
 
 
-    // Asignar una insignia a un usuario
     public function assignBadgeToUser(Request $request)
     {
         $request->validate([
@@ -54,9 +51,8 @@ public function getAllBadges()
         $user = User::findOrFail($request->user_id);
         $badge = Badge::findOrFail($request->badge_id);
 
-        // Verificar si el usuario ya tiene la insignia asignada
         if ($user->badges->contains($badge)) {
-            return response()->json(['message' => 'Badge already assigned to this user'], 409); // 409 Conflict
+            return response()->json(['message' => 'Badge already assigned to this user'], 409);
         }
 
         $user->badges()->attach($badge);
@@ -64,15 +60,14 @@ public function getAllBadges()
         return response()->json(['message' => 'Badge assigned successfully'], 200);
     }
 
-    // Obtener las insignias de un usuario
     public function getUserBadges($userId)
     {
         $user = User::with('badges')->findOrFail($userId);
-        
+
         return response()->json([
             'username' => $user->username,
-            'badges' => $user->badges // Deberías recibir un array de insignias
+            'badges' => $user->badges
         ], 200);
     }
-    
+
 }

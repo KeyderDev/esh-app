@@ -9,7 +9,6 @@ use App\Events\UserStatusChanged;
 
 class UserController extends Controller
 {
-    // Update online status
     public function updateOnlineStatus(Request $request)
     {
         $request->validate(['is_online' => 'required|boolean']);
@@ -42,7 +41,6 @@ class UserController extends Controller
         return response()->json($users);
     }
 
-    // Get offline users
     public function getOfflineUsers()
     {
         $users = User::where('is_online', false)
@@ -59,7 +57,7 @@ class UserController extends Controller
             $user->save();
         }
     
-        Auth::logout(); // Cierra la sesión del usuario autenticado
+        Auth::logout(); 
     
         return response()->json(['message' => 'Usuario desconectado.']);
     }
@@ -69,8 +67,6 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         return response()->json($user);
     }
-
-    // Update user description
     public function update(Request $request)
     {
         $request->validate([
@@ -83,8 +79,6 @@ class UserController extends Controller
 
         return response()->json($user);
     }
-
-    // Get all users
     public function getAllUsers()
     {
         $users = User::get(['id', 'username', 'profile_picture', 'description', 'is_online', 'created_at']);
