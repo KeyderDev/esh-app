@@ -14,13 +14,13 @@
     <!-- Main Content -->
     <div class="content">
       <h1 class="text-white">
-      {{ activeTab.charAt(0).toUpperCase() + activeTab.slice(1) }}
+        {{ activeTab.charAt(0).toUpperCase() + activeTab.slice(1) }}
       </h1>
       <div class="content-scroll">
         <template v-if="activeTab === 'cuenta'">
           <div class="input-container">
             <label for="profile-upload" class="input-label">Foto de perfil:</label>
-            <input type="file" id="profile-upload" @change="onFileChange" accept="image/*" class="file-input"/>
+            <input type="file" id="profile-upload" @change="onFileChange" accept="image/*" class="file-input" />
             <button @click="upload" :disabled="isUploading" class="upload-button">
               <span v-if="isUploading">Subiendo...</span>
               <span v-else>Subir Foto de Perfil</span>
@@ -30,7 +30,8 @@
 
           <div class="description-container">
             <label for="description" class="input-label">Descripción:</label>
-            <textarea id="description" v-model="description" placeholder="Escribe tu descripción aquí..." class="description-input"></textarea>
+            <textarea id="description" v-model="description" placeholder="Escribe tu descripción aquí..."
+              class="description-input"></textarea>
             <button @click="saveDescription" class="update-button">
               {{ description ? "Actualizar Descripción" : "Agregar Descripción" }}
             </button>
@@ -38,16 +39,20 @@
         </template>
 
         <template v-if="activeTab === 'conexiones'">
+          <div class="connections-container">
+            <button @click="connectSpotify" class="spotify-connect-button">Conectar Spotify</button>
+          </div>
         </template>
+
 
         <template v-if="activeTab === 'apariencia'">
           <div class="reward-container">
             <div class="reward-header">
               <h3>Fondo ESH</h3>
-                <div class="toggle-switch">
-                  <input type="checkbox" id="reward-toggle">
-                  <label for="reward-toggle" class="toggle-label"></label>
-                </div>
+              <div class="toggle-switch">
+                <input type="checkbox" id="reward-toggle">
+                <label for="reward-toggle" class="toggle-label"></label>
+              </div>
             </div>
             <p>Esta opcion hace que la app tenga un estilo transparente, con el fondo de Emprende Sin Humo.</p>
           </div>
@@ -55,7 +60,7 @@
 
         <template v-if="activeTab === 'Accesibilidad'">
         </template>
-        
+
       </div>
     </div>
   </div>
@@ -156,11 +161,11 @@
 }
 
 .logout {
-  cursor: pointer; 
+  cursor: pointer;
 }
 
 .logout.red:hover {
-  text-decoration: underline; 
+  text-decoration: underline;
 }
 
 .content-scroll {
@@ -190,70 +195,85 @@
 }
 
 .reward-container {
-    background-color: #2b2d31; 
-    padding: 0.75rem; 
-    border-radius: 6px; 
-    margin-bottom: 0.75rem; 
-    color: #e3e5e8; 
+  background-color: #2b2d31;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+  color: #e3e5e8;
 }
 
 .reward-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.3rem; 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.3rem;
 }
 
 h3 {
-    font-size: 1rem; 
-    margin: 0;
+  font-size: 1rem;
+  margin: 0;
 }
 
 p {
-    font-size: 0.875rem; 
-    margin: 0;
+  font-size: 0.875rem;
+  margin: 0;
 }
 
 .toggle-switch {
-    position: relative;
+  position: relative;
 }
 
 .toggle-switch input {
-    display: none;
+  display: none;
 }
 
 .toggle-label {
-    width: 30px;
-    height: 16px; 
-    background-color: #d3d3d3;
-    border-radius: 999px;
-    position: relative;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  width: 30px;
+  height: 16px;
+  background-color: #d3d3d3;
+  border-radius: 999px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .toggle-label::before {
-    content: '';
-    position: absolute;
-    width: 14px; 
-    height: 14px;
-    background-color: #fff;
-    border-radius: 50%;
-    top: 1px;
-    left: 1px;
-    transition: transform 0.3s ease;
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background-color: #fff;
+  border-radius: 50%;
+  top: 1px;
+  left: 1px;
+  transition: transform 0.3s ease;
 }
 
-input:checked + .toggle-label {
-    background-color: #4caf50;
+input:checked+.toggle-label {
+  background-color: #4caf50;
 }
 
-input:checked + .toggle-label::before {
-    transform: translateX(14px); 
+input:checked+.toggle-label::before {
+  transform: translateX(14px);
 }
 
 a {
-    color: #00b0f4; 
-    font-size: 0.875rem; 
+  color: #00b0f4;
+  font-size: 0.875rem;
+}
+
+.spotify-connect-button {
+  background-color: #1DB954;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.spotify-connect-button:hover {
+  background-color: #1aa34a;
 }
 </style>

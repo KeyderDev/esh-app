@@ -36,56 +36,54 @@
           <div class="custom-user-list">
             <div v-for="user in users" :key="user.id" class="custom-user-item">
               <img :src="`/storage/${user.profile_picture}`" alt="Profile Picture" class="custom-profile-picture" />
-                <div class="custom-user-details">
-                  <h3 class="custom-username">{{ user.username }}</h3>
-                  <p class="custom-description">{{ user.description || 'No description available' }}</p>
-                  <p class="custom-creation-date">Joined: {{ formatDate(user.created_at) }}</p>
-                    <div class="custom-badges">
-                      <span v-for="badge in user.badges" :key="badge.id" class="custom-badge">
-                      {{ badge.name }}</span>
-                    </div>
-                  </div>
-                    <div class="custom-menu-container" @click="toggleMenu(user.id)">
-                      <span class="custom-menu-icon">⋮</span>
-                        <div v-if="activeMenu === user.id" class="custom-menu-dropdown">
-                          <button @click="deleteUser(user.id)">Delete</button>
-                      </div>
-                  </div>
+              <div class="custom-user-details">
+                <h3 class="custom-username">{{ user.username }}</h3>
+                <p class="custom-description">{{ user.description || 'No description available' }}</p>
+                <p class="custom-creation-date">Joined: {{ formatDate(user.created_at) }}</p>
+                <div class="custom-badges">
+                  <span v-for="badge in user.badges" :key="badge.id" class="custom-badge">
+                    {{ badge.name }}</span>
+                </div>
               </div>
-         </div>
-          </template>
+              <div class="custom-menu-container" @click="toggleMenu(user.id)">
+                <span class="custom-menu-icon">⋮</span>
+                <div v-if="activeMenu === user.id" class="custom-menu-dropdown">
+                  <button @click="deleteUser(user.id)">Delete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
 
 
-          <template v-if="activeTab === 'canales'">
-  <div class="channel-container">
-    <h2>Gestionar Canales</h2>
-    <div class="create-channel">
-      <input v-model="newChannelName" type="text" placeholder="Nombre del canal" class="channel-input" />
-      <button @click="createChannel" class="btn-create-channel">Crear Canal</button>
-    </div>
+        <template v-if="activeTab === 'canales'">
+          <div class="channel-container">
+            <h2>Gestionar Canales</h2>
+            <div class="create-channel">
+              <input v-model="newChannelName" type="text" placeholder="Nombre del canal" class="channel-input" />
+              <button @click="createChannel" class="btn-create-channel">Crear Canal</button>
+            </div>
 
-    <ul class="channel-list">
-      <li v-for="channel in channels" :key="channel.id" class="channel-item">
-        <span>{{ channel.name }}</span>
-        <button @click="deleteChannel(channel.id)" class="btn-delete-channel">Borrar</button>
-      </li>
-    </ul>
-  </div>
-</template>
+            <ul class="channel-list">
+              <li v-for="channel in channels" :key="channel.id" class="channel-item">
+                <span>{{ channel.name }}</span>
+                <button @click="deleteChannel(channel.id)" class="btn-delete-channel">Borrar</button>
+              </li>
+            </ul>
+          </div>
+        </template>
 
         <template v-if="activeTab === 'debug'">
           <div class="debug-info">
             <h2>Información de Debug</h2>
             <p><strong>Token de autorización:</strong> {{ authToken }}</p>
+            <p><strong>Token de autorización (Spotify):</strong> {{ spotifyToken }}</p>
             <p><strong>Estado de la sesión:</strong> {{ sessionStatus }}</p>
           </div>
         </template>
 
         <template v-if="activeTab === 'insignias'">
           <div class="insignias-container">
-            <!-- <div class="insignias-header">
-              <h2>Crear nueva insignia</h2>
-            </div> -->
             <form @submit.prevent="createBadge" class="insignias-form">
               <label for="badgeName">Nombre de la insignia</label>
               <input v-model="badge.name" id="badgeName" placeholder="Nombre de la insignia" required />
@@ -94,9 +92,6 @@
               <button type="submit">Crear Insignia</button>
             </form>
 
-            <!-- <div class="insignias-header">
-              <h2>Asignar Insignia a Usuario</h2>
-            </div> -->
             <div class="insignias-assign">
               <label for="selectUser">Seleccionar Usuario</label>
               <select v-model="selectedUser" id="selectUser">
@@ -109,7 +104,7 @@
               <button @click="assignBadge">Asignar Insignia</button>
             </div>
           </div>
-          </template>
+        </template>
 
 
       </div>
@@ -117,11 +112,7 @@
   </div>
 </template>
 
-
-
-
-<script src="./Dashboard.js"></script> <!-- Importa el script aquí -->
-
+<script src="./Dashboard.js"></script> 
 
 <style scoped>
 .custom-settings-container {
@@ -213,17 +204,14 @@
 
 .custom-red {
   color: red;
-  /* Cambia a tu tono de rojo preferido */
 }
 
 .custom-logout {
   cursor: pointer;
-  /* Cambia el cursor a pointer para indicar que es clicable */
 }
 
 .custom-logout.custom-red:hover {
   text-decoration: underline;
-  /* O cualquier otro efecto que prefieras */
 }
 
 .custom-content-scroll {
@@ -569,7 +557,6 @@ input:checked+.slider:before {
   color: #e5e5e5;
 }
 
-/* Formulario de creación de insignias */
 .insignias-form {
   display: flex;
   flex-direction: column;
@@ -609,7 +596,6 @@ input:checked+.slider:before {
   background-color: #349140;
 }
 
-/* Asignación de insignias */
 .insignias-assign {
   display: flex;
   flex-direction: column;
@@ -644,7 +630,6 @@ input:checked+.slider:before {
   background-color: #1569c7;
 }
 
-/* Lista de insignias */
 .insignias-list {
   margin-top: 20px;
 }
@@ -705,19 +690,31 @@ input:checked+.slider:before {
 .channel-container {
   padding: 20px;
 }
+
 .channel-input {
   margin-right: 10px;
 }
-.btn-create-channel, .btn-delete-channel {
+
+.btn-create-channel,
+.btn-delete-channel {
   cursor: pointer;
 }
+
 .channel-list {
   list-style: none;
   padding: 0;
 }
+
 .channel-item {
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
+}
+
+.debug-info {
+  background-color: #282c34;
+  color: #ffffff;
+  padding: 20px;
+  border-radius: 5px;
 }
 </style>

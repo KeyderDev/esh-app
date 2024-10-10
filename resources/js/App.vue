@@ -1,12 +1,15 @@
 <template>
     <div id="app" class="d-flex flex-column" style="height: 100vh">
         <!-- Navbar -->
-        <nav class="navbar navbar-expand" style="background-color: #121212;padding: 0.5rem 1rem;border-bottom: 1px solid #1e1e1e;">
+        <nav class="navbar navbar-expand"
+            style="background-color: #121212;padding: 0.5rem 1rem;border-bottom: 1px solid #1e1e1e;">
             <div class="container-fluid d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center">
                     <img :src="imageSrc" alt="Logo" class="navbar-logo" />
-                    <form class="d-flex" role="search" style="background-color: #1e1e1e;border-radius: 0.25rem;padding: 0.25rem;margin-left: 2rem;">
-                        <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar" style="max-width: 200px;background-color: #1e1e1e;border: none;color: #e0e0e0;" />
+                    <form class="d-flex" role="search"
+                        style="background-color: #1e1e1e;border-radius: 0.25rem;padding: 0.25rem;margin-left: 2rem;">
+                        <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar"
+                            style="max-width: 200px;background-color: #1e1e1e;border: none;color: #e0e0e0;" />
                     </form>
                 </div>
                 <div class="navbar-brand mx-auto text-white"
@@ -22,7 +25,8 @@
 
         <div class="d-flex flex-grow-1">
             <!-- Sidebar -->
-            <nav class="text-white d-flex flex-column" style="background-color: #121212;width: 60px;padding: 0.5rem;border-right: 1px solid #1e1e1e;">
+            <nav class="text-white d-flex flex-column"
+                style="background-color: #121212;width: 60px;padding: 0.5rem;border-right: 1px solid #1e1e1e;">
                 <div class="d-flex flex-column align-items-center flex-grow-1" style="margin-top: 1rem">
                     <router-link to="/" class="nav-link text-white d-flex flex-column align-items-center">
                         <i class="fas fa-home"></i>
@@ -42,12 +46,13 @@
             </nav>
 
             <!-- Sidebar de canales -->
-            <div class="channels" style="background-color: #1e1e1e;width: 230px;display: flex;flex-direction: column;padding: 1rem;border-right: 1px solid #1e1e1e;position: relative;">
-                    <div class="channel" v-for="channel in channels" :key="channel.id">
-                        <router-link :to="{ name: 'channel', params: { id: channel.id } }" class="channel-link">
+            <div class="channels"
+                style="background-color: #1e1e1e;width: 230px;display: flex;flex-direction: column;padding: 1rem;border-right: 1px solid #1e1e1e;position: relative;">
+                <div class="channel" v-for="channel in channels" :key="channel.id">
+                    <router-link :to="{ name: 'channel', params: { id: channel.id } }" class="channel-link">
                         {{ channel.name }}
-                        </router-link>
-                    </div>
+                    </router-link>
+                </div>
                 <router-link to="/dashboard" class="settings-icon" style="position: absolute; top: 10px; right: 10px">
                     <i class="fas fa-cog" style="color: #e0e0e0"></i>
                 </router-link>
@@ -55,33 +60,18 @@
 
             <!-- Contenido principal -->
             <div class="flex-grow-1" style="background-color: #181818; padding: 1rem">
-                <!-- Aquí se muestran otros componentes -->
                 <router-view></router-view>
-
-                <!-- Aquí siempre se muestra el ticker de precios y las noticias del mercado -->
-                <div>
-                    <!-- Ticker tape de precios -->
-                    <!-- <div class="ticker-tape-container" style="background-color: #2c2c2c;padding: 0.5rem;border-bottom: 1px solid #1e1e1e;">
-                        <div v-if="stockPrices && stockPrices.length" class="ticker-tape d-flex align-items-center">
-                            <div v-for="stock in stockPrices" :key="stock.symbol"
-                                class="stock-item d-flex align-items-center me-4">
-                                <span class="stock-symbol text-white">{{ stock.symbol }}</span>
-                                <span :class="getStockChangeClass(stock.changePercent)" class="stock-change">{{stock.changePercent }}%</span>
-                            </div>
-                        </div>
-                        <div v-else class="text-white">Cargando...</div>
-                    </div> -->
-                </div>
             </div>
 
-            <!-- Sidebar derecha (usuarios en línea y desconectados) -->
-            <div class="right-sidebar" style="background-color: #1e1e1e;width: 200px;display: flex;flex-direction: column;padding: 1rem;border-left: 1px solid #1e1e1e;">
+            <div class="right-sidebar"
+                style="background-color: #1e1e1e;width: 200px;display: flex;flex-direction: column;padding: 1rem;border-left: 1px solid #1e1e1e;">
                 <h6 class="text-white small-text">En Línea - {{ onlineUsersCount }}</h6>
                 <div v-for="user in users" :key="user.id" class="user-item d-flex flex-column mb-2 online-user"
                     @click="showUserDetails(user)">
                     <div class="d-flex align-items-center">
                         <div class="profile-container">
-                            <img :src="buildProfilePictureUrl(user.profile_picture)" alt="Profile"class="profile-pic" />
+                            <img :src="buildProfilePictureUrl(user.profile_picture)" alt="Profile"
+                                class="profile-pic" />
                             <div class="online-indicator"></div>
                         </div>
                         <div class="d-flex flex-column ms-2">
@@ -107,12 +97,16 @@
             <button @click="closeUserDetails" class="close-button"
                 aria-label="Cerrar detalles del usuario">&times;</button>
             <div class="profile-info-details">
-                <img :src="buildProfilePictureUrl(selectedUser.profile_picture)" alt="Profile Picture" class="profile-pic" />
+                <img :src="buildProfilePictureUrl(selectedUser.profile_picture)" alt="Profile Picture"
+                    class="profile-pic" />
 
                 <h5 class="username">
                     {{ selectedUser.username }}
                     <span v-if="userBadges.length > 0">
-                        <img v-for="badge in userBadges" :key="badge.id":src="`http://192.168.0.10:90/storage/${badge.icon}`.trim()" :alt="badge.name" width="20"height="20" class="badge-icon" @load="console.log(`Loaded badge icon: ${badge.icon}`)"@error="console.error(`Error loading badge icon: ${badge.icon}`); console.log('Error loading URL:', `http://192.168.0.10/storage/${badge.icon}`)" />
+                        <img v-for="badge in userBadges" :key="badge.id"
+                            :src="`http://192.168.0.10:90/storage/${badge.icon}`.trim()" :alt="badge.name" width="20"
+                            height="20" class="badge-icon" @load="console.log(`Loaded badge icon: ${badge.icon}`)"
+                            @error="console.error(`Error loading badge icon: ${badge.icon}`); console.log('Error loading URL:', `http://192.168.0.10/storage/${badge.icon}`)" />
                     </span>
                 </h5>
 
@@ -120,8 +114,17 @@
                     Miembro desde: {{ formatDate(selectedUser.created_at) }}
                 </p>
                 <p class="description-details" v-if="selectedUser.description">{{ selectedUser.description }}</p>
+
+                <div v-if="selectedUser.currentSong" class="current-song">
+                    <h6>Escuchando ahora:</h6>
+                    <p><strong>Título:</strong> {{ selectedUser.currentSong.title }}</p>
+                    <p><strong>Artista:</strong> {{ selectedUser.currentSong.artist }}</p>
+                    <p><strong>Álbum:</strong> {{ selectedUser.currentSong.album }}</p>
+                    <img :src="selectedUser.currentSong.albumArtUrl" alt="Album Art" />
+                </div>
             </div>
         </div>
+
     </div>
 </template>
 
@@ -374,7 +377,6 @@ body {
     width: 250px;
     transition: transform 0.3s ease, opacity 0.3s ease;
     opacity: 0.95;
-    /* Slightly transparent for a softer look */
 }
 
 .close-button {
@@ -391,7 +393,6 @@ body {
 
 .close-button:hover {
     color: #ff6b6b;
-    /* Change color on hover */
 }
 
 .profile-info {
@@ -402,31 +403,21 @@ body {
 .profile-pic-details {
     border-radius: 50%;
     width: 70px;
-    /* Adjust size as needed */
     height: 70px;
-    /* Adjust size as needed */
     object-fit: cover;
-    /* Ensure the image fits nicely */
     border: 2px solid #fff;
-    /* Optional border for emphasis */
 }
 
 .username-details {
     font-size: 1.25rem;
-    /* Adjust font size as needed */
     color: #ffffff;
-    /* White color for contrast */
     margin: 0.5rem 0 0.25rem;
-    /* Spacing adjustments */
 }
 
 .description-details {
     color: #b3b3b3;
-    /* Lighter color for description */
     font-size: 0.9rem;
-    /* Smaller font for description */
     margin: 0;
-    /* Reset margin */
 }
 
 .user-description {
@@ -436,12 +427,10 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 120px;
-    /* Ajusta este valor según tus necesidades */
 }
 
 .text-gray {
     color: #ffffff;
-    /* Cambia a blanco para probar */
 }
 
 .role-item {
@@ -483,34 +472,27 @@ body {
 
 .stock-price.positive {
     color: #4caf50;
-    /* Green for positive changes */
 }
 
 .stock-price.negative {
     color: #f44336;
-    /* Red for negative changes */
 }
 
 .text-success {
     color: #00ff00;
-    /* Verde */
 }
 
 .text-danger {
     color: #ff0000;
-    /* Rojo */
 }
 
 .text-neutral {
     color: #ffffff;
-    /* Blanco o color neutro */
 }
 
 .badge-icon {
     margin-left: 5px;
-    /* Espacio entre el nombre de usuario y la insignia */
     vertical-align: middle;
-    /* Alinear verticalmente con el texto */
 }
 
 

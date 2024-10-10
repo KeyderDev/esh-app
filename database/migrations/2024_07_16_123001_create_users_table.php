@@ -16,6 +16,7 @@ class CreateUsersTable extends Migration
             $table->string('profile_picture')->nullable();
             $table->boolean('is_online')->default(false);
             $table->text('description')->nullable();
+            $table->string('spotify_access_token')->nullable(); 
             $table->timestamps();
         });
     }

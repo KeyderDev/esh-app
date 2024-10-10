@@ -27,28 +27,51 @@ export default {
         console.error("Error fetching user data:", error);
       }
     },
+    closeUserDetails() {
+      this.selectedUser = null;
+      this.currentSong = null;
+    },
+    async fetchCurrentSong() {
+      try {
+        const response = await fetch('/spotify/current-song');
+        if (response.ok) {
+          this.currentSong = await response.json();
+        } else {
+          console.error('Error al obtener la canción actual');
+        }
+      } catch (error) {
+        console.error('Error en la solicitud:', error);
+      }
+    },
+    async fetchUserDetails() {
+      await this.fetchCurrentSong();
+    },
+
+    connectSpotify() {
+      window.location.href = "/auth/spotify";
+    },
     logout() {
       console.log("click");
       axios.post('/api/logout', {}, {
-          headers: {
-              'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-          }
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+        }
       })
-      .then(response => {
+        .then(response => {
           console.log('Logout successful:', response.data);
-          localStorage.removeItem('auth_token');      
-          window.location.href = '/login';  
-      })
-      .catch(error => {
+          localStorage.removeItem('auth_token');
+          window.location.href = '/login';
+        })
+        .catch(error => {
           console.error('Logout error:', error);
-      });
-  },
-  
+        });
+    },
+
     updateSymbols() {
       const newSymbols = this.desiredSymbolsInput
         .split(",")
         .map((symbol) => symbol.trim());
-      this.$emit("update-symbols", newSymbols); 
+      this.$emit("update-symbols", newSymbols);
     },
     onFileChange(event) {
       this.profilePicture = event.target.files[0];
@@ -88,7 +111,7 @@ export default {
     async saveDescription() {
       try {
         const response = await axios.post(
-          `/api/users/description/${this.userId}`,  
+          `/api/users/description/${this.userId}`,
           { description: this.description },
           {
             headers: { Authorization: `Bearer ${this.authToken}` },
@@ -109,5 +132,8 @@ export default {
     setActiveTab(tab) {
       this.activeTab = tab;
     },
+  },
+  watch: {
+    selectedUser: 'fetchUserDetails',
   },
 };

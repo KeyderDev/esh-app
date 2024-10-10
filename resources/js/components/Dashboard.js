@@ -8,17 +8,18 @@ export default {
     return {
       badge: {
         name: '',
-        icon: null, 
+        icon: null,
       },
-      channels: [], 
-      newChannelName: '', 
+      channels: [],
+      newChannelName: '',
       profilePicture: null,
       description: "",
       authToken: localStorage.getItem("auth_token"),
       activeTab: "usuarios", // Default tab
-      users: [], 
-      activeMenu: null, 
-      authToken: '', 
+      users: [],
+      activeMenu: null,
+      authToken: '',
+      spotifyToken: null,
       permissions: [],
       users: [],
       selectedUser: null,
@@ -45,11 +46,12 @@ export default {
     this.authToken = localStorage.getItem('auth_token') || 'No disponible';
     this.fetchUsers();
     this.fetchChannels();
+    this.fetchSpotifyToken();
     this.fetchBadges();
   },
   methods: {
     onFileChange(event) {
-      this.badge.icon = event.target.files[0]; 
+      this.badge.icon = event.target.files[0];
     },
     async fetchUsers() {
       try {
@@ -68,49 +70,57 @@ export default {
         console.error('Error fetching users:', error);
       }
     },
+    async fetchSpotifyToken() {
+      try {
+        const authToken = localStorage.getItem('auth_token');
+        const response = await axios.get('/api/spotify/token', {
+          headers: {
+            'Authorization': `Bearer ${authToken}`,
+          },
+        });
+        this.spotifyToken = response.data.token;
+      } catch (error) {
+        console.error('Error al obtener el token de Spotify:', error);
+      }
+    },
+
     async fetchChannels() {
       try {
-        const response = await axios.get('/api/channels'); // Llamada a la API para obtener los canales
-        this.channels = response.data; // Asigna los canales a la variable
+        const response = await axios.get('/api/channels');
+        this.channels = response.data;
       } catch (error) {
         console.error('Error al obtener los canales:', error);
       }
     },
     async createChannel() {
-      if (!this.newChannelName) return; // Validar que el nombre del canal no esté vacío
+      if (!this.newChannelName) return;
       try {
         const response = await axios.post('/api/channels', {
           name: this.newChannelName,
         });
-        this.channels.push(response.data); // Agrega el nuevo canal a la lista
-        this.newChannelName = ''; // Limpiar el input
+        this.channels.push(response.data);
+        this.newChannelName = '';
       } catch (error) {
         console.error('Error al crear el canal:', error);
       }
     },
     async deleteChannel(channelId) {
       try {
-          // Make the API call to delete the channel
-          const response = await axios.delete(`/api/channels/${channelId}`);
-  
-          // Check if the response indicates success
-          if (response.status === 200) {
-              // Remove the channel from the local state
-              this.channels = this.channels.filter(channel => channel.id !== channelId);
-              console.log('Canal eliminado con éxito:', response.data);
-          } else {
-              console.error('Error al eliminar el canal:', response.data.message);
-          }
+        const response = await axios.delete(`/api/channels/${channelId}`);
+        if (response.status === 200) {
+          this.channels = this.channels.filter(channel => channel.id !== channelId);
+          console.log('Canal eliminado con éxito:', response.data);
+        } else {
+          console.error('Error al eliminar el canal:', response.data.message);
+        }
       } catch (error) {
-          // Handle error from the API
-          if (error.response) {
-              console.error('Error al borrar el canal:', error.response.data.message);
-          } else {
-              console.error('Error al borrar el canal:', error.message);
-          }
+        if (error.response) {
+          console.error('Error al borrar el canal:', error.response.data.message);
+        } else {
+          console.error('Error al borrar el canal:', error.message);
+        }
       }
-  },
-  
+    },
     async deleteUser(userId) {
       if (!confirm('Are you sure you want to delete this user?')) {
         return;
@@ -129,7 +139,7 @@ export default {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         this.users = this.users.filter(user => user.id !== userId);
-        this.activeMenu = null; 
+        this.activeMenu = null;
       } catch (error) {
         console.error('Error deleting user:', error);
       }
@@ -142,12 +152,12 @@ export default {
           }
         });
         this.badges = response.data;
-        console.log('Insignias cargadas:', this.badges);  // Verifica que los datos están aquí
+        console.log('Insignias cargadas:', this.badges);
       } catch (error) {
         console.error("Error fetching badges:", error);
       }
     },
-    
+
 
 
     async fetchUserBadges(userId) {
@@ -168,7 +178,7 @@ export default {
         const response = await axios.post('http://192.168.0.10:90/api/badges', formData, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-            'Content-Type': 'multipart/form-data', 
+            'Content-Type': 'multipart/form-data',
           },
         });
         console.log('Insignia creada:', response.data);
