@@ -30,7 +30,7 @@ export default {
       badges: [],
       userBadges: [],
       newWord: '',
-      forbiddenWords: [], 
+      forbiddenWords: [],
       newPermission: {
         name: '',
         description: ''
@@ -178,7 +178,7 @@ export default {
       }
       try {
         const token = localStorage.getItem('auth_token');
-        const response = await fetch(`http://192.168.0.10/api/users/${userId}`, {
+        const response = await fetch(`${window.appUrl}/api/users/${userId}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -226,7 +226,7 @@ export default {
       formData.append('icon', this.badge.icon);
 
       try {
-        const response = await axios.post('http://192.168.0.10/api/badges', formData, {
+        const response = await axios.post(`${window.appUrl}/api/badges`, formData, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
             'Content-Type': 'multipart/form-data',

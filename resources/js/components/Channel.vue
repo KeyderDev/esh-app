@@ -53,7 +53,7 @@ export default {
     };
   },
   async created() {
-    this.socket = io('http://192.168.0.10:6001');
+    this.socket = io(`${window.appUrl}:6001`);
 
     this.socket.on('connect', () => {
       console.log('Socket connected:', this.socket.id);
@@ -159,11 +159,12 @@ export default {
     },
 
     buildProfilePictureUrl(picture) {
-      const url = picture
-        ? `http://192.168.0.10/storage/${picture}`
+    const url = picture
+        ? `${window.appUrl}/storage/${picture}`
         : '/path/to/default/profile_picture.jpg';
-      return url;
-    },
+    return url;
+},
+
 
     formatTimestamp(timestamp) {
       const date = new Date(timestamp);

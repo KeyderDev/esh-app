@@ -10,10 +10,9 @@ class CorsMiddleware
     {
         $response = $next($request);
 
-        // Configura los encabezados CORS
-        $response->headers->set('Access-Control-Allow-Origin', '*'); // Permite todas las orígenes
-        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'); // Métodos permitidos
-        $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // Encabezados permitidos
+        $response->headers->set('Access-Control-Allow-Origin', '*'); 
+        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'); 
+        $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization'); 
 
         return $response;
     }

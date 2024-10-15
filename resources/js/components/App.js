@@ -1,5 +1,5 @@
 import Settings from "../components/Settings.vue"; 
-import { ref, onMounted } from "vue";
+// import { ref, onMounted } from "vue";
 import axios from "axios";
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
@@ -25,7 +25,6 @@ export default {
         }
     },
     
-
     data() {
         return {
             imageSrc: "/images/esh.jpg",
@@ -34,8 +33,6 @@ export default {
             users: [],
             channels: [],
             userBadges: [],
-            desiredSymbols: ["AAPL", "GOOGL", "MSFT", "PLTR"],
-            stockPrices: [],
             offlineUsers: [],
             badges: [],
             selectedUser: null,
@@ -55,7 +52,6 @@ export default {
         this.loadProfilePicture();
         this.updateTime();
         this.updateOnlineStatus(true);
-        this.fetchStockPrices();
         document.addEventListener("visibilitychange", this.handleVisibilityChange);
         window.addEventListener("beforeunload", this.handleBeforeUnload);
         window.addEventListener("unload", () => this.updateOnlineStatus(false));
@@ -95,10 +91,11 @@ export default {
             }
         },
         buildBadgeUrl(badgeIcon) {
-            const url = `http://192.168.0.10/storage/badges/${badgeIcon}`;
-            console.log("Generated Badge URL:", url); 
+            const url = `${window.appUrl}/storage/badges/${badgeIcon}`; 
+            console.log("Generated Badge URL:", url);
             return url;
         },
+        
         async loadChannels() {
             try {
               const token = localStorage.getItem('auth_token');
@@ -152,32 +149,9 @@ export default {
                 return "text-neutral"; 
             }
         },
-        async fetchStockPrices() {
-            try {
-                const response = await axios.get(
-                    "https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/2024-09-17", {
-                    headers: {
-                        Authorization: "Bearer lUB79pJEZzFhNeoeRpFnsssVuArIHZJV", 
-                    },
-                }
-                );
-
-                this.stockPrices = response.data.results
-                    .filter((stock) => this.desiredSymbols.includes(stock.T))
-                    .map((stock) => {
-                        const changePercent = ((stock.c - stock.h) / stock.h) * 100;
-                        return {
-                            symbol: stock.T,
-                            changePercent: changePercent.toFixed(2),
-                        };
-                    });
-            } catch (error) {
-                console.error("Error fetching stock prices:", error);
-            }
-        },
         buildProfilePictureUrl(picture) {
             const url = picture ?
-                `http://192.168.0.10/storage/${picture}` :
+                `${window.appUrl}/storage/${picture}` :
                 "/path/to/default/profile_picture.jpg";
             console.log("Profile picture URL:", url); 
             return url;

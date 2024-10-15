@@ -24,7 +24,7 @@ class MessageSent implements ShouldBroadcast
 
     public function broadcastOn()
     {
-        return new Channel('channel.' . $this->message->channel_id); // Asegúrate de que esto coincida con tu lógica
+        return new Channel('channel.' . $this->message->channel_id); 
     }
 
     public function broadcastWith()
@@ -34,7 +34,7 @@ class MessageSent implements ShouldBroadcast
             'content' => $this->message->content,
             'user_id' => $this->message->user_id,
             'created_at' => $this->message->created_at,
-            'user' => $this->message->user, // Incluye el usuario asociado
+            'user' => $this->message->user,
         ];
     }
 }

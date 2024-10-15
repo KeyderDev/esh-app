@@ -38,11 +38,11 @@ export default {
         fetchAllPermissions() {
     axios.get(`/api/users/${this.userId}/all-permissions`)
         .then(response => {
-            console.log(response.data); // Verifica que los permisos se reciban correctamente
+            console.log(response.data); 
             this.allPermissions = response.data.map(permission => ({
                 id: permission.id,
                 name: permission.name,
-                assigned: permission.assigned  // Asumiendo que el backend proporciona esta propiedad
+                assigned: permission.assigned  
             }));
         })
         .catch(error => {

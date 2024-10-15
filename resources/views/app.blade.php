@@ -4,6 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>ESH - APP</title>
+
+    <script>
+    window.appUrl = '{{ env('APP_URL') }}';
+    </script>
+
     @vite(['resources/js/app.js'])
 </head>
 <body>

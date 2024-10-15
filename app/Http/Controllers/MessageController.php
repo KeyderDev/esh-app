@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Channel; // Asegúrate de importar tu modelo Channel
-use App\Models\Message; // Asegúrate de importar tu modelo Message
+use App\Models\Channel; 
+use App\Models\Message; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Events\MessageSent;
@@ -32,13 +32,9 @@ class MessageController extends Controller
         $message->user_id = $userId; 
         $channel->messages()->save($message);
     
-        // Emitir el evento
         broadcast(new MessageSent($message))->toOthers(); 
     
         return response()->json($message->load('user'), 201);
-    }
-    
-    
-    
+    }  
 }
 

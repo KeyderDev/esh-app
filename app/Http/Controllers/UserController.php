@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
-    // Relationship method for permissions
     public function permissions()
     {
         return $this->belongsToMany(Permission::class, 'permission_user');
@@ -91,10 +90,8 @@ class UserController extends Controller
     }
 
     public function getAllPermissions($userId) {
-        // Get all permissions
         $permissions = Permission::all();
         
-        // Map permissions and determine if assigned to user
         $userPermissions = $permissions->map(function ($permission) use ($userId) {
             return [
                 'id' => $permission->id,
@@ -102,7 +99,7 @@ class UserController extends Controller
                 'assigned' => DB::table('permission_user')
                     ->where('user_id', $userId)
                     ->where('permission_id', $permission->id)
-                    ->exists(), // returns true if the permission is assigned
+                    ->exists(), 
             ];
         });
     
@@ -163,7 +160,6 @@ class UserController extends Controller
         $user = User::findOrFail($userId);
         $permission = Permission::findOrFail($request->permission_id);
 
-        // Revoke the permission from the user
         $user->permissions()->detach($permission);
 
         return response()->json(['message' => 'Permiso revocado correctamente']);
