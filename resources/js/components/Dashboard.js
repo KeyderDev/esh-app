@@ -29,6 +29,8 @@ export default {
       selectedBadge: null,
       badges: [],
       userBadges: [],
+      newWord: '',
+      forbiddenWords: [], 
       newPermission: {
         name: '',
         description: ''
@@ -68,9 +70,9 @@ export default {
     createPermission() {
       axios.post('/api/permissions', this.newPermission)
         .then(response => {
-          this.permissions.push(response.data); 
-          this.newPermission.name = ''; 
-          this.newPermission.description = ''; 
+          this.permissions.push(response.data);
+          this.newPermission.name = '';
+          this.newPermission.description = '';
         })
         .catch(error => {
           console.error('Error creando permiso:', error);
@@ -106,7 +108,33 @@ export default {
         console.error('Error al obtener el token de Spotify:', error);
       }
     },
-
+    // async fetchForbiddenWords() {
+    //   try {
+    //     const response = await axios.get('/api/forbidden-words');
+    //     this.forbiddenWords = response.data;
+    //   } catch (error) {
+    //     console.error('Error al cargar las palabras prohibidas:', error);
+    //   }
+    // },
+    // async addForbiddenWord() {
+    //   if (this.newWord && !this.forbiddenWords.includes(this.newWord.toLowerCase())) {
+    //     try {
+    //       const response = await axios.post('/api/forbidden-words', { word: this.newWord.toLowerCase() });
+    //       this.forbiddenWords.push(response.data.word); // Agregar la nueva palabra a la lista
+    //       this.newWord = ''; // Limpiar el campo de entrada
+    //     } catch (error) {
+    //       console.error('Error al agregar la palabra prohibida:', error);
+    //     }
+    //   }
+    // },
+    // async removeForbiddenWord(word) {
+    //   try {
+    //     await axios.delete(`/api/forbidden-words/${word}`);
+    //     this.forbiddenWords = this.forbiddenWords.filter(w => w !== word); // Remover la palabra de la lista
+    //   } catch (error) {
+    //     console.error('Error al eliminar la palabra prohibida:', error);
+    //   }
+    // },
     async fetchChannels() {
       try {
         const response = await axios.get('/api/channels');

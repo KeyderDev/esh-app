@@ -1,8 +1,5 @@
 import axios from "axios";
 export default {
-  props: {
-    desiredSymbols: Array,
-  },
   data() {
     return {
       profilePicture: null,

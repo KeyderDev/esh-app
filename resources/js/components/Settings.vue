@@ -43,8 +43,6 @@
             <button @click="connectSpotify" class="spotify-connect-button">Conectar Spotify</button>
           </div>
         </template>
-
-
         <template v-if="activeTab === 'apariencia'">
           <div class="option-container">
             <div class="option-header">
@@ -68,7 +66,7 @@
           </div>
         </template>
 
-        <template v-if="activeTab === 'Accesibilidad'">
+        <template v-if="activeTab === 'accesibilidad'">
         </template>
 
       </div>

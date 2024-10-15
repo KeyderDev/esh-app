@@ -15,6 +15,9 @@
         <li :class="{ active: activeTab === 'permisos' }" @click="setActiveTab('permisos')">
           Permisos
         </li>
+        <li :class="{ active: activeTab === 'watchdog' }" @click="setActiveTab('watchdog')">
+          WatchDog
+        </li>
         <li :class="{ active: activeTab === 'debug' }" @click="setActiveTab('debug')">
           Debug
         </li>
@@ -82,6 +85,24 @@
             <p><strong>Token de autorización:</strong> {{ authToken }}</p>
             <p><strong>Token de autorización (Spotify):</strong> {{ spotifyToken }}</p>
             <p><strong>Estado de la sesión:</strong> {{ sessionStatus }}</p>
+          </div>
+        </template>
+
+        <template v-if="activeTab === 'watchdog'">
+          <div class="watchdog-container">
+            <h3 class="title">Gestión de palabras prohibidas</h3>
+            <form @submit.prevent="addForbiddenWord" class="watchdog-form">
+              <input v-model="newWord" class="input-word" placeholder="Nueva palabra" required />
+              <button type="submit" class="btn-add">Agregar</button>
+            </form>
+            <ul class="word-list">
+              <li v-for="(word, index) in forbiddenWords" :key="index" class="word-item">
+                {{ word }}
+                <button @click="removeForbiddenWord(word)" class="btn-remove">
+                  Eliminar
+                </button>
+              </li>
+            </ul>
           </div>
         </template>
 
@@ -751,7 +772,6 @@ input:checked+.slider:before {
   border-radius: 5px;
 }
 
-/* Estilos para el formulario y la lista de permisos */
 form {
   margin-bottom: 1.5rem;
 }
@@ -778,5 +798,84 @@ button {
 
 button:hover {
   background-color: #0056b3;
+}
+
+.watchdog-container {
+  background-color: #1e1e1e;
+  padding: 1.5rem;
+  border-radius: 8px;
+  color: #fff;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #f5f5f5;
+}
+
+.watchdog-form {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.input-word {
+  flex-grow: 1;
+  padding: 0.5rem;
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.input-word::placeholder {
+  color: #bbb;
+}
+
+.btn-add {
+  padding: 0.5rem 1rem;
+  background-color: #4caf50;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-add:hover {
+  background-color: #45a049;
+}
+
+.word-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.word-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background-color: #292929;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+}
+
+.btn-remove {
+  padding: 0.25rem 0.75rem;
+  background-color: #e74c3c;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-remove:hover {
+  background-color: #c0392b;
 }
 </style>

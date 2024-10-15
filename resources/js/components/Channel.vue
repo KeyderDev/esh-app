@@ -62,12 +62,12 @@ export default {
 
     this.socket.on('message-received', (message) => {
       console.log('Message received:', message);
-      message.created_at = message.created_at || new Date().toISOString(); 
+      message.created_at = message.created_at || new Date().toISOString();
       this.messages.push(message);
       this.groupMessages();
       this.scrollToBottom();
     });
-    
+
     await this.loadMessages();
   },
   mounted() {
@@ -75,7 +75,15 @@ export default {
   },
   methods: {
     renderMarkdown(content) {
-      return this.md.render(content);
+      const markdownContent = this.md.render(content);
+      return this.convertLinksToHyperlinks(markdownContent);
+    },
+
+    convertLinksToHyperlinks(content) {
+      const urlRegex = /(https?:\/\/[^\s]+)/g; 
+      return content.replace(urlRegex, (url) => {
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+      });
     },
 
     async loadMessages() {
