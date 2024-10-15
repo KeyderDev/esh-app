@@ -95,7 +95,7 @@ export default {
             }
         },
         buildBadgeUrl(badgeIcon) {
-            const url = `http://192.168.0.10:90/storage/badges/${badgeIcon}`;
+            const url = `http://192.168.0.10/storage/badges/${badgeIcon}`;
             console.log("Generated Badge URL:", url); 
             return url;
         },
@@ -177,7 +177,7 @@ export default {
         },
         buildProfilePictureUrl(picture) {
             const url = picture ?
-                `http://192.168.0.10:90/storage/${picture}` :
+                `http://192.168.0.10/storage/${picture}` :
                 "/path/to/default/profile_picture.jpg";
             console.log("Profile picture URL:", url); 
             return url;

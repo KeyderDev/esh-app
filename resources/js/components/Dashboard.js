@@ -29,6 +29,10 @@ export default {
       selectedBadge: null,
       badges: [],
       userBadges: [],
+      newPermission: {
+        name: '',
+        description: ''
+      }
     };
   },
   created() {
@@ -52,6 +56,25 @@ export default {
   methods: {
     onFileChange(event) {
       this.badge.icon = event.target.files[0];
+    },
+    goToUserPermissions(userId) {
+      this.$router.push({ name: 'UserPermissions', params: { id: userId } });
+    },
+    fetchPermissions() {
+      axios.get('/api/permissions').then(response => {
+        this.permissions = response.data;
+      });
+    },
+    createPermission() {
+      axios.post('/api/permissions', this.newPermission)
+        .then(response => {
+          this.permissions.push(response.data); 
+          this.newPermission.name = ''; 
+          this.newPermission.description = ''; 
+        })
+        .catch(error => {
+          console.error('Error creando permiso:', error);
+        });
     },
     async fetchUsers() {
       try {
@@ -127,7 +150,7 @@ export default {
       }
       try {
         const token = localStorage.getItem('auth_token');
-        const response = await fetch(`http://192.168.0.10:90/api/users/${userId}`, {
+        const response = await fetch(`http://192.168.0.10/api/users/${userId}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -175,7 +198,7 @@ export default {
       formData.append('icon', this.badge.icon);
 
       try {
-        const response = await axios.post('http://192.168.0.10:90/api/badges', formData, {
+        const response = await axios.post('http://192.168.0.10/api/badges', formData, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
             'Content-Type': 'multipart/form-data',

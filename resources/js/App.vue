@@ -104,7 +104,7 @@
                     {{ selectedUser.username }}
                     <span v-if="userBadges.length > 0">
                         <img v-for="badge in userBadges" :key="badge.id"
-                            :src="`http://192.168.0.10:90/storage/${badge.icon}`.trim()" :alt="badge.name" width="20"
+                            :src="`http://192.168.0.10/storage/${badge.icon}`.trim()" :alt="badge.name" width="20"
                             height="20" class="badge-icon" @load="console.log(`Loaded badge icon: ${badge.icon}`)"
                             @error="console.error(`Error loading badge icon: ${badge.icon}`); console.log('Error loading URL:', `http://192.168.0.10/storage/${badge.icon}`)" />
                     </span>
@@ -494,7 +494,6 @@ body {
     margin-left: 5px;
     vertical-align: middle;
 }
-
 
 @keyframes ticker {
     from {

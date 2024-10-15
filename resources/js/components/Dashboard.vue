@@ -12,6 +12,9 @@
         <li :class="{ active: activeTab === 'seguridad' }" @click="setActiveTab('insignias')">
           Insignias
         </li>
+        <li :class="{ active: activeTab === 'permisos' }" @click="setActiveTab('permisos')">
+          Permisos
+        </li>
         <li :class="{ active: activeTab === 'debug' }" @click="setActiveTab('debug')">
           Debug
         </li>
@@ -21,7 +24,6 @@
 
     <!-- Main Content -->
     <div class="custom-content">
-      <!-- Mensaje de aviso -->
       <div class="custom-notice">
         <p>Estas en el panel general de administración de la aplicación, estos ajustes son esenciales para el correcto
           funcionamiento.</p>
@@ -34,7 +36,7 @@
       <div class="custom-content-scroll">
         <template v-if="activeTab === 'usuarios'">
           <div class="custom-user-list">
-            <div v-for="user in users" :key="user.id" class="custom-user-item">
+            <div v-for="user in users" :key="user.id" class="custom-user-item" @click="goToUserPermissions(user.id)">
               <img :src="`/storage/${user.profile_picture}`" alt="Profile Picture" class="custom-profile-picture" />
               <div class="custom-user-details">
                 <h3 class="custom-username">{{ user.username }}</h3>
@@ -42,10 +44,11 @@
                 <p class="custom-creation-date">Joined: {{ formatDate(user.created_at) }}</p>
                 <div class="custom-badges">
                   <span v-for="badge in user.badges" :key="badge.id" class="custom-badge">
-                    {{ badge.name }}</span>
+                    {{ badge.name }}
+                  </span>
                 </div>
               </div>
-              <div class="custom-menu-container" @click="toggleMenu(user.id)">
+              <div class="custom-menu-container" @click.stop="toggleMenu(user.id)">
                 <span class="custom-menu-icon">⋮</span>
                 <div v-if="activeMenu === user.id" class="custom-menu-dropdown">
                   <button @click="deleteUser(user.id)">Delete</button>
@@ -82,6 +85,36 @@
           </div>
         </template>
 
+        <template v-if="activeTab === 'permisos'">
+          <div>
+            <h1>Gestión de Permisos</h1>
+
+            <form @submit.prevent="createPermission">
+              <div>
+                <label for="permissionName">Nombre del Permiso:</label>
+                <input type="text" id="permissionName" v-model="newPermission.name" required />
+              </div>
+
+              <div>
+                <label for="permissionDescription">Descripción:</label>
+                <textarea id="permissionDescription" v-model="newPermission.description" rows="3" required></textarea>
+              </div>
+
+              <button type="submit">Crear Permiso</button>
+            </form>
+
+            <div v-if="permissions.length">
+              <h2>Lista de Permisos:</h2>
+              <ul>
+                <li v-for="permission in permissions" :key="permission.id">
+                  <strong>{{ permission.name }}</strong> - {{ permission.description }}
+                  <button @click="deletePermission(permission.id)">Eliminar</button>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </template>
+
         <template v-if="activeTab === 'insignias'">
           <div class="insignias-container">
             <form @submit.prevent="createBadge" class="insignias-form">
@@ -112,7 +145,7 @@
   </div>
 </template>
 
-<script src="./Dashboard.js"></script> 
+<script src="./Dashboard.js"></script>
 
 <style scoped>
 .custom-settings-container {
@@ -716,5 +749,34 @@ input:checked+.slider:before {
   color: #ffffff;
   padding: 20px;
   border-radius: 5px;
+}
+
+/* Estilos para el formulario y la lista de permisos */
+form {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
 }
 </style>

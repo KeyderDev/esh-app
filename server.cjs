@@ -6,7 +6,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "http://192.168.0.10:90", // Cambia esto al origen de tu aplicación frontend
+        origin: "http://192.168.0.10", // Cambia esto al origen de tu aplicación frontend
         methods: ["GET", "POST"],
         allowedHeaders: ["Authorization"],
         credentials: true

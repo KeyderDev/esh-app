@@ -29,19 +29,16 @@ class User extends Authenticatable
         'api_token' => 'string',
     ];
 
-    // Relación con roles
-    public function roles()
+    public function permissions()
     {
-        return $this->belongsToMany(Role::class); // Cambia Role::class si tienes un namespace diferente
+        return $this->belongsToMany(Permission::class, 'permission_user'); 
     }
 
-    // Accesor para obtener solo los nombres de los roles
-    public function getRoleNamesAttribute()
+    public function getPermissionNamesAttribute()
     {
-        return $this->roles->pluck('name');
+        return $this->permissions->pluck('name');
     }
 
-    // Relación muchos a muchos entre User y Badge
     public function badges()
     {
         return $this->belongsToMany(Badge::class, 'user_badges');

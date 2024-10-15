@@ -46,15 +46,25 @@
 
 
         <template v-if="activeTab === 'apariencia'">
-          <div class="reward-container">
-            <div class="reward-header">
+          <div class="option-container">
+            <div class="option-header">
               <h3>Fondo ESH</h3>
               <div class="toggle-switch">
-                <input type="checkbox" id="reward-toggle">
-                <label for="reward-toggle" class="toggle-label"></label>
+                <input type="checkbox" id="option-toggle">
+                <label for="option-toggle" class="toggle-label"></label>
               </div>
             </div>
             <p>Esta opcion hace que la app tenga un estilo transparente, con el fondo de Emprende Sin Humo.</p>
+          </div>
+          <div class="option-container">
+            <div class="option-header">
+              <h3>Mostrar Hora</h3>
+              <div class="toggle-switch">
+                <input type="checkbox" id="option-toggle">
+                <label for="option-toggle" class="toggle-label"></label>
+              </div>
+            </div>
+            <p>Muestra la hora actual en la sidebar superior.</p>
           </div>
         </template>
 
@@ -194,7 +204,7 @@
   background-color: #7289da;
 }
 
-.reward-container {
+.option-container {
   background-color: #2b2d31;
   padding: 0.75rem;
   border-radius: 6px;
@@ -202,7 +212,7 @@
   color: #e3e5e8;
 }
 
-.reward-header {
+.option-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
