@@ -6,6 +6,8 @@ import Libreria from './components/Libreria.vue';
 import Dashboard from './components/Dashboard.vue';
 import Channel from './components/Channel.vue'; 
 import UserPermissions from './components/UserPermissions.vue';
+// import NotFound from './components/NotFound.vue'; 
+// { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound },
 
 
 const routes = [
@@ -16,7 +18,6 @@ const routes = [
   { path: '/dashboard', component: Dashboard },
   { path: '/channel/:id', component: Channel, name: 'channel' }, 
   { path: '/user-permissions/:id', name: 'UserPermissions', component: UserPermissions },
-
 ];
 
 function isAuthenticated() {
