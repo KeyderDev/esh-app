@@ -58,8 +58,6 @@ export default {
         window.addEventListener("mousemove", this.resetInactivityTimeout);
         window.addEventListener("keydown", this.resetInactivityTimeout);
         this.startInactivityTimeout();
-        this.fetchOnlineUsers();
-        this.fetchOfflineUsers();
         setInterval(this.updateTime, 1000);
         this.loadUsers();
         this.loadChannels();
@@ -135,19 +133,6 @@ export default {
 
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             return date.toLocaleDateString('es-ES', options);
-        },
-        updateSymbols(newSymbols) {
-            this.desiredSymbols = newSymbols;
-            this.fetchStockPrices();
-        },
-        getStockChangeClass(changePercent) {
-            if (changePercent > 0) {
-                return "text-success"; 
-            } else if (changePercent < 0) {
-                return "text-danger"; 
-            } else {
-                return "text-neutral"; 
-            }
         },
         buildProfilePictureUrl(picture) {
             const url = picture ?
@@ -302,57 +287,6 @@ export default {
             } catch (error) {
                 console.error("Error fetching user badges:", error);
             }
-        },
-        
-        fetchOnlineUsers() {
-            const authToken = localStorage.getItem("auth_token");
-            axios
-                .get("/api/users/online", {
-                    headers: {
-                        Authorization: `Bearer ${authToken}`,
-                    },
-                })
-                .then((response) => {
-                    if (Array.isArray(response.data)) {
-                        this.users = response.data.map((user) => {
-                            console.log("User description:", user.description);
-                            return {
-                                ...user,
-                                profile_picture: this.buildProfilePictureUrl(user.profile_picture),
-                            };
-                        });
-                    }
-                })
-                .catch((error) => {
-                    console.error(
-                        "Error fetching online users",
-                        error.response ? error.response.data : error
-                    );
-                });
-        },
-        fetchOfflineUsers() {
-            const authToken = localStorage.getItem("auth_token");
-            axios
-                .get("/api/users/offline", {
-                    headers: {
-                        Authorization: `Bearer ${authToken}`,
-                    },
-                })
-                .then((response) => {
-                    this.offlineUsers = response.data.map((user) => ({
-                        ...user,
-                        profile_picture: this.buildProfilePictureUrl(user.profile_picture),
-                    }));
-                })
-                .catch((error) => {
-                    console.error(
-                        "Error fetching offline users",
-                        error.response ? error.response.data : error
-                    );
-                });
-        },
-        getStockPriceClass(price) {
-            return price > 0 ? "text-success" : "text-danger";
         },
         showUserDetails(user) {
             this.selectedUser = user;
