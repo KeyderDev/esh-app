@@ -80,7 +80,7 @@ export default {
     },
 
     convertLinksToHyperlinks(content) {
-      const urlRegex = /(https?:\/\/[^\s]+)/g; 
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
       return content.replace(urlRegex, (url) => {
         return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
       });
@@ -159,11 +159,11 @@ export default {
     },
 
     buildProfilePictureUrl(picture) {
-    const url = picture
+      const url = picture
         ? `${window.appUrl}/storage/${picture}`
         : '/path/to/default/profile_picture.jpg';
-    return url;
-},
+      return url;
+    },
 
 
     formatTimestamp(timestamp) {
@@ -178,8 +178,19 @@ export default {
         date.getMonth() === now.getMonth() &&
         date.getFullYear() === now.getFullYear();
 
+      const isYesterday =
+        date.getDate() === now.getDate() - 1 &&
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear();
+
       if (isToday) {
         return `hoy a las ${date.toLocaleTimeString('es-ES', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        })}`;
+      } else if (isYesterday) {
+        return `ayer a las ${date.toLocaleTimeString('es-ES', {
           hour: '2-digit',
           minute: '2-digit',
           hour12: false,
@@ -196,7 +207,6 @@ export default {
         return date.toLocaleString('es-ES', options).replace(',', '');
       }
     },
-
     scrollToBottom() {
       this.$nextTick(() => {
         const container = this.$refs.messagesContainer;
