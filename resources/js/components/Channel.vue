@@ -114,9 +114,8 @@ export default {
       try {
         let content = this.newMessage.trim();
         let replyingToId = null;
-
         if (this.replyingTo && this.replyingTo.content) {
-          content = `> ${this.replyingTo.content}\n\n${content}`;
+          content = `<div class="replying-to">Respondiendo a: ${this.replyingTo.content}</div>\n\n${content}`;
           replyingToId = this.replyingTo.id;
         }
 
@@ -147,7 +146,6 @@ export default {
           user: message.user,
           created_at: message.created_at
         });
-
 
         this.newMessage = '';
         this.replyingTo = null;
@@ -387,16 +385,6 @@ export default {
   text-decoration: underline;
 }
 
-.reply-preview {
-  margin-bottom: 0.5rem;
-  background-color: #444;
-  padding: 0.5rem;
-  border-radius: 5px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .reply-preview button {
   background: none;
   border: none;
@@ -407,5 +395,38 @@ export default {
 
 .reply-preview button:hover {
   text-decoration: underline;
+}
+
+.reply-preview {
+  margin-bottom: 0.5rem;
+  background-color: #2c2f33;
+  border-radius: 5px;
+  padding: 0.5rem;
+  border-left: 3px solid #7289da;
+}
+
+.reply-header {
+  display: flex;
+  align-items: center;
+}
+
+.reply-text {
+  color: #b9bbbe;
+  font-size: 0.9rem;
+  line-height: 1.2;
+}
+
+.reply-text strong {
+  color: #00bfff;
+}
+
+.replying-to {
+  background-color: #f0f0f0;
+  border-left: 4px solid #007bff;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  color: #333;
+  font-style: italic;
 }
 </style>
