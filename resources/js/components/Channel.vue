@@ -28,8 +28,11 @@
         Respondiendo a <strong>{{ replyingTo.user.username }}</strong>: "{{ replyingTo.content }}"
         <button @click="cancelReply">Cancelar</button>
       </div>
+      <button @click="uploadFile" class="upload-button"><i class="fa-solid fa-paperclip"></i></button>
       <input ref="messageInput" v-model="newMessage" placeholder="Escribe tu mensaje..." required class="message-input"
         @keydown.enter="sendMessage" />
+      <button @click="toggleEmojiPicker" class="emoji-button">😀</button>
+      <Picker class="emoji-picker" @select="addEmoji" />
     </div>
   </div>
 </template>
@@ -37,6 +40,7 @@
 <script>
 import { io } from 'socket.io-client';
 import MarkdownIt from 'markdown-it';
+import { Picker } from 'emoji-mart';
 
 export default {
   data() {
@@ -50,6 +54,7 @@ export default {
       md: new MarkdownIt(),
       hoveredMessage: null,
       replyingTo: null,
+      showEmojiPicker: false,
     };
   },
   async created() {
@@ -163,7 +168,6 @@ export default {
       return url;
     },
 
-
     formatTimestamp(timestamp) {
       const date = new Date(timestamp);
       if (isNaN(date.getTime())) {
@@ -264,12 +268,17 @@ export default {
     cancelReply() {
       this.replyingTo = null;
     },
-  },
 
-  beforeUnmount() {
-    if (this.socket) {
-      this.socket.disconnect();
-    }
+    toggleEmojiPicker() {
+      this.showEmojiPicker = !this.showEmojiPicker;
+      console.log('Toggle Emoji Picker:', this.showEmojiPicker);
+    },
+
+
+    addEmoji(emoji) {
+      this.newMessage += emoji.native;
+      this.showEmojiPicker = false;
+    },
   },
 };
 </script>
@@ -325,23 +334,25 @@ export default {
 
 .input-container {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   width: 100%;
+  background-color: #2a2a2a;
+  border-radius: 5px;
 }
 
 .message-input {
   flex: 1;
   padding: 0.5rem;
-  border: 1px solid #444;
+  border: 1px solid transparent;
   border-radius: 5px;
   background-color: #2a2a2a;
   color: #fff;
   transition: border-color 0.3s;
   width: 100%;
+  margin: 0 0.5rem;
 }
 
 .message-input:focus {
-  border-color: #007bff;
   outline: none;
 }
 
@@ -385,6 +396,14 @@ export default {
   text-decoration: underline;
 }
 
+.reply-preview {
+  margin-bottom: 0.5rem;
+  background-color: #2c2f33;
+  border-radius: 5px;
+  padding: 0.5rem;
+  border-left: 3px solid #7289da;
+}
+
 .reply-preview button {
   background: none;
   border: none;
@@ -395,14 +414,6 @@ export default {
 
 .reply-preview button:hover {
   text-decoration: underline;
-}
-
-.reply-preview {
-  margin-bottom: 0.5rem;
-  background-color: #2c2f33;
-  border-radius: 5px;
-  padding: 0.5rem;
-  border-left: 3px solid #7289da;
 }
 
 .reply-header {
@@ -428,5 +439,43 @@ export default {
   border-radius: 4px;
   color: #333;
   font-style: italic;
+}
+
+.input-controls {
+  display: flex;
+  align-items: center;
+}
+
+.upload-button,
+.emoji-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 0.5rem;
+}
+
+.upload-button img {
+  width: 20px;
+  height: 20px;
+}
+
+.emoji-button {
+  font-size: 1.5rem;
+}
+
+i {
+  color: #6f7573;
+}
+
+.emoji-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.emoji-picker {
+  position: absolute;
+  z-index: 1000;
 }
 </style>
