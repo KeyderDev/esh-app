@@ -32,7 +32,7 @@
       <textarea ref="messageInput" v-model="newMessage" placeholder="Escribe tu mensaje..." required
         class="message-input" @keydown="handleKeydown"></textarea>
       <button @click="toggleEmojiPicker" class="emoji-button">😀</button>
-      <Picker class="emoji-picker" @select="addEmoji" />
+      <Picker v-if="showEmojiPicker" class="emoji-picker" @select="addEmoji" />
     </div>
   </div>
 </template>
