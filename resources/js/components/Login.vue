@@ -2,17 +2,34 @@
   <div class="overlay">
     <div class="login-container">
       <form @submit.prevent="login">
-        <h2 class="login-title">Iniciar Sesion</h2>
+        <h2 class="login-title">Iniciar sesión</h2>
+        <p class="login-description">Introduce tus credenciales para continuar.</p>
+
         <div class="input-group">
-          <input v-model="username" placeholder="Usuario" required />
-          <input v-model="password" placeholder="Contraseña" type="password" required />
+          <label for="email"><i class="fa-regular fa-user"></i> USUARIO</label>
+          <input v-model="username" id="email" placeholder="Usuario" required />
         </div>
-        <button type="submit" class="login-button">Entrar</button>
-        <button type="button" @click="goToRegister" class="register-button">Registrarse</button>
+
+        <div class="input-group">
+          <label for="password"><i class="fa-solid fa-lock"></i> CONTRASEÑA</label>
+          <input v-model="password" id="password" placeholder="Contraseña" type="password" required />
+          <i class="toggle-password">👁️</i>
+        </div>
+
+        <!-- Aquí se mostrarán las alertas -->
+        <div v-if="alertMessage" class="alert-box">
+          {{ alertMessage }}
+        </div>
+
+        <div class="action-group">
+          <button type="button" class="date-button"><i class="fa-solid fa-id-card"></i></button>
+          <button type="submit" class="login-button">Iniciar</button>
+        </div>
       </form>
     </div>
   </div>
 </template>
+
 
 <script>
 import axios from '../axios';
@@ -22,49 +39,47 @@ export default {
     return {
       username: '',
       password: '',
+      alertMessage: '', // Propiedad reactiva para el mensaje de alerta
     };
   },
   mounted() {
-  const token = localStorage.getItem('auth_token');
-  if (token) {
-    this.$router.push('/');
-  }
-  },
-  methods: {
-  async login() {
-    try {
-      const response = await axios.post('/api/login', {
-        username: this.username,
-        password: this.password,
-      });
-
-      const token = response.data.token;
-      const userProfile = response.data.user;
-
-      if (token) {
-        localStorage.setItem('auth_token', token);
-        localStorage.setItem('username', userProfile.username);
-        localStorage.setItem('profile_picture', userProfile.profile_picture);
-        alert(response.data.message);
-        window.location.reload();
-      } else {
-        alert('No se recibió un token.');
-      }
-    } catch (error) {
-      if (error.response) {
-        alert(error.response.data.message || 'Login failed.');
-      } else {
-        alert('Error en el proceso de inicio de sesión.');
-      }
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      this.$router.push('/');
     }
   },
-  goToRegister() {
-    this.$router.push('/register'); 
-  }
-}
+  methods: {
+    async login() {
+      try {
+        const response = await axios.post('/api/login', {
+          username: this.username,
+          password: this.password,
+        });
 
+        const token = response.data.token;
+        const userProfile = response.data.user;
+
+        if (token) {
+          localStorage.setItem('auth_token', token);
+          localStorage.setItem('username', userProfile.username);
+          localStorage.setItem('profile_picture', userProfile.profile_picture);
+          this.alertMessage = response.data.message;
+          setTimeout(() => window.location.reload(), 1000); // Espera un segundo antes de recargar
+        } else {
+          this.alertMessage = 'No se recibió un token.';
+        }
+      } catch (error) {
+        if (error.response) {
+          this.alertMessage = error.response.data.message || 'Error en el inicio de sesión.';
+        } else {
+          this.alertMessage = 'Error en el proceso de inicio de sesión.';
+        }
+      }
+    },
+  },
 };
 </script>
+
 
 <style scoped>
 .overlay {
@@ -74,7 +89,6 @@ export default {
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(10px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -82,30 +96,44 @@ export default {
 
 .login-container {
   background: #1e1e1e;
-  padding: 30px;
+  padding: 40px;
   border-radius: 12px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
-  width: 300px;
+  width: 370px;
 }
 
 .login-title {
-  color: #ccc;
-  margin-bottom: 20px;
+  color: #e0e0e0;
+  font-size: 2rem;
+  margin-bottom: 10px;
   text-align: center;
 }
 
+.login-description {
+  color: #9ea0a1;
+  font-size: 1rem;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 .input-group {
-  display: flex;
-  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+label {
+  color: #9ea0a1;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  display: block;
 }
 
 input {
-  margin-bottom: 15px;
+  width: 100%;
   padding: 12px;
   border: 1px solid #444;
   border-radius: 6px;
   background: #2a2a2a;
-  color: white;
+  color: #e0e0e0;
   transition: border-color 0.3s;
 }
 
@@ -114,30 +142,52 @@ input:focus {
 }
 
 input::placeholder {
-  color: #bbb;
+  color: #a0a0a0;
 }
 
-button {
-  padding: 12px;
-  background-color: #444;
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 42px;
+  cursor: pointer;
+}
+
+.action-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.date-button {
+  padding: 5px;
+  background-color: #2a2a2a;
+  border: none;
+  border-radius: 6px;
+  color: #9ea0a1;
+  cursor: pointer;
+}
+
+.login-button {
+  padding: 6px 20px;
+  background-color: #3a57e8;
   color: white;
   border: none;
   border-radius: 6px;
+  font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s;
-  margin-right: 5px
+  position: relative;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-
-button:hover {
-  background-color: #555;
+.login-button:hover {
+  background-color: #304fcf;
 }
 
-.register-button {
-  background-color: #333;
+.alert-box {
+  color: red;
 }
 
-.register-button:hover {
-  background-color: #444;
-}
 </style>
