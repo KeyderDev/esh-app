@@ -29,8 +29,8 @@
         <button @click="cancelReply">Cancelar</button>
       </div>
       <button @click="uploadFile" class="upload-button"><i class="fa-solid fa-paperclip"></i></button>
-      <input ref="messageInput" v-model="newMessage" placeholder="Escribe tu mensaje..." required class="message-input"
-        @keydown.enter="sendMessage" />
+      <textarea ref="messageInput" v-model="newMessage" placeholder="Escribe tu mensaje..." required
+        class="message-input" @keydown="handleKeydown"></textarea>
       <button @click="toggleEmojiPicker" class="emoji-button">😀</button>
       <Picker class="emoji-picker" @select="addEmoji" />
     </div>
@@ -83,7 +83,12 @@ export default {
       const markdownContent = this.md.render(content);
       return this.convertLinksToHyperlinks(markdownContent);
     },
-
+    handleKeydown(event) {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        this.sendMessage();
+      }
+    },
     convertLinksToHyperlinks(content) {
       const urlRegex = /(https?:\/\/[^\s]+)/g;
       return content.replace(urlRegex, (url) => {
@@ -350,6 +355,13 @@ export default {
   transition: border-color 0.3s;
   width: 100%;
   margin: 0 0.5rem;
+  height: auto;
+  min-height: 40px;
+  resize: none;
+}
+
+.message-input:focus {
+  outline: none;
 }
 
 .message-input:focus {
