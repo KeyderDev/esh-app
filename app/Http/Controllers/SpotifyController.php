@@ -14,7 +14,7 @@ class SpotifyController extends Controller
         Log::info('Accediendo a redirectToSpotify'); 
 
         $clientId = 'f6f7302758544954b25d1faba25da2c3';
-        $redirectUri = 'http://192.168.0.10/auth/spotify/callback';
+        $redirectUri = 'https://esh-app.ddns.net/auth/spotify/callback';
         $scope = 'user-read-private user-read-email';
 
         $url = "https://accounts.spotify.com/authorize?client_id={$clientId}&redirect_uri=" . urlencode($redirectUri) . "&scope=" . urlencode($scope) . "&response_type=code";
