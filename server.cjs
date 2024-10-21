@@ -3,7 +3,6 @@ const { Server } = require('socket.io');
 const express = require('express');
 const https = require('https');
 const fs = require('fs');
-
 const app = express();
 
 const credentials = {
