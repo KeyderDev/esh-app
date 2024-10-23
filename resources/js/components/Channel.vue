@@ -12,10 +12,16 @@
             <span class="message-timestamp">{{ formatTimestamp(group.timestamp) }}</span>
           </div>
         </div>
+
         <div v-for="(message, messageIndex) in group.messages" :key="message.id || messageIndex"
           class="message-content-wrapper" @mouseover="showHoverMenu(groupIndex, messageIndex)"
           @mouseleave="hideHoverMenu">
           <div class="message-content" v-html="renderMarkdown(message.content)"></div>
+
+          <div v-if="message.image">
+            <img :src="buildImageUrl(message.image)" alt="Message Image" class="message-image" />
+          </div>
+
           <div v-if="hoveredMessage === `${groupIndex}-${messageIndex}`" class="hover-menu">
             <button @click="replyToMessage(message)">Responder</button>
           </div>
@@ -28,14 +34,27 @@
         Respondiendo a <strong>{{ replyingTo.user.username }}</strong>: "{{ replyingTo.content }}"
         <button @click="cancelReply">Cancelar</button>
       </div>
-      <button @click="uploadFile" class="upload-button"><i class="fa-solid fa-paperclip"></i></button>
+
+      <div v-if="imageFile" class="image-preview">
+        <p>Imagen adjuntada: {{ imageFile.name }}</p>
+        <button @click="removeAttachedImage">Eliminar</button>
+      </div>
+
+      <button @click="triggerFileUpload" class="upload-button">
+        <i class="fa-solid fa-paperclip"></i>
+      </button>
+
+      <input type="file" ref="fileInput" @change="handleFileUpload" style="display: none;" />
+
       <textarea ref="messageInput" v-model="newMessage" placeholder="Escribe tu mensaje..." required
         class="message-input" @keydown="handleKeydown"></textarea>
+
       <button @click="toggleEmojiPicker" class="emoji-button">😀</button>
       <Picker v-if="showEmojiPicker" class="emoji-picker" @select="addEmoji" />
     </div>
   </div>
 </template>
+
 
 <script>
 import { io } from 'socket.io-client';
@@ -55,6 +74,7 @@ export default {
       hoveredMessage: null,
       replyingTo: null,
       showEmojiPicker: false,
+      imageFile: null,
     };
   },
   async created() {
@@ -79,10 +99,40 @@ export default {
     this.$refs.messageInput.focus();
   },
   methods: {
+    renderMessage(content, imageUrl = null) {
+      if (content) {
+        return this.renderMarkdown(content);
+      } else if (imageUrl) {
+        return this.renderImage(imageUrl);
+      } else {
+        console.warn("No hay contenido ni imagen para mostrar.");
+      }
+    },
+
     renderMarkdown(content) {
+      if (!content) {
+        return '';
+      }
       const markdownContent = this.md.render(content);
       return this.convertLinksToHyperlinks(markdownContent);
     },
+    renderImage(imageUrl) {
+      return `<img src="${imageUrl}" alt="Imagen" class="message-image" />`;
+    },
+    triggerFileUpload() {
+      this.$refs.fileInput.click();
+    },
+
+    async handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      this.imageFile = file;
+
+      console.log("Imagen adjuntada. Espera a que el usuario envíe el mensaje.");
+    },
+
+
     handleKeydown(event) {
       if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
@@ -124,46 +174,68 @@ export default {
       try {
         let content = this.newMessage.trim();
         let replyingToId = null;
+
         if (this.replyingTo && this.replyingTo.content) {
           content = `<div class="replying-to">Respondiendo a: ${this.replyingTo.content}</div>\n\n${content}`;
           replyingToId = this.replyingTo.id;
         }
 
-        if (content === '') {
+        if (content === '' && !this.imageFile) {
           return;
         }
 
         const token = localStorage.getItem('auth_token');
-        const response = await fetch(`/api/channels/${this.channelId}/messages`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ content: content, replyingTo: replyingToId }),
-        });
+        const formData = new FormData();
 
-        if (!response.ok) {
-          throw new Error('Network response was not ok ' + response.statusText);
+        if (content) {
+          formData.append('content', content);
         }
 
-        const message = await response.json();
-        console.log('Emitting message:', message);
+        if (this.imageFile) {
+          formData.append('image', this.imageFile);
+        }
 
-        this.socket.emit('new-message', {
-          content: message.content,
-          channelId: this.channelId,
-          user: message.user,
-          created_at: message.created_at
-        });
-
-        this.newMessage = '';
-        this.replyingTo = null;
-        this.$refs.messageInput.focus();
-        this.scrollToBottom();
+        await this.sendMessageToServer(formData, token);
+        this.finalizeMessage();
       } catch (error) {
-        console.error('Error sending message:', error);
+        console.error('Error al enviar el mensaje:', error);
       }
+    },
+
+
+    finalizeMessage() {
+      this.newMessage = '';
+      this.replyingTo = null;
+      this.imageFile = null;
+      this.$refs.messageInput.focus();
+      this.$nextTick(() => {
+        this.scrollToBottom();
+      });
+    },
+
+    async sendMessageToServer(formData, token) {
+      const response = await fetch(`/api/channels/${this.channelId}/messages`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('La respuesta de la red no fue correcta ' + response.statusText);
+      }
+
+      const message = await response.json();
+      console.log('Emitiendo mensaje:', message);
+
+      this.socket.emit('new-message', {
+        content: message.content,
+        channelId: this.channelId,
+        user: message.user,
+        created_at: message.created_at,
+        image: message.image
+      });
     },
 
     buildProfilePictureUrl(picture) {
@@ -172,6 +244,16 @@ export default {
         : '/path/to/default/profile_picture.jpg';
       return url;
     },
+
+    buildImageUrl(image) {
+      return `${window.appUrl}/storage/${image}`;
+    },
+
+    removeAttachedImage() {
+      this.imageFile = null;
+      console.log('Imagen adjunta eliminada');
+    },
+
 
     formatTimestamp(timestamp) {
       const date = new Date(timestamp);
@@ -218,7 +300,7 @@ export default {
       this.$nextTick(() => {
         const container = this.$refs.messagesContainer;
         if (container) {
-          container.scrollTop = container.scrollHeight;
+          container.scrollTop = container.scrollHeight; 
         }
       });
     },
@@ -489,5 +571,13 @@ i {
 .emoji-picker {
   position: absolute;
   z-index: 1000;
+}
+
+.message-image {
+  max-width: 200px;
+  max-height: 200px;
+  width: auto;
+  height: auto;
+  border-radius: 8px;
 }
 </style>

@@ -15,12 +15,11 @@ use App\Http\Controllers\SpotifyController;
 // Rutas públicas
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-
 Route::get('/stocks', [FinanceController::class, 'getStockPrices']);
 Route::get('channels', [ChannelController::class, 'index']);
 Route::post('channels', [ChannelController::class, 'store']);
 Route::get('channels/{channel}', [ChannelController::class, 'show']);
-Route::post('channels/{channel}/messages', [MessageController::class, 'store']);
+Route::post('/channels/{channel}/upload', [MessageController::class, 'upload']);
 
 // Rutas Privadas
 Route::middleware(['auth.api'])->group(function () {
@@ -29,6 +28,8 @@ Route::middleware(['auth.api'])->group(function () {
     Route::post('/users/description/{user}', [UserController::class, 'update']);
     Route::post('/badges', [BadgeController::class, 'createBadge']);
     Route::post('/channels/{channel}/messages', [MessageController::class, 'store']);
+    Route::post('channels/{channel}/messages', [MessageController::class, 'store']);
+
     Route::post('/assign-badge', [BadgeController::class, 'assignBadgeToUser']);
     Route::post('/profile/picture', [ProfileController::class, 'updateProfilePicture']);
     Route::post('/users/{userId}/permissions', [UserController::class, 'assignPermission']);
