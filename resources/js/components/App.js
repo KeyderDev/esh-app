@@ -111,8 +111,6 @@ export default {
         
                 const data = await response.json();
                 console.log(data);
-        
-                // Ordena los canales por el campo 'order' antes de asignarlos
                 this.channels = data.sort((a, b) => a.order - b.order);
             } catch (error) {
                 console.error('Error loading channels:', error);
