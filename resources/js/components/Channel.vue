@@ -44,6 +44,10 @@
         <i class="fa-solid fa-paperclip"></i>
       </button>
 
+      <button class="translate-button">
+        <i class="fa-solid fa-language"></i>
+      </button>
+
       <input type="file" ref="fileInput" @change="handleFileUpload" style="display: none;" />
 
       <textarea ref="messageInput" v-model="newMessage" placeholder="Escribe tu mensaje..." required
@@ -300,7 +304,7 @@ export default {
       this.$nextTick(() => {
         const container = this.$refs.messagesContainer;
         if (container) {
-          container.scrollTop = container.scrollHeight; 
+          container.scrollTop = container.scrollHeight;
         }
       });
     },
@@ -425,21 +429,24 @@ export default {
   width: 100%;
   background-color: #2a2a2a;
   border-radius: 5px;
+  height: auto;
+  padding: 0.2rem;
 }
 
 .message-input {
   flex: 1;
-  padding: 0.5rem;
+  padding: 0.2rem 0.5rem;
   border: 1px solid transparent;
   border-radius: 5px;
   background-color: #2a2a2a;
   color: #fff;
   transition: border-color 0.3s;
   width: 100%;
-  margin: 0 0.5rem;
-  height: auto;
-  min-height: 40px;
+  height: 30px;
+  min-height: 30px;
   resize: none;
+  margin: 0 0.5rem;
+  overflow-y: hidden;
 }
 
 .message-input:focus {
@@ -541,7 +548,8 @@ export default {
 }
 
 .upload-button,
-.emoji-button {
+.emoji-button,
+.translate-button {
   background: none;
   border: none;
   cursor: pointer;
