@@ -85,7 +85,6 @@
 
         <template v-if="activeTab === 'debug'">
           <div class="debug-info">
-            <h2>Información de Debug</h2>
             <p><strong>Token de autorización:</strong> {{ authToken }}</p>
             <p><strong>Token de autorización (Spotify):</strong> {{ spotifyToken }}</p>
             <p><strong>Estado de la sesión:</strong> {{ sessionStatus }}</p>
