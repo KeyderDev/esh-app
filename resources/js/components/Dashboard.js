@@ -3,7 +3,7 @@ import axios from "axios";
 import draggable from 'vuedraggable';
 export default {
   components: {
-    draggable,  // Registra el componente aquí
+    draggable,  
   },
   props: {
     desiredSymbols: Array,
@@ -161,7 +161,7 @@ export default {
       }
     },
     async onChannelReorder(event) {
-      console.log('Reordenando canales:', this.channels); // Verifica los datos antes de enviar
+      console.log('Reordenando canales:', this.channels); 
       try {
         const reorderedChannels = this.channels.map((channel, index) => {
           return { id: channel.id, order: index + 1 };
@@ -171,7 +171,7 @@ export default {
 
         await axios.post('/api/channels/reorder', { channels: reorderedChannels })
           .then(response => {
-            console.log('Respuesta del servidor:', response.data); // Verifica la respuesta
+            console.log('Respuesta del servidor:', response.data); 
           })
           .catch(error => {
             console.error('Error al actualizar el orden de los canales:', error);
