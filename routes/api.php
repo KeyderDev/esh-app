@@ -20,6 +20,7 @@ Route::get('channels', [ChannelController::class, 'index']);
 Route::post('channels', [ChannelController::class, 'store']);
 Route::get('channels/{channel}', [ChannelController::class, 'show']);
 Route::post('/channels/{channel}/upload', [MessageController::class, 'upload']);
+Route::post('/channels/reorder', [ChannelController::class, 'reorderChannels']);
 
 // Rutas Privadas
 Route::middleware(['auth.api'])->group(function () {

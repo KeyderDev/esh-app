@@ -1,6 +1,10 @@
 
 import axios from "axios";
+import draggable from 'vuedraggable';
 export default {
+  components: {
+    draggable,  // Registra el componente aquí
+  },
   props: {
     desiredSymbols: Array,
   },
@@ -138,11 +142,12 @@ export default {
     async fetchChannels() {
       try {
         const response = await axios.get('/api/channels');
-        this.channels = response.data;
+        this.channels = response.data.sort((a, b) => a.order - b.order);
       } catch (error) {
-        console.error('Error al obtener los canales:', error);
+        console.error('Error al cargar los canales:', error);
       }
     },
+
     async createChannel() {
       if (!this.newChannelName) return;
       try {
@@ -155,6 +160,30 @@ export default {
         console.error('Error al crear el canal:', error);
       }
     },
+    async onChannelReorder(event) {
+      console.log('Reordenando canales:', this.channels); // Verifica los datos antes de enviar
+      try {
+        const reorderedChannels = this.channels.map((channel, index) => {
+          return { id: channel.id, order: index + 1 };
+        });
+
+        console.log('Canales reordenados:', reorderedChannels);
+
+        await axios.post('/api/channels/reorder', { channels: reorderedChannels })
+          .then(response => {
+            console.log('Respuesta del servidor:', response.data); // Verifica la respuesta
+          })
+          .catch(error => {
+            console.error('Error al actualizar el orden de los canales:', error);
+          });
+
+
+        console.log('Orden de canales actualizado:', reorderedChannels);
+      } catch (error) {
+        console.error('Error al actualizar el orden de los canales:', error);
+      }
+    },
+
     async deleteChannel(channelId) {
       try {
         const response = await axios.delete(`/api/channels/${channelId}`);

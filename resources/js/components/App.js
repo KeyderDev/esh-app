@@ -96,26 +96,29 @@ export default {
         
         async loadChannels() {
             try {
-              const token = localStorage.getItem('auth_token');
-              const response = await fetch('/api/channels', {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${token}`
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/channels', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+        
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
                 }
-              });
         
-              if (!response.ok) {
-                throw new Error('Network response was not ok ' + response.statusText);
-              }
+                const data = await response.json();
+                console.log(data);
         
-              const data = await response.json();
-              console.log(data); 
-              this.channels = data; 
+                // Ordena los canales por el campo 'order' antes de asignarlos
+                this.channels = data.sort((a, b) => a.order - b.order);
             } catch (error) {
-              console.error('Error loading channels:', error);
+                console.error('Error loading channels:', error);
             }
-          },
+        },
+        
         
         formatDate(dateString) {
             if (!dateString) {

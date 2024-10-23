@@ -36,4 +36,23 @@ class ChannelController extends Controller
     return response()->json(['message' => 'Channel deleted successfully'], 200);
 }
 
+public function reorderChannels(Request $request)
+{
+    $channels = $request->input('channels'); // Asegúrate de que esto contenga el array de canales
+    if (!$channels) {
+        return response()->json(['message' => 'No channels provided.'], 400);
+    }
+
+    foreach ($channels as $channelData) {
+        $channel = Channel::find($channelData['id']);
+        if ($channel) {
+            $channel->order = $channelData['order'];  // Actualiza el campo 'order'
+            $channel->save();
+        }
+    }
+
+    return response()->json(['message' => 'Order updated successfully.']);
+}
+
+
 }

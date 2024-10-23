@@ -70,12 +70,16 @@
               <button @click="createChannel" class="btn-create-channel">Crear Canal</button>
             </div>
 
-            <ul class="channel-list">
-              <li v-for="channel in channels" :key="channel.id" class="channel-item">
-                <span>{{ channel.name }}</span>
-                <button @click="deleteChannel(channel.id)" class="btn-delete-channel">Borrar</button>
-              </li>
-            </ul>
+            <draggable v-model="channels" class="channel-list" @end="onChannelReorder">
+              <template #item="{ element }">
+                <li :key="element.id" class="channel-item">
+                  <span>{{ element.name }}</span>
+                  <button @click="deleteChannel(element.id)" class="btn-delete-channel">Borrar</button>
+                </li>
+              </template>
+            </draggable>
+
+
           </div>
         </template>
 
