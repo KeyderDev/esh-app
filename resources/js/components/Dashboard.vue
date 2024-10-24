@@ -78,8 +78,6 @@
                 </li>
               </template>
             </draggable>
-
-
           </div>
         </template>
 

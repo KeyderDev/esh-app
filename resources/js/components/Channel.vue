@@ -82,27 +82,44 @@ export default {
     };
   },
   async created() {
-    this.socket = io(`${window.appUrl}:6001`);
-
-    this.socket.on('connect', () => {
-      console.log('Socket connected:', this.socket.id);
-      this.socket.emit('join-channel', this.channelId);
-    });
-
-    this.socket.on('message-received', (message) => {
-      console.log('Message received:', message);
-      message.created_at = message.created_at || new Date().toISOString();
-      this.messages.push(message);
-      this.groupMessages();
-      this.scrollToBottom();
-    });
-
-    await this.loadMessages();
+    this.initializeSocket();  
+    await this.loadMessages(); 
   },
+  watch: {
+    '$route.params.id': {
+      immediate: true,
+      handler(newChannelId) {
+        if (this.socket) {
+          this.socket.emit('leave-channel', this.channelId);
+          this.socket.disconnect();
+        }
+        this.channelId = newChannelId;
+        this.initializeSocket();
+        this.loadMessages();
+      },
+    },
+  },
+
   mounted() {
     this.$refs.messageInput.focus();
   },
   methods: {
+    initializeSocket() {
+      this.socket = io(`${window.appUrl}:6001`);
+
+      this.socket.on('connect', () => {
+        console.log('Socket connected:', this.socket.id);
+        this.socket.emit('join-channel', this.channelId);
+      });
+
+      this.socket.on('message-received', (message) => {
+        console.log('Message received:', message);
+        message.created_at = message.created_at || new Date().toISOString();
+        this.messages.push(message);
+        this.groupMessages();
+        this.scrollToBottom();
+      });
+    },
     renderMessage(content, imageUrl = null) {
       if (content) {
         return this.renderMarkdown(content);
