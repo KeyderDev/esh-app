@@ -28,7 +28,21 @@
         </div>
       </div>
     </div>
-
+    <div v-if="showTranslator" class="translator-box">
+      <button @click="closeUserDetails" class="close-button"
+      aria-label="Cerrar detalles del usuario">&times;</button>
+      <textarea v-model="textToTranslate" placeholder="Escribe texto para traducir..."></textarea>
+      <select v-model="targetLanguage">
+        <option value="en">Inglés</option>
+        <option value="es">Español</option>
+        <option value="fr">Francés</option>
+      </select>
+      <button @click="translateText">Traducir</button>
+      <div v-if="translatedText">
+        <h4>Traducción:</h4>
+        <p>{{ translatedText }}</p>
+      </div>
+    </div>
     <div class="input-container">
       <div v-if="replyingTo" class="reply-preview">
         Respondiendo a <strong>{{ replyingTo.user.username }}</strong>: "{{ replyingTo.content }}"
@@ -44,7 +58,7 @@
         <i class="fa-solid fa-paperclip"></i>
       </button>
 
-      <button class="translate-button">
+      <button @click="toggleTranslator" class="translate-button">
         <i class="fa-solid fa-language"></i>
       </button>
 
@@ -79,11 +93,14 @@ export default {
       replyingTo: null,
       showEmojiPicker: false,
       imageFile: null,
+      textToTranslate: '',
+      translatedText: '',
+      targetLanguage: 'en',
     };
   },
   async created() {
-    this.initializeSocket();  
-    await this.loadMessages(); 
+    this.initializeSocket();
+    await this.loadMessages();
   },
   watch: {
     '$route.params.id': {
@@ -120,6 +137,31 @@ export default {
         this.scrollToBottom();
       });
     },
+    toggleTranslator() {
+      this.showTranslator = !this.showTranslator;
+    },
+    async translateText() {
+      if (!this.textToTranslate.trim()) {
+        console.error('No hay texto para traducir');
+        return;
+      }
+
+      try {
+        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(this.textToTranslate)}&langpair=es|${this.targetLanguage}`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.responseStatus === 200) {
+          this.translatedText = data.responseData.translatedText;
+        } else {
+          console.error('Error en la traducción:', data.responseDetails);
+        }
+      } catch (error) {
+        console.error('Error al traducir el texto:', error);
+      }
+    },
+
+
     renderMessage(content, imageUrl = null) {
       if (content) {
         return this.renderMarkdown(content);
@@ -448,6 +490,7 @@ export default {
   border-radius: 5px;
   height: auto;
   padding: 0.2rem;
+  position: relative;
 }
 
 .message-input {
@@ -605,4 +648,61 @@ i {
   height: auto;
   border-radius: 8px;
 }
+
+.translator-box {
+  position: absolute; 
+  bottom: 60px; /* Ajusta según sea necesario para que el cuadro aparezca justo encima del área de entrada de mensaje */
+  left: 0;
+  background-color: #1e1e1e;
+  color: #fff;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  max-width: 300px; 
+  max-height: 200px; 
+  overflow-y: auto; 
+}
+
+/* Estilos de texto en el cuadro de traducción */
+.translator-box textarea {
+  width: 100%;
+  background-color: #2b2b2b;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 5px;
+  padding: 6px; 
+  font-size: 14px; 
+}
+
+.translator-box button {
+  background-color: #4b4b4b;
+  color: #fff;
+  border: none;
+  padding: 6px;
+  margin-top: 5px;
+  cursor: pointer;
+  font-size: 14px; 
+}
+
+.translator-box button:hover {
+  background-color: #616161;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-button:hover {
+    color: #ff6b6b;
+}
+
 </style>
