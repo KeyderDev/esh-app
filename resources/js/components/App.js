@@ -1,4 +1,4 @@
-import Settings from "../components/Settings.vue"; 
+import Settings from "../components/Settings.vue";
 // import { ref, onMounted } from "vue";
 import axios from "axios";
 import Echo from "laravel-echo";
@@ -24,7 +24,7 @@ export default {
             required: true
         }
     },
-    
+
     data() {
         return {
             imageSrc: "/images/esh.jpg",
@@ -63,14 +63,13 @@ export default {
         this.loadChannels();
 
         window.Echo.channel("user-status").listen("UserStatusChanged", (event) => {
-            console.log("Event received:", event);
             this.handleUserStatusChange(event);
         });
     },
     created() {
         this.loadChannels();
-      },
-      
+    },
+
     beforeDestroy() {
         clearTimeout(inactivityTimeout);
         document.removeEventListener("visibilitychange", this.handleVisibilityChange);
@@ -89,11 +88,11 @@ export default {
             }
         },
         buildBadgeUrl(badgeIcon) {
-            const url = `${window.appUrl}/storage/badges/${badgeIcon}`; 
+            const url = `${window.appUrl}/storage/badges/${badgeIcon}`;
             console.log("Generated Badge URL:", url);
             return url;
         },
-        
+
         async loadChannels() {
             try {
                 const token = localStorage.getItem('auth_token');
@@ -104,11 +103,11 @@ export default {
                         'Authorization': `Bearer ${token}`
                     }
                 });
-        
+
                 if (!response.ok) {
                     throw new Error('Network response was not ok ' + response.statusText);
                 }
-        
+
                 const data = await response.json();
                 console.log(data);
                 this.channels = data.sort((a, b) => a.order - b.order);
@@ -116,18 +115,18 @@ export default {
                 console.error('Error loading channels:', error);
             }
         },
-        
-        
+
+
         formatDate(dateString) {
             if (!dateString) {
-                return 'Fecha no disponible'; 
+                return 'Fecha no disponible';
             }
 
             const cleanedDateString = dateString.trim();
 
             const date = new Date(cleanedDateString);
 
-            
+
             if (isNaN(date.getTime())) {
                 return 'Fecha no válida';
             }
@@ -139,7 +138,6 @@ export default {
             const url = picture ?
                 `${window.appUrl}/storage/${picture}` :
                 "/path/to/default/profile_picture.jpg";
-            console.log("Profile picture URL:", url); 
             return url;
         },
         fetchUserBadges(userId) {
@@ -150,7 +148,7 @@ export default {
                         this.userBadges = response.data.badges.map(badge => {
                             return {
                                 ...badge,
-                                icon: badge.icon.trim() 
+                                icon: badge.icon.trim()
                             };
                         });
                         console.log("User badges:", this.userBadges);
@@ -162,9 +160,9 @@ export default {
                     console.error("Error fetching badges:", error);
                 });
         },
-        
-        
-        
+
+
+
         handleUserStatusChange(event) {
             if (!event ||
                 typeof event.id === "undefined" ||
@@ -174,8 +172,6 @@ export default {
                 return;
             }
 
-            console.log("Event received in handleUserStatusChange:", event);
-
             const onlineUserIndex = this.users.findIndex((user) => user.id === event.id);
             const offlineUserIndex = this.offlineUsers.findIndex(
                 (user) => user.id === event.id
@@ -183,31 +179,22 @@ export default {
 
             if (event.is_online) {
                 if (offlineUserIndex !== -1) {
-                    console.log(
-                        "Removing user from offlineUsers:",
-                        this.offlineUsers[offlineUserIndex]
-                    );
                     this.offlineUsers.splice(offlineUserIndex, 1);
                 }
 
                 if (onlineUserIndex === -1) {
-                    console.log("Adding user to onlineUsers:", event);
                     this.users.push(event);
                 } else {
-                    console.log("Updating user in onlineUsers:", event);
                     this.users[onlineUserIndex] = { ...this.users[onlineUserIndex], ...event };
                 }
             } else {
                 if (onlineUserIndex !== -1) {
-                    console.log("Removing user from onlineUsers:", this.users[onlineUserIndex]);
                     this.users.splice(onlineUserIndex, 1);
                 }
 
                 if (offlineUserIndex === -1) {
-                    console.log("Adding user to offlineUsers:", event);
                     this.offlineUsers.push(event);
                 } else {
-                    console.log("Updating user in offlineUsers:", event);
                     this.offlineUsers[offlineUserIndex] = {
                         ...this.offlineUsers[offlineUserIndex],
                         ...event,
@@ -239,11 +226,9 @@ export default {
             this.currentTime = `${hours}:${minutes}`;
         },
         handleVisibilityChange() {
-            console.log("Visibility changed:", document.visibilityState);
             if (document.visibilityState === "visible") {
                 this.updateOnlineStatus(true);
             } else {
-                console.log("User going offline");
                 this.updateOnlineStatus(false);
             }
         },
@@ -252,7 +237,6 @@ export default {
             event.returnValue = "";
         },
         updateOnlineStatus(isOnline) {
-            console.log("Updating online status to:", isOnline);
             const authToken = localStorage.getItem("auth_token");
             axios
                 .post(
@@ -262,9 +246,6 @@ export default {
                     },
                 }
                 )
-                .then((response) => {
-                    console.log("Online status updated", response.data);
-                })
                 .catch((error) => {
                     console.error(
                         "Error updating online status",
@@ -279,12 +260,12 @@ export default {
                         Authorization: `Bearer ${localStorage.getItem('auth_token')}`
                     }
                 });
-        
-                
-                console.log("Fetched user badges:", response.data); 
-        
-                this.selectedUser = response.data; 
-                this.userBadges = response.data.badges || []; 
+
+
+                console.log("Fetched user badges:", response.data);
+
+                this.selectedUser = response.data;
+                this.userBadges = response.data.badges || [];
             } catch (error) {
                 console.error("Error fetching user badges:", error);
             }
@@ -300,7 +281,7 @@ export default {
     watch: {
         selectedUser(newUser) {
             if (newUser) {
-                this.fetchUserBadges(newUser.id); 
+                this.fetchUserBadges(newUser.id);
             }
         },
     },
