@@ -19,7 +19,8 @@
           <div class="message-content" v-html="renderMarkdown(message.content)"></div>
 
           <div v-if="message.image">
-            <img :src="buildImageUrl(message.image)" alt="Message Image" class="message-image" />
+            <img :src="buildImageUrl(message.image)" alt="Message Image" class="message-image"
+              @click="openImage(message.image)" />
           </div>
 
           <div v-if="hoveredMessage === `${groupIndex}-${messageIndex}`" class="hover-menu">
@@ -28,6 +29,11 @@
         </div>
       </div>
     </div>
+
+    <div v-if="isImageOpen" class="image-modal" @click="closeImage">
+      <img :src="enlargedImageUrl" alt="Imagen ampliada" class="enlarged-image" />
+    </div>
+
     <div v-if="showTranslator" class="translator-box">
       <button @click="closeUserDetails" class="close-button" aria-label="Cerrar detalles del usuario">&times;</button>
       <textarea v-model="textToTranslate" placeholder="Escribe texto para traducir..."></textarea>
@@ -72,7 +78,6 @@
   </div>
 </template>
 
-
 <script>
 import { io } from 'socket.io-client';
 import MarkdownIt from 'markdown-it';
@@ -95,6 +100,8 @@ export default {
       textToTranslate: '',
       translatedText: '',
       targetLanguage: 'en',
+      isImageOpen: false,        
+      enlargedImageUrl: '',  
     };
   },
   async created() {
@@ -135,6 +142,14 @@ export default {
         this.groupMessages();
         this.scrollToBottom();
       });
+    },
+    openImage(image) {
+      this.enlargedImageUrl = this.buildImageUrl(image);
+      this.isImageOpen = true;
+    },
+    closeImage() {
+      this.isImageOpen = false;
+      this.enlargedImageUrl = '';
     },
     toggleTranslator() {
       this.showTranslator = !this.showTranslator;
@@ -215,7 +230,7 @@ export default {
             canvas.toBlob((blob) => {
               const cleanedFile = new File([blob], file.name, { type: 'image/jpeg' });
               resolve(cleanedFile);
-            }, 'image/jpeg'); 
+            }, 'image/jpeg');
           };
 
           img.onerror = (error) => {
@@ -227,7 +242,7 @@ export default {
           reject(error);
         };
 
-        reader.readAsDataURL(file); 
+        reader.readAsDataURL(file);
       });
     },
 
@@ -743,4 +758,24 @@ i {
 .close-button:hover {
   color: #ff6b6b;
 }
+
+.image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.enlarged-image {
+  max-width: 90%;
+  max-height: 90%;
+  border: 2px solid #fff; 
+}
+
 </style>
