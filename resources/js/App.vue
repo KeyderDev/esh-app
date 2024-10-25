@@ -53,9 +53,9 @@
                         <i class="fa-solid fa-hashtag"></i> {{ channel.name }}
                     </router-link>
                 </div>
-                <router-link to="/dashboard" class="settings-icon" style="position: absolute; top: 10px; right: 10px">
+                <!-- <router-link to="/dashboard" class="settings-icon" style="position: absolute; top: 10px; right: 10px">
                     <i class="fas fa-cog" style="color: #e0e0e0"></i>
-                </router-link>
+                </router-link> -->
             </div>
 
             <!-- Contenido principal -->
