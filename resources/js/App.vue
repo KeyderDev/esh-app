@@ -50,7 +50,7 @@
                 style="background-color: #1e1e1e;width: 230px;display: flex;flex-direction: column;padding: 1rem;border-right: 1px solid #1e1e1e;position: relative;">
                 <div class="channel" v-for="channel in channels" :key="channel.id">
                     <router-link :to="{ name: 'channel', params: { id: channel.id } }" class="channel-link">
-                        {{ channel.name }}
+                        <i class="fa-solid fa-hashtag"></i> {{ channel.name }}
                     </router-link>
                 </div>
                 <router-link to="/dashboard" class="settings-icon" style="position: absolute; top: 10px; right: 10px">

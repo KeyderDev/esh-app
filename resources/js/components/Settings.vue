@@ -17,7 +17,17 @@
         {{ activeTab.charAt(0).toUpperCase() + activeTab.slice(1) }}
       </h1>
       <div class="content-scroll">
+
         <template v-if="activeTab === 'cuenta'">
+          <div class="input-container">
+            <label class="input-label">Nombre de Usuario:</label>
+            <input type="text" id="username" v-model="username" placeholder="Escribe tu nuevo nombre de usuario..."
+              class="username-input" />
+            <button @click="saveUsername" class="update-button">
+              Actualizar
+            </button>
+          </div>
+
           <div class="input-container">
             <label for="profile-upload" class="input-label">Foto de perfil:</label>
             <input type="file" id="profile-upload" @change="onFileChange" accept="image/*" class="file-input" />
@@ -37,6 +47,7 @@
             </button>
           </div>
         </template>
+
 
         <template v-if="activeTab === 'conexiones'">
           <div class="connections-container">
@@ -283,5 +294,29 @@ a {
 
 .spotify-connect-button:hover {
   background-color: #1aa34a;
+}
+
+.username-input {
+  margin-bottom: 10px;
+  width: 100%;
+  border: 2px solid #444;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: #222;
+  color: #fff;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.username-input::placeholder {
+  color: #888;
+  /* Color del texto del placeholder */
+}
+
+.username-input:focus {
+  border-color: #007bff;
+  /* Color del borde al enfocar */
+  outline: none;
+  /* Sin contorno */
 }
 </style>

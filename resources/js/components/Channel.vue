@@ -29,8 +29,7 @@
       </div>
     </div>
     <div v-if="showTranslator" class="translator-box">
-      <button @click="closeUserDetails" class="close-button"
-      aria-label="Cerrar detalles del usuario">&times;</button>
+      <button @click="closeUserDetails" class="close-button" aria-label="Cerrar detalles del usuario">&times;</button>
       <textarea v-model="textToTranslate" placeholder="Escribe texto para traducir..."></textarea>
       <select v-model="targetLanguage">
         <option value="en">Inglés</option>
@@ -190,11 +189,47 @@ export default {
       const file = event.target.files[0];
       if (!file) return;
 
-      this.imageFile = file;
+      const cleanedImageFile = await this.removeImageMetadata(file);
+
+      this.imageFile = cleanedImageFile;
 
       console.log("Imagen adjuntada. Espera a que el usuario envíe el mensaje.");
     },
 
+    async removeImageMetadata(file) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+          img.src = e.target.result;
+
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+
+            canvas.toBlob((blob) => {
+              const cleanedFile = new File([blob], file.name, { type: 'image/jpeg' });
+              resolve(cleanedFile);
+            }, 'image/jpeg'); 
+          };
+
+          img.onerror = (error) => {
+            reject(error);
+          };
+        };
+
+        reader.onerror = (error) => {
+          reject(error);
+        };
+
+        reader.readAsDataURL(file); 
+      });
+    },
 
     handleKeydown(event) {
       if (event.key === 'Enter' && !event.shiftKey) {
@@ -255,7 +290,7 @@ export default {
         }
 
         if (this.imageFile) {
-          formData.append('image', this.imageFile);
+          formData.append('image', this.imageFile, this.imageFile.name);
         }
 
         await this.sendMessageToServer(formData, token);
@@ -285,8 +320,13 @@ export default {
         body: formData,
       });
 
+      console.log('Estado de la respuesta:', response.status);
+      console.log('Tipo de contenido:', response.headers.get('Content-Type'));
+
       if (!response.ok) {
-        throw new Error('La respuesta de la red no fue correcta ' + response.statusText);
+        const errorText = await response.text();
+        console.error('Error de la respuesta:', errorText);
+        throw new Error('La respuesta de la red no fue correcta: ' + response.statusText);
       }
 
       const message = await response.json();
@@ -650,8 +690,8 @@ i {
 }
 
 .translator-box {
-  position: absolute; 
-  bottom: 60px; /* Ajusta según sea necesario para que el cuadro aparezca justo encima del área de entrada de mensaje */
+  position: absolute;
+  bottom: 60px;
   left: 0;
   background-color: #1e1e1e;
   color: #fff;
@@ -659,20 +699,19 @@ i {
   border-radius: 10px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   z-index: 100;
-  max-width: 300px; 
-  max-height: 200px; 
-  overflow-y: auto; 
+  max-width: 300px;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
-/* Estilos de texto en el cuadro de traducción */
 .translator-box textarea {
   width: 100%;
   background-color: #2b2b2b;
   color: #fff;
   border: 1px solid #444;
   border-radius: 5px;
-  padding: 6px; 
-  font-size: 14px; 
+  padding: 6px;
+  font-size: 14px;
 }
 
 .translator-box button {
@@ -682,7 +721,7 @@ i {
   padding: 6px;
   margin-top: 5px;
   cursor: pointer;
-  font-size: 14px; 
+  font-size: 14px;
 }
 
 .translator-box button:hover {
@@ -690,19 +729,18 @@ i {
 }
 
 .close-button {
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 1.5rem;
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    cursor: pointer;
-    transition: color 0.3s ease;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
 }
 
 .close-button:hover {
-    color: #ff6b6b;
+  color: #ff6b6b;
 }
-
 </style>

@@ -6,6 +6,7 @@ export default {
       isUploading: false,
       uploadMessage: "",
       description: "",
+      username: '', 
       authToken: localStorage.getItem("auth_token"),
       activeTab: "cuenta", // Default
     };
@@ -23,6 +24,15 @@ export default {
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
+    },
+    async saveUsername() {
+      try {
+        const response = await axios.post('/api/user/username', { username: this.username });
+        console.log('Nombre de usuario actualizado:', response.data);
+      } catch (error) {
+        console.error('Error al actualizar el nombre de usuario:', error);
+      }
+      window.location.reload();
     },
     closeUserDetails() {
       this.selectedUser = null;

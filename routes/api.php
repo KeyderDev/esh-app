@@ -29,8 +29,7 @@ Route::middleware(['auth.api'])->group(function () {
     Route::post('/users/description/{user}', [UserController::class, 'update']);
     Route::post('/badges', [BadgeController::class, 'createBadge']);
     Route::post('/channels/{channel}/messages', [MessageController::class, 'store']);
-    Route::post('channels/{channel}/messages', [MessageController::class, 'store']);
-
+    Route::post('/user/username', [UserController::class, 'updateUsername']);
     Route::post('/assign-badge', [BadgeController::class, 'assignBadgeToUser']);
     Route::post('/profile/picture', [ProfileController::class, 'updateProfilePicture']);
     Route::post('/users/{userId}/permissions', [UserController::class, 'assignPermission']);

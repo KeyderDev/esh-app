@@ -179,6 +179,20 @@ class UserController extends Controller
         return response()->json(['has_permission' => $hasPermission]);
     }
 
+    public function updateUsername(Request $request)
+    {
+        $request->validate([
+            'username' => 'required|string|min:3|max:30|unique:users,username,' . Auth::id(),
+        ]);
+
+        $user = Auth::user();
+
+        $user->username = $request->username;
+        $user->save();
+
+        return response()->json(['message' => 'Nombre de usuario actualizado con éxito.'], 200);
+    }
+
     public function createPermission(Request $request)
     {
         $request->validate([
