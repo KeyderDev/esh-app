@@ -26,12 +26,10 @@
         "markdown-it": "^14.1.0",
         "prismjs": "^1.29.0",
         "pusher-js": "^8.4.0-rc2",
-        "redis": "^4.6.15",
         "socket.io": "^4.8.0",
         "socket.io-client": "^4.8.0",
         "vue": "^3.4.31",
         "vue-router": "^4.0.13",
-        "vuedraggable": "^4.1.0",
-        "yahoo-finance2": "^2.12.3"
+        "vuedraggable": "^4.1.0"
     }
 }

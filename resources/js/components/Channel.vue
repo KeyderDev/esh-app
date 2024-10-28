@@ -24,7 +24,8 @@
           </div>
 
           <div v-if="hoveredMessage === `${groupIndex}-${messageIndex}`" class="hover-menu">
-            <button @click="replyToMessage(message)">Responder</button>
+            <i @click="replyToMessage(message)" class="fa-solid fa-reply"></i>
+            <i @click="deleteMessage(channelId, message.id)" class="fa-solid fa-trash" style="color:red;"></i>
           </div>
         </div>
       </div>
@@ -183,13 +184,26 @@
   right: 5px;
   background-color: #333;
   border: 1px solid #555;
-  border-radius: 5px;
-  padding: 0.3rem 0.5rem;
+  border-radius: 8px;
+  padding: 0.4rem; 
   color: #fff;
-  font-size: 0.9rem;
+  font-size: 1rem; 
   display: flex;
-  gap: 5px;
+  align-items: center; 
+  gap: 8px; 
 }
+
+.hover-menu i {
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.hover-menu i:hover {
+  background-color: #555; 
+}
+
 
 .hover-menu button {
   background: none;

@@ -60,6 +60,10 @@
 
             <!-- Contenido principal -->
             <div class="flex-grow-1" style="background-color: #181818; padding: 1rem">
+                <div class="custom-notice">
+                    <p>Esh-App se encuentra en fase beta. Algunas funcionalidades podrian no estar disponibles.
+                    </p>
+                </div>
                 <router-view></router-view>
             </div>
 
@@ -493,6 +497,19 @@ body {
 .badge-icon {
     margin-left: 5px;
     vertical-align: middle;
+}
+
+.custom-notice {
+    background-color: #333;
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    border-left: 4px solid #5865f2;
+}
+
+.custom-notice p {
+    margin: 0;
 }
 
 @keyframes ticker {

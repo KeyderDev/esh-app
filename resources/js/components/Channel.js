@@ -403,5 +403,26 @@ export default {
       this.newMessage += emoji.native;
       this.showEmojiPicker = false;
     },
+    async deleteMessage(channelId, messageId) {
+      try {
+        const token = localStorage.getItem('auth_token');
+        const response = await fetch(`https://esh-app.ddns.net/api/channels/${channelId}/messages/${messageId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Error al eliminar el mensaje');
+        }
+
+        this.messages = this.messages.filter(message => message.id !== messageId);
+        this.groupMessages();
+      } catch (error) {
+        console.error('Error eliminando el mensaje:', error);
+      }
+    },
   },
 };

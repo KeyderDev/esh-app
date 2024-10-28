@@ -50,6 +50,7 @@ Route::middleware(['auth.api'])->group(function () {
     Route::delete('/channels/{channel}', [ChannelController::class, 'destroy']);
     Route::delete('/users/{userId}/permissions', [UserController::class, 'revokePermission']);
     Route::delete('/permissions/{id}', [UserController::class, 'deletePermission']);
+    Route::delete('/channels/{channel}/messages/{message}', [MessageController::class, 'destroy']);
 });
 
 

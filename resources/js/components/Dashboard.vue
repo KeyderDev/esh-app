@@ -389,16 +389,6 @@
   background-color: #4c4c4c;
 }
 
-.custom-notice {
-  background-color: #333;
-  color: #ffffff;
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 1rem;
-  font-size: 14px;
-  border-left: 4px solid #2196f3;
-}
-
 .channel-container {
   padding: 20px;
   background-color: #2c2c2c;
