@@ -185,12 +185,12 @@
   background-color: #333;
   border: 1px solid #555;
   border-radius: 8px;
-  padding: 0.4rem; 
+  padding: 0.4rem;
   color: #fff;
-  font-size: 1rem; 
+  font-size: 1rem;
   display: flex;
-  align-items: center; 
-  gap: 8px; 
+  align-items: center;
+  gap: 8px;
 }
 
 .hover-menu i {
@@ -201,7 +201,7 @@
 }
 
 .hover-menu i:hover {
-  background-color: #555; 
+  background-color: #555;
 }
 
 
@@ -381,7 +381,12 @@ i {
 .enlarged-image {
   max-width: 90%;
   max-height: 90%;
-  border: 2px solid #fff; 
+  border: 2px solid #fff;
 }
 
+.message-content:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
 </style>

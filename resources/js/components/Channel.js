@@ -11,7 +11,7 @@ export default {
       groupedMessages: [],
       newMessage: '',
       socket: null,
-      md: new MarkdownIt(),
+      md: new MarkdownIt({ breaks: true }),
       hoveredMessage: null,
       replyingTo: null,
       showEmojiPicker: false,
@@ -19,8 +19,8 @@ export default {
       textToTranslate: '',
       translatedText: '',
       targetLanguage: 'en',
-      isImageOpen: false,        
-      enlargedImageUrl: '',  
+      isImageOpen: false,
+      enlargedImageUrl: '',
     };
   },
   async created() {
@@ -106,12 +106,19 @@ export default {
     },
 
     renderMarkdown(content) {
-      if (!content) {
-        return '';
+      if (!content) return '';
+
+      let markdownContent = this.md.render(content);
+
+      markdownContent = markdownContent.replace(/<\/?p>/g, '');
+
+      if (!/<a\s+href=".*">.*<\/a>/.test(markdownContent)) {
+        markdownContent = this.convertLinksToHyperlinks(markdownContent);
       }
-      const markdownContent = this.md.render(content);
-      return this.convertLinksToHyperlinks(markdownContent);
+
+      return markdownContent;
     },
+
     renderImage(imageUrl) {
       return `<img src="${imageUrl}" alt="Imagen" class="message-image" />`;
     },
@@ -172,9 +179,11 @@ export default {
       }
     },
     convertLinksToHyperlinks(content) {
-      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      const urlRegex = /(?:(https?|ftp):\/\/|www\.)[^\s/$.?#].[^\s]*/g;
+
       return content.replace(urlRegex, (url) => {
-        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+        const href = url.startsWith('http') ? url : `http://${url}`;
+        return `<a href="${href}" target="_blank" rel="noopener noreferrer">${url}</a>`;
       });
     },
 
