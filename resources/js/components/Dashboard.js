@@ -64,7 +64,7 @@ export default {
       this.badge.icon = event.target.files[0];
     },
     goToUserPermissions(userId) {
-      this.$router.push({ name: 'UserPermissions', params: { id: userId } });
+      this.$router.push({ name: 'UserDetails', params: { id: userId } });
     },
     fetchPermissions() {
       axios.get('/api/permissions').then(response => {

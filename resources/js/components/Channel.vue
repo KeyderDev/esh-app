@@ -24,6 +24,7 @@
           </div>
 
           <div v-if="hoveredMessage === `${groupIndex}-${messageIndex}`" class="hover-menu">
+            <i class="fa-solid fa-pencil"></i>
             <i @click="replyToMessage(message)" class="fa-solid fa-reply"></i>
             <i @click="deleteMessage(channelId, message.id)" class="fa-solid fa-trash" style="color:red;"></i>
           </div>

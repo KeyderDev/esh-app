@@ -39,7 +39,7 @@
       <div class="custom-content-scroll">
         <template v-if="activeTab === 'usuarios'">
           <div class="custom-user-list">
-            <div v-for="user in users" :key="user.id" class="custom-user-item" @click="goToUserPermissions(user.id)">
+            <div v-for="user in users" :key="user.id" class="custom-user-item" @click="goToUserDetails(user.id)">
               <img :src="`/storage/${user.profile_picture}`" alt="Profile Picture" class="custom-profile-picture" />
               <div class="custom-user-details">
                 <h3 class="custom-username">{{ user.username }}</h3>
