@@ -53,9 +53,11 @@
                         <i class="fa-solid fa-hashtag"></i> {{ channel.name }}
                     </router-link>
                 </div>
-                <!-- <router-link to="/dashboard" class="settings-icon" style="position: absolute; top: 10px; right: 10px">
+                <router-link v-if="isKeyder" to="/dashboard" class="settings-icon"
+                    style="position: absolute; top: 10px; right: 10px">
                     <i class="fas fa-cog" style="color: #e0e0e0"></i>
-                </router-link> -->
+                </router-link>
+
             </div>
 
             <!-- Contenido principal -->
@@ -548,7 +550,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7); 
+    background: rgba(0, 0, 0, 0.7);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -561,7 +563,7 @@ body {
     padding: 20px 25px;
     border-radius: 10px;
     width: 100%;
-    max-width: 400px; 
+    max-width: 400px;
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.4);
     text-align: center;
     position: relative;
@@ -570,17 +572,19 @@ body {
     align-items: center;
     gap: 15px;
 }
+
 .modal-content h3 {
-    color: #f5f5f5; 
+    color: #f5f5f5;
     font-size: 1.2rem;
     margin-bottom: 10px;
 }
 
 .modal-content p {
-    color: #cccccc; 
+    color: #cccccc;
     font-size: 0.95rem;
     margin-bottom: 20px;
 }
+
 .confirm-button,
 .cancel-button {
     padding: 8px 20px;

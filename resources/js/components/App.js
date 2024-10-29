@@ -38,6 +38,9 @@ export default {
             badges: [],
             selectedUser: null,
             currentTime: "",
+            user: {
+                username: localStorage.getItem("username") || "",
+            }
         };
     },
     computed: {
@@ -47,6 +50,11 @@ export default {
         offlineUsersCount() {
             return this.offlineUsers.length;
         },
+
+        isKeyder() {
+            const allowedUsers = ['keyder', 'anotherUser', 'thirdUser'];
+            return this.user && allowedUsers.includes(this.user.username);
+        }
     },
 
     mounted() {
