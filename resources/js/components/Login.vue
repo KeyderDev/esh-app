@@ -13,10 +13,8 @@
         <div class="input-group">
           <label for="password"><i class="fa-solid fa-lock"></i> CONTRASEÑA</label>
           <input v-model="password" id="password" placeholder="Contraseña" type="password" required />
-          <i class="toggle-password">👁️</i>
         </div>
 
-        <!-- Aquí se mostrarán las alertas -->
         <div v-if="alertMessage" class="alert-box">
           {{ alertMessage }}
         </div>
@@ -39,7 +37,7 @@ export default {
     return {
       username: '',
       password: '',
-      alertMessage: '', // Propiedad reactiva para el mensaje de alerta
+      alertMessage: '', 
     };
   },
   mounted() {
@@ -64,7 +62,7 @@ export default {
           localStorage.setItem('username', userProfile.username);
           localStorage.setItem('profile_picture', userProfile.profile_picture);
           this.alertMessage = response.data.message;
-          setTimeout(() => window.location.reload(), 1000); // Espera un segundo antes de recargar
+          setTimeout(() => window.location.reload(), 1000); 
         } else {
           this.alertMessage = 'No se recibió un token.';
         }

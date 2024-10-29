@@ -5,8 +5,8 @@
     <div class="messages" ref="messagesContainer">
       <div v-for="(group, groupIndex) in groupedMessages" :key="groupIndex" class="message-group">
         <div class="message-header">
-          <img :src="buildProfilePictureUrl(group.user.profile_picture)" alt="Profile Picture"
-            class="profile-picture" />
+          <img :src="buildProfilePictureUrl(group.user.profile_picture)" alt="Profile Picture" @click="showUserDetails(group.user)"
+          class="profile-picture" />
           <div class="user-info">
             <strong>{{ group.user.username }}</strong>
             <span class="message-timestamp">{{ formatTimestamp(group.timestamp) }}</span>

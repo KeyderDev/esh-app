@@ -34,6 +34,7 @@ export default {
             channels: [],
             userBadges: [],
             offlineUsers: [],
+            showReportModal: false,
             badges: [],
             selectedUser: null,
             currentTime: "",
@@ -92,7 +93,17 @@ export default {
             console.log("Generated Badge URL:", url);
             return url;
         },
-
+        reportUser() {
+            this.showReportModal = true;
+        },
+        closeModal() {
+            this.showReportModal = false;
+        },
+        submitReport() {
+            // Lógica para manejar el reporte
+            alert(`Usuario ${this.selectedUser.username} ha sido reportado.`);
+            this.closeModal();
+        },
         async loadChannels() {
             try {
                 const token = localStorage.getItem('auth_token');

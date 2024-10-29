@@ -64,6 +64,14 @@
                     <p>Esh-App se encuentra en fase beta. Algunas funcionalidades podrian no estar disponibles.
                     </p>
                 </div>
+                <div v-if="showReportModal" class="modal-overlay" @click.self="closeModal">
+                    <div class="modal-content">
+                        <h3>Reportar Usuario</h3>
+                        <p>¿Estás seguro de que deseas reportar a {{ selectedUser.username }}?</p>
+                        <button @click="submitReport" class="confirm-button">Confirmar</button>
+                        <button @click="closeModal" class="cancel-button">Cancelar</button>
+                    </div>
+                </div>
                 <router-view></router-view>
             </div>
 
@@ -127,6 +135,10 @@
                     <img :src="selectedUser.currentSong.albumArtUrl" alt="Album Art" />
                 </div>
             </div>
+
+            <button @click="reportUser" class="report-button" aria-label="Reportar usuario">
+                <i class="fa-solid fa-flag"></i> Reportar
+            </button>
         </div>
 
     </div>
@@ -511,6 +523,96 @@ body {
 .custom-notice p {
     margin: 0;
 }
+
+.report-button {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    padding: 4px 10px;
+    background-color: #ff5c5c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: background-color 0.2s ease;
+}
+
+.report-button:hover {
+    background-color: #e04b4b;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #1c1c1c;
+    color: #fff;
+    padding: 20px 25px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 400px; 
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+.modal-content h3 {
+    color: #f5f5f5; 
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.modal-content p {
+    color: #cccccc; 
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+}
+.confirm-button,
+.cancel-button {
+    padding: 8px 20px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.confirm-button {
+    background-color: #ff5c5c;
+    color: white;
+    border: none;
+}
+
+.confirm-button:hover {
+    background-color: #e04b4b;
+}
+
+.cancel-button {
+    background-color: #444;
+    color: white;
+    border: none;
+    margin-left: 10px;
+}
+
+.cancel-button:hover {
+    background-color: #555;
+}
+
+
 
 @keyframes ticker {
     from {

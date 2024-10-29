@@ -124,6 +124,7 @@ export default {
     },
     triggerFileUpload() {
       this.$refs.fileInput.click();
+      this.$refs.messageInput.focus();
     },
 
     async handleFileUpload(event) {
@@ -411,6 +412,10 @@ export default {
     addEmoji(emoji) {
       this.newMessage += emoji.native;
       this.showEmojiPicker = false;
+    },
+    showUserDetails(user) {
+      this.selectedUser = user;
+      console.log("Selected User:", this.selectedUser);
     },
     async deleteMessage(channelId, messageId) {
       try {
