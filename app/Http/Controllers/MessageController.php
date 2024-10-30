@@ -18,29 +18,31 @@ class MessageController extends Controller
     public function store(Request $request, Channel $channel)
     {
         \Log::info('Request data:', $request->all());
-
+    
         $request->validate([
             'content' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
         ]);
-
-        $userId = Auth::id();
+    
+        $user = Auth::user(); 
         $message = new Message();
         $message->content = $request->input('content') ?? '';
-
+    
         if ($request->hasFile('image') && $request->file('image')->isValid()) {
             $image = $request->file('image');
             $message->image = $this->uploadImage($image);
         }
-
-        $message->user_id = $userId;
-
+    
+        $message->user_id = $user->id;
+    
         $channel->messages()->save($message);
-
+        $user->increment('xp', 2);
+    
         broadcast(new MessageSent($message->load('user')))->toOthers();
-
+    
         return response()->json($message->load('user'), 201);
     }
+    
 
     public function destroy(Channel $channel, Message $message)
     {

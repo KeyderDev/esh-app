@@ -464,6 +464,12 @@ body {
     background-color: #555;
 }
 
+.xp-label {
+    color: #26cc4d; 
+    font-weight: bold;
+}
+
+
 @keyframes ticker {
     from {
         transform: translateX(100%);

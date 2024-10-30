@@ -122,7 +122,7 @@ class UserController extends Controller
 
     public function getAllUsers()
     {
-        $users = User::get(['id', 'username', 'profile_picture', 'description', 'is_online', 'created_at']);
+        $users = User::get(['id', 'username', 'profile_picture', 'description', 'is_online', 'created_at', 'xp']);
         return response()->json($users);
     }
 

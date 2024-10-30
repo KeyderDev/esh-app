@@ -9,7 +9,7 @@ class Message extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['content', 'channel_id', 'user_id']; // Propiedades que se pueden asignar de forma masiva
+    protected $fillable = ['content', 'channel_id', 'user_id']; 
 
     // Relación con el canal
     public function channel(): BelongsTo

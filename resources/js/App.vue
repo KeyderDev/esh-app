@@ -17,7 +17,11 @@
                     {{ currentTime }}
                 </div>
                 <div class="navbar-nav d-flex align-items-center">
-                    <span class="text-white ms-2 username">{{ username }}</span>
+                    <!-- <span class="text-white ms-2 xp" style="margin-right: 1.5rem;">
+                        {{ xp }} <span class="xp-label">XP</span>
+                    </span> -->
+                    <i style="color: #9e9e9e;margin-right:1.5rem;" class="fa-solid fa-bell"></i>
+                    <span class="text-white username">{{ username }}</span>
                     <img :src="profilePicture" alt="Profile" class="profile-pic" v-if="profilePicture" />
                 </div>
             </div>
@@ -148,4 +152,4 @@
 
 
 <script src="./components/App.js"></script>
-<style src="../css/app.css"></style>
+<style src="../css/App.css"></style>

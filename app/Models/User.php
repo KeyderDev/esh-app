@@ -18,6 +18,7 @@ class User extends Authenticatable
         'profile_picture',
         'is_online', 
         'description',
+        'xp'
     ];
 
     protected $hidden = [

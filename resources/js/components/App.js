@@ -38,6 +38,7 @@ export default {
             badges: [],
             selectedUser: null,
             currentTime: "",
+            xp: 0,
             user: {
                 username: localStorage.getItem("username") || "",
             }
@@ -90,8 +91,25 @@ export default {
         async loadUsers() {
             try {
                 const response = await axios.get("/api/users");
-                this.users = response.data.filter((user) => user.is_online);
-                this.offlineUsers = response.data.filter((user) => !user.is_online);
+                console.log(response.data);
+
+                this.users = response.data
+                    .filter((user) => user.is_online)
+                    .map((user) => ({
+                        ...user,
+                        xp: user.xp || 0,
+                    }));
+                this.offlineUsers = response.data
+                    .filter((user) => !user.is_online)
+                    .map((user) => ({
+                        ...user,
+                        xp: user.xp || 0,
+                    }));
+
+                const currentUser = response.data.find(user => user.username === this.username);
+                if (currentUser) {
+                    this.xp = currentUser.xp;
+                }
             } catch (error) {
                 console.error("Error al cargar usuarios:", error);
             }
