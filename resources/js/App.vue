@@ -11,15 +11,15 @@
                         <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar"
                             style="max-width: 200px;background-color: #1e1e1e;border: none;color: #e0e0e0;" />
                     </form>
+                    <span class="text-white ms-2 xp" style="margin-right: 1.5rem;">
+                        {{ xp }} <span class="xp-label">XP</span>
+                    </span>
                 </div>
                 <div class="navbar-brand mx-auto text-white"
                     style="position: absolute; left: 50%; transform: translateX(-50%)">
                     {{ currentTime }}
                 </div>
                 <div class="navbar-nav d-flex align-items-center">
-                    <!-- <span class="text-white ms-2 xp" style="margin-right: 1.5rem;">
-                        {{ xp }} <span class="xp-label">XP</span>
-                    </span> -->
                     <i style="color: #9e9e9e;margin-right:1.5rem;" class="fa-solid fa-bell"></i>
                     <span class="text-white username">{{ username }}</span>
                     <img :src="profilePicture" alt="Profile" class="profile-pic" v-if="profilePicture" />
