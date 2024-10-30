@@ -26,7 +26,7 @@
           <div v-if="message.gif_url">
             <img :src="message.gif_url" alt="Message GIF" class="message-gif" />
           </div>
-          
+
           <div v-if="hoveredMessage === `${groupIndex}-${messageIndex}`" class="hover-menu">
             <i class="fa-solid fa-pencil"></i>
             <i @click="replyToMessage(message)" class="fa-solid fa-reply"></i>
@@ -39,32 +39,32 @@
     <div v-if="isImageOpen" class="image-modal" @click="closeImage">
       <img :src="enlargedImageUrl" alt="Imagen ampliada" class="enlarged-image" />
     </div>
-    <div>
-      <div v-if="showGifPicker" class="gif-picker">
-        <input type="text" v-model="searchQuery" placeholder="Buscar GIFs..." @input="searchGifs"
-          class="gif-search-input" />
-        <div class="gif-grid">
-          <div v-for="gif in gifs" :key="gif.id" @click="selectGif(gif)">
-            <img :src="gif.images.fixed_height.url" :alt="gif.title" />
+    <div class="input-container">
+      <div v-if="showTranslator" class="translator-box">
+        <button @click="closeTranslator" class="close-button" aria-label="Cerrar detalles del usuario">&times;</button>
+        <textarea v-model="textToTranslate" placeholder="Escribe texto para traducir..."></textarea>
+        <select v-model="targetLanguage">
+          <option value="en">Inglés</option>
+          <option value="es">Español</option>
+          <option value="fr">Francés</option>
+        </select>
+        <button @click="translateText">Traducir</button>
+        <div v-if="translatedText">
+          <h4>Traducción:</h4>
+          <p>{{ translatedText }}</p>
+        </div>
+      </div>
+      <div>
+        <div v-if="showGifPicker" class="gif-picker">
+          <input type="text" v-model="searchQuery" placeholder="Buscar GIFs..." @input="searchGifs"
+            class="gif-search-input" />
+          <div class="gif-grid">
+            <div v-for="gif in gifs" :key="gif.id" @click="selectGif(gif)">
+              <img :src="gif.images.fixed_height.url" :alt="gif.title" />
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div v-if="showTranslator" class="translator-box">
-      <button @click="closeUserDetails" class="close-button" aria-label="Cerrar detalles del usuario">&times;</button>
-      <textarea v-model="textToTranslate" placeholder="Escribe texto para traducir..."></textarea>
-      <select v-model="targetLanguage">
-        <option value="en">Inglés</option>
-        <option value="es">Español</option>
-        <option value="fr">Francés</option>
-      </select>
-      <button @click="translateText">Traducir</button>
-      <div v-if="translatedText">
-        <h4>Traducción:</h4>
-        <p>{{ translatedText }}</p>
-      </div>
-    </div>
-    <div class="input-container">
       <div v-if="replyingTo" class="reply-preview">
         Respondiendo a <strong>{{ replyingTo.user.username }}</strong>: "{{ replyingTo.content }}"
         <button @click="cancelReply">Cancelar</button>
