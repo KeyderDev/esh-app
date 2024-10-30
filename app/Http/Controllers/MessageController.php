@@ -22,6 +22,7 @@ class MessageController extends Controller
         $request->validate([
             'content' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+            'gif_url' => 'nullable|url', 
         ]);
     
         $user = Auth::user(); 
@@ -33,6 +34,10 @@ class MessageController extends Controller
             $message->image = $this->uploadImage($image);
         }
     
+        if ($request->filled('gif_url')) {
+            $message->gif_url = $request->input('gif_url'); 
+        }
+    
         $message->user_id = $user->id;
     
         $channel->messages()->save($message);
@@ -42,7 +47,6 @@ class MessageController extends Controller
     
         return response()->json($message->load('user'), 201);
     }
-    
 
     public function destroy(Channel $channel, Message $message)
     {

@@ -1,6 +1,10 @@
 import { io } from 'socket.io-client';
 import MarkdownIt from 'markdown-it';
 import { Picker } from 'emoji-mart';
+import DOMPurify from 'dompurify';
+
+const apiKey = import.meta.env.VITE_GIPHY_API_KEY; 
+
 
 export default {
   data() {
@@ -11,7 +15,10 @@ export default {
       groupedMessages: [],
       newMessage: '',
       socket: null,
-      md: new MarkdownIt({ breaks: true }),
+      md: new MarkdownIt({
+        breaks: true,
+        html: true
+      }),
       hoveredMessage: null,
       replyingTo: null,
       showEmojiPicker: false,
@@ -21,6 +28,10 @@ export default {
       targetLanguage: 'en',
       isImageOpen: false,
       enlargedImageUrl: '',
+      showGifPicker: false,
+      selectedGif: null,
+      gifs: [],
+      searchQuery: '',
     };
   },
   async created() {
@@ -94,14 +105,21 @@ export default {
       }
     },
 
-
-    renderMessage(content, imageUrl = null) {
+    renderMessage(content, imageUrl = null, gifUrl = null) {
+      if (gifUrl) {
+        return this.renderGif(gifUrl);
+      }
       if (content) {
-        return this.renderMarkdown(content);
+        if (this.isGifUrl(content)) {
+          return this.renderGif(content);
+        } else {
+          return this.renderMarkdown(content);
+        }
       } else if (imageUrl) {
         return this.renderImage(imageUrl);
       } else {
         console.warn("No hay contenido ni imagen para mostrar.");
+        return null;
       }
     },
 
@@ -109,8 +127,8 @@ export default {
       if (!content) return '';
 
       let markdownContent = this.md.render(content);
-
       markdownContent = markdownContent.replace(/<\/?p>/g, '');
+      markdownContent = DOMPurify.sanitize(markdownContent);
 
       if (!/<a\s+href=".*">.*<\/a>/.test(markdownContent)) {
         markdownContent = this.convertLinksToHyperlinks(markdownContent);
@@ -122,6 +140,11 @@ export default {
     renderImage(imageUrl) {
       return `<img src="${imageUrl}" alt="Imagen" class="message-image" />`;
     },
+
+    renderGif(gifUrl) {
+      return `<img src="${gifUrl}" alt="GIF" class="message-gif" />`;
+    },
+
     triggerFileUpload() {
       this.$refs.fileInput.click();
       this.$refs.messageInput.focus();
@@ -217,13 +240,16 @@ export default {
         let content = this.newMessage.trim();
         let replyingToId = null;
 
+        // Limpiar el contenido
+        content = DOMPurify.sanitize(content);
+
         if (this.replyingTo && this.replyingTo.content) {
           content = `<div class="replying-to">Respondiendo a: ${this.replyingTo.content}</div>\n\n${content}`;
           replyingToId = this.replyingTo.id;
         }
 
-        if (content === '' && !this.imageFile) {
-          return;
+        if (content === '' && !this.imageFile && !this.selectedGif) {
+          return; 
         }
 
         const token = localStorage.getItem('auth_token');
@@ -235,6 +261,11 @@ export default {
 
         if (this.imageFile) {
           formData.append('image', this.imageFile, this.imageFile.name);
+        }
+
+        if (this.selectedGif) {
+          console.log('GIF seleccionado:', this.selectedGif);
+          formData.append('gif_url', this.selectedGif.images.original.url);
         }
 
         await this.sendMessageToServer(formData, token);
@@ -249,6 +280,7 @@ export default {
       this.newMessage = '';
       this.replyingTo = null;
       this.imageFile = null;
+      this.selectedGif = null;
       this.$refs.messageInput.focus();
       this.$nextTick(() => {
         this.scrollToBottom();
@@ -281,8 +313,10 @@ export default {
         channelId: this.channelId,
         user: message.user,
         created_at: message.created_at,
-        image: message.image
+        image: message.image,
+        gif_url: message.gif_url
       });
+      console.log(message.gif_url);
     },
 
     buildProfilePictureUrl(picture) {
@@ -408,15 +442,57 @@ export default {
       console.log('Toggle Emoji Picker:', this.showEmojiPicker);
     },
 
-
     addEmoji(emoji) {
       this.newMessage += emoji.native;
       this.showEmojiPicker = false;
     },
+
     showUserDetails(user) {
       this.selectedUser = user;
       console.log("Selected User:", this.selectedUser);
     },
+
+    async toggleGif() {
+      this.showGifPicker = !this.showGifPicker;
+      if (this.showGifPicker) {
+        await this.fetchTrendingGifs();
+      }
+    },
+
+    async fetchTrendingGifs() {
+      this.gifs = [];
+      try {
+        const response = await fetch(`https://api.giphy.com/v1/gifs/trending?api_key=${apiKey}&limit=10`);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+        this.gifs = data.data;
+      } catch (error) {
+        console.error('Error al cargar GIFs:', error);
+      }
+    },
+
+    async searchGifs() {
+      this.gifs = [];
+      try {
+        const response = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${this.searchQuery}&limit=10`);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+        this.gifs = data.data;
+      } catch (error) {
+        console.error('Error en la búsqueda de GIFs:', error);
+      }
+    },
+
+    selectGif(gifUrl) {
+      this.selectedGif = gifUrl;
+      this.showGifPicker = false;
+      this.$refs.messageInput.focus();
+    },
+
+    isGifUrl(url) {
+      return url.endsWith('.gif') || url.includes('giphy');
+    },
+
     async deleteMessage(channelId, messageId) {
       try {
         const token = localStorage.getItem('auth_token');

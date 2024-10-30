@@ -24,6 +24,7 @@ class CreateChannelsAndMessagesTables extends Migration
             $table->text('content')->nullable();
             $table->timestamps();
             $table->string('image')->nullable(); 
+            $table->string('gif_url')->nullable(); 
         });
     }
 

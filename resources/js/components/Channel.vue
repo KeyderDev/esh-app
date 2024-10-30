@@ -5,8 +5,8 @@
     <div class="messages" ref="messagesContainer">
       <div v-for="(group, groupIndex) in groupedMessages" :key="groupIndex" class="message-group">
         <div class="message-header">
-          <img :src="buildProfilePictureUrl(group.user.profile_picture)" alt="Profile Picture" @click="showUserDetails(group.user)"
-          class="profile-picture" />
+          <img :src="buildProfilePictureUrl(group.user.profile_picture)" alt="Profile Picture"
+            @click="showUserDetails(group.user)" class="profile-picture" />
           <div class="user-info">
             <strong>{{ group.user.username }}</strong>
             <span class="message-timestamp">{{ formatTimestamp(group.timestamp) }}</span>
@@ -16,13 +16,17 @@
         <div v-for="(message, messageIndex) in group.messages" :key="message.id || messageIndex"
           class="message-content-wrapper" @mouseover="showHoverMenu(groupIndex, messageIndex)"
           @mouseleave="hideHoverMenu">
-          <div class="message-content" v-html="renderMarkdown(message.content)"></div>
+          <div class="message-content" v-html="renderMessage(message.content)"></div>
 
           <div v-if="message.image">
             <img :src="buildImageUrl(message.image)" alt="Message Image" class="message-image"
               @click="openImage(message.image)" />
           </div>
 
+          <div v-if="message.gif_url">
+            <img :src="message.gif_url" alt="Message GIF" class="message-gif" />
+          </div>
+          
           <div v-if="hoveredMessage === `${groupIndex}-${messageIndex}`" class="hover-menu">
             <i class="fa-solid fa-pencil"></i>
             <i @click="replyToMessage(message)" class="fa-solid fa-reply"></i>
@@ -35,7 +39,17 @@
     <div v-if="isImageOpen" class="image-modal" @click="closeImage">
       <img :src="enlargedImageUrl" alt="Imagen ampliada" class="enlarged-image" />
     </div>
-
+    <div>
+      <div v-if="showGifPicker" class="gif-picker">
+        <input type="text" v-model="searchQuery" placeholder="Buscar GIFs..." @input="searchGifs"
+          class="gif-search-input" />
+        <div class="gif-grid">
+          <div v-for="gif in gifs" :key="gif.id" @click="selectGif(gif)">
+            <img :src="gif.images.fixed_height.url" :alt="gif.title" />
+          </div>
+        </div>
+      </div>
+    </div>
     <div v-if="showTranslator" class="translator-box">
       <button @click="closeUserDetails" class="close-button" aria-label="Cerrar detalles del usuario">&times;</button>
       <textarea v-model="textToTranslate" placeholder="Escribe texto para traducir..."></textarea>
@@ -65,16 +79,16 @@
         <i class="fa-solid fa-paperclip"></i>
       </button>
 
-      <button @click="toggleTranslator" class="translate-button">
-        <i class="fa-solid fa-language"></i>
-      </button>
-
       <input type="file" ref="fileInput" @change="handleFileUpload" style="display: none;" />
 
       <textarea ref="messageInput" v-model="newMessage" placeholder="Escribe tu mensaje..." required
         class="message-input" @keydown="handleKeydown"></textarea>
 
-      <button @click="toggleEmojiPicker" class="emoji-button">😀</button>
+      <button @click="toggleTranslator" class="translate-button">
+        <i class="fa-solid fa-language"></i>
+      </button>
+      <button @click="toggleGif" class="gif-button"><i class="fa-regular fa-note-sticky"></i></button>
+      <button @click="toggleEmojiPicker" class="emoji-button">😺</button>
       <Picker v-if="showEmojiPicker" class="emoji-picker" @select="addEmoji" />
     </div>
   </div>
