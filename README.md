@@ -63,6 +63,7 @@ Para iniciar el servidor de desarrollo, ejecuta:
 ```bash
 npm run dev
 php artisan serve
+```
 
 ## Donaciones
 
