@@ -1,12 +1,12 @@
-# Proyecto Laravel con Vite y Vue.js
+# ESH-APP 
 
-Este es un proyecto que utiliza Laravel para el backend y Vue.js junto con Vite para el frontend.
+Este proyecto utiliza Laravel, Node, SocketIO, Vue y Vite.
 
 ## Requisitos
 
 - Node.js (versión 20.15.0 recomendada)
 - Composer
-- PHP
+- PHP (version 8.3 recomendada)
 
 ## Instalación
 
@@ -40,13 +40,6 @@ DB_PORT=3306
 DB_DATABASE=laravel
 DB_USERNAME=root
 DB_PASSWORD=
-
-BROADCAST_DRIVER=pusher
-CACHE_DRIVER=file
-FILESYSTEM_DISK=local
-QUEUE_CONNECTION=sync
-SESSION_DRIVER=file
-SESSION_LIFETIME=120
 ```
 
 6. Ejecuta las migraciones de la base de datos:
