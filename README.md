@@ -64,4 +64,9 @@ Para iniciar el servidor de desarrollo, ejecuta:
 npm run dev
 php artisan serve
 
+## Donaciones
+
+Si consideras este proyecto util, considera comprarme un cafe :)
+
+<a href="https://www.buymeacoffee.com/keyyderr" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
