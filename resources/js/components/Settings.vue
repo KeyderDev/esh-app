@@ -50,8 +50,23 @@
 
 
         <template v-if="activeTab === 'conexiones'">
-          <div class="connections-container">
-            <button @click="connectSpotify" class="spotify-connect-button">Conectar Spotify</button>
+          <div class="profile-connection">
+            <h2>Añadir cuentas a tu perfil</h2>
+            <p>Esta información no se compartirá fuera de Emprende Sin Humo sin tu permiso y se utilizará de acuerdo con
+              la <a href="#">Política de privacidad</a> de Emprende Sin Humo.</p>
+            <div class="icons">
+              <div @click="connectSpotify" class="icon spotify"></div>
+              <div class="icon github"></div>
+              <div class="icon buymeacoffee"></div>
+              <div class="icon tiktok"></div>
+              <div class="icon twitter"></div>
+              <div class="icon ebay"></div>
+              <div class="icon xbox"></div>
+              <div class="icon amazon"></div>
+              <div class="icon atom"></div>
+              <div class="icon destiny"></div>
+              <div class="icon arrow"></div>
+            </div>
           </div>
         </template>
         <template v-if="activeTab === 'apariencia'">
