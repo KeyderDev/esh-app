@@ -7,7 +7,7 @@
 
         <div class="input-group">
           <label for="email"><i class="fa-regular fa-user"></i> USUARIO</label>
-          <input v-model="username" id="email" placeholder="Usuario" required />
+          <input v-model="username" id="email" placeholder="Usuario" required autocomplete="off" />
         </div>
 
         <div class="input-group">
@@ -19,10 +19,7 @@
           {{ alertMessage }}
         </div>
 
-        <div class="action-group">
-          <button type="button" class="date-button"><i class="fa-solid fa-id-card"></i></button>
-          <button type="submit" class="login-button">Iniciar</button>
-        </div>
+        <p class="register-link">¿Aún no tienes cuenta? <a href="#">Regístrate</a></p>
       </form>
     </div>
   </div>
@@ -45,6 +42,11 @@ export default {
     if (token) {
       this.$router.push('/');
     }
+    
+    window.addEventListener('keyup', this.handleEnterKey);
+  },
+  beforeDestroy() {
+    window.removeEventListener('keyup', this.handleEnterKey);
   },
   methods: {
     async login() {
@@ -74,8 +76,14 @@ export default {
         }
       }
     },
+    handleEnterKey(event) {
+      if (event.key === 'Enter') {
+        this.login();
+      }
+    }
   },
 };
+
 </script>
 
 
@@ -186,6 +194,23 @@ input::placeholder {
 
 .alert-box {
   color: red;
+}
+
+.register-link {
+    font-size: 0.9rem;
+    color: #cccccc; /* Gris claro */
+    text-align: center; /* Centra el texto */
+    margin-top: 20px; /* Añade un margen superior para separarlo del formulario */
+}
+
+.register-link a {
+    color: #ffffff;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
 }
 
 </style>

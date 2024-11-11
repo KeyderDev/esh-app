@@ -118,7 +118,6 @@ export default {
       } else if (imageUrl) {
         return this.renderImage(imageUrl);
       } else {
-        console.warn("No hay contenido ni imagen para mostrar.");
         return null;
       }
     },
