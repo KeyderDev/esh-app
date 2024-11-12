@@ -486,6 +486,7 @@ export default {
       this.selectedGif = gifUrl;
       this.showGifPicker = false;
       this.$refs.messageInput.focus();
+      this.sendMessage(); 
     },
 
     isGifUrl(url) {
