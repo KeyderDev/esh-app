@@ -115,6 +115,12 @@ export default {
       }
       window.location.reload();
     },
+    buildProfilePictureUrl(picture) {
+      const url = picture
+        ? `${window.appUrl}/storage/${picture}`
+        : '/path/to/default/profile_picture.jpg';
+      return url;
+    },
     async saveDescription() {
       try {
         const response = await axios.post(
