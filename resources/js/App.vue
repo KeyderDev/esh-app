@@ -12,7 +12,7 @@
                             style="max-width: 200px;background-color: #1e1e1e;border: none;color: #e0e0e0;" />
                     </form>
                     <span class="text-white ms-2 xp" style="margin-right: 1.5rem;">
-                        {{ xp }} <span class="xp-label">XP</span>
+                        {{ xp }} <span class="xp-label">puntos</span>
                     </span>
                 </div>
                 <div class="navbar-brand mx-auto text-white"
@@ -67,7 +67,7 @@
             <!-- Contenido principal -->
             <div class="flex-grow-1" style="background-color: #181818; padding: 1rem">
                 <div class="custom-notice">
-                    <p>Esh-App se encuentra en fase beta. Algunas funcionalidades podrian no estar disponibles.
+                    <p>Comenzo el nuevo año, y a su vez se retomo el desarrollo de esta app! Unete a nuestro Discord para noticias recientes.
                     </p>
                 </div>
                 <div v-if="showReportModal" class="modal-overlay" @click.self="closeModal">

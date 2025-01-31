@@ -367,7 +367,7 @@ body {
     padding: 10px;
     border-radius: 4px;
     font-size: 14px;
-    border-left: 4px solid #5865f2;
+    border-left: 4px solid #f4900c;
 }
 
 .custom-notice p {
@@ -465,7 +465,6 @@ body {
 }
 
 .xp-label {
-    color: #26cc4d; 
     font-weight: bold;
 }
 

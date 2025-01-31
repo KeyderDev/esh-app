@@ -12,12 +12,6 @@
         <li :class="{ active: activeTab === 'seguridad' }" @click="setActiveTab('insignias')">
           Insignias
         </li>
-        <li :class="{ active: activeTab === 'permisos' }" @click="setActiveTab('permisos')">
-          Permisos
-        </li>
-        <li :class="{ active: activeTab === 'watchdog' }" @click="setActiveTab('watchdog')">
-          WatchDog
-        </li>
         <li :class="{ active: activeTab === 'debug' }" @click="setActiveTab('debug')">
           Debug
         </li>
@@ -27,10 +21,10 @@
 
     <!-- Main Content -->
     <div class="custom-content">
-      <div class="custom-notice">
+      <!-- <div class="custom-notice">
         <p>Estas en el panel general de administración de la aplicación, estos ajustes son esenciales para el correcto
           funcionamiento.</p>
-      </div>
+      </div> -->
 
       <h1 class="text-white">
         {{ activeTab.charAt(0).toUpperCase() + activeTab.slice(1) }}
@@ -38,23 +32,31 @@
 
       <div class="custom-content-scroll">
         <template v-if="activeTab === 'usuarios'">
-          <div class="custom-user-list">
-            <div v-for="user in users" :key="user.id" class="custom-user-item" @click="goToUserDetails(user.id)">
-              <img :src="`/storage/${user.profile_picture}`" alt="Profile Picture" class="custom-profile-picture" />
-              <div class="custom-user-details">
-                <h3 class="custom-username">{{ user.username }}</h3>
-                <p class="custom-description">{{ user.description || 'No description available' }}</p>
-                <p class="custom-creation-date">Joined: {{ formatDate(user.created_at) }}</p>
-                <div class="custom-badges">
-                  <span v-for="badge in user.badges" :key="badge.id" class="custom-badge">
-                    {{ badge.name }}
-                  </span>
+          <div class="custom-user-container">
+            <!-- Barra de búsqueda -->
+            <div class="custom-search-bar">
+              <input type="text" v-model="searchQuery" placeholder="Buscar usuarios..." class="custom-search-input" />
+            </div>
+
+            <div class="custom-user-list">
+              <div v-for="user in filteredUsers" :key="user.id" class="custom-user-item"
+                @click="goToUserDetails(user.id)">
+                <img :src="`/storage/${user.profile_picture}`" alt="Profile Picture" class="custom-profile-picture" />
+                <div class="custom-user-details">
+                  <h3 class="custom-username">{{ user.username }}</h3>
+                  <p class="custom-description">{{ user.description || 'No description available' }}</p>
+                  <p class="custom-creation-date">Joined: {{ formatDate(user.created_at) }}</p>
+                  <div class="custom-badges">
+                    <span v-for="badge in user.badges" :key="badge.id" class="custom-badge">
+                      {{ badge.name }}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div class="custom-menu-container" @click.stop="toggleMenu(user.id)">
-                <span class="custom-menu-icon">⋮</span>
-                <div v-if="activeMenu === user.id" class="custom-menu-dropdown">
-                  <button @click="deleteUser(user.id)">Delete</button>
+                <div class="custom-menu-container" @click.stop="toggleMenu(user.id)">
+                  <span class="custom-menu-icon">⋮</span>
+                  <div v-if="activeMenu === user.id" class="custom-menu-dropdown">
+                    <button @click="deleteUser(user.id)">Delete</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -64,46 +66,34 @@
 
         <template v-if="activeTab === 'canales'">
           <div class="channel-container">
-            <h2>Gestionar Canales</h2>
+            <h2 class="channel-title">Gestionar Canales</h2>
+
             <div class="create-channel">
               <input v-model="newChannelName" type="text" placeholder="Nombre del canal" class="channel-input" />
-              <button @click="createChannel" class="btn-create-channel">Crear Canal</button>
+              <button @click="createChannel" class="btn-create-channel">
+                <i class="fas fa-plus"></i> Crear
+              </button>
             </div>
 
             <draggable v-model="channels" class="channel-list" @end="onChannelReorder">
               <template #item="{ element }">
                 <li :key="element.id" class="channel-item">
-                  <span>{{ element.name }}</span>
-                  <button @click="deleteChannel(element.id)" class="btn-delete-channel">Borrar</button>
+                  <span class="channel-name">{{ element.name }}</span>
+                  <button @click="deleteChannel(element.id)" class="btn-delete-channel">
+                    <i class="fas fa-trash"></i>
+                  </button>
                 </li>
               </template>
             </draggable>
           </div>
         </template>
 
+
         <template v-if="activeTab === 'debug'">
           <div class="debug-info">
             <p><strong>Token de autorización:</strong> {{ authToken }}</p>
             <p><strong>Token de autorización (Spotify):</strong> {{ spotifyToken }}</p>
             <p><strong>Estado de la sesión:</strong> {{ sessionStatus }}</p>
-          </div>
-        </template>
-
-        <template v-if="activeTab === 'watchdog'">
-          <div class="watchdog-container">
-            <h3 class="title">Gestión de palabras prohibidas</h3>
-            <form @submit.prevent="addForbiddenWord" class="watchdog-form">
-              <input v-model="newWord" class="input-word" placeholder="Nueva palabra" required />
-              <button type="submit" class="btn-add">Agregar</button>
-            </form>
-            <ul class="word-list">
-              <li v-for="(word, index) in forbiddenWords" :key="index" class="word-item">
-                {{ word }}
-                <button @click="removeForbiddenWord(word)" class="btn-remove">
-                  Eliminar
-                </button>
-              </li>
-            </ul>
           </div>
         </template>
 

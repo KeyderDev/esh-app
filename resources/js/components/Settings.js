@@ -6,9 +6,11 @@ export default {
       isUploading: false,
       uploadMessage: "",
       description: "",
-      username: '', 
+      username: '',
       authToken: localStorage.getItem("auth_token"),
       activeTab: "cuenta", // Default
+      changesPending: false,
+      notificationClass: ''
     };
   },
   mounted() {
@@ -25,14 +27,57 @@ export default {
         console.error("Error fetching user data:", error);
       }
     },
-    async saveUsername() {
+    async saveChanges() {
       try {
-        const response = await axios.post('/api/user/username', { username: this.username });
-        console.log('Nombre de usuario actualizado:', response.data);
+        const formData = new FormData();
+        if (this.profilePicture) {
+          formData.append("profile_picture", this.profilePicture);
+        }
+        if (this.username) {
+          await axios.post('/api/user/username', { username: this.username });
+          window.location.reload();
+        }
+        if (this.description) {
+          await axios.post(`/api/users/description/${this.userId}`, { description: this.description });
+          window.location.reload();
+        }
+
+        if (formData.has("profile_picture")) {
+          await axios.post("/api/profile/picture", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${this.authToken}`,
+            },
+          });
+          window.location.reload();
+        }
+
+        this.changesPending = false;
+        this.notificationClass = 'fade-out';
       } catch (error) {
-        console.error('Error al actualizar el nombre de usuario:', error);
+        console.error("Error al guardar los cambios:", error);
+        alert("Hubo un error al guardar los cambios.");
       }
-      window.location.reload();
+    },
+    async revertChanges() {
+      try {
+        this.username = this.originalUsername;
+        this.description = this.originalDescription;
+        this.profilePicture = null;
+
+        this.$nextTick(() => {
+          document.querySelectorAll('input').forEach(input => input.value = '');
+          document.querySelectorAll('textarea').forEach(input => input.value = '');
+        });
+
+        this.$nextTick(() => {
+          this.changesPending = false;
+          this.notificationClass = 'fade-out';
+        });
+      } catch (error) {
+        console.error("Error al revertir los cambios:", error);
+        alert("Hubo un error al revertir los cambios.");
+      }
     },
     closeUserDetails() {
       this.selectedUser = null;
@@ -85,6 +130,9 @@ export default {
       if (this.profilePicture && this.profilePicture.size > 2 * 1024 * 1024) {
         alert("El archivo es demasiado grande. Debe ser menor a 2MB.");
         this.profilePicture = null;
+      } else {
+        this.changesPending = true;
+        this.showSaveNotification = true;
       }
     },
     async upload() {
@@ -148,5 +196,15 @@ export default {
   },
   watch: {
     selectedUser: 'fetchUserDetails',
+    username(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.changesPending = true;
+      }
+    },
+    description(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.changesPending = true;
+      }
+    }
   },
 };

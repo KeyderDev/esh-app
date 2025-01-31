@@ -19,41 +19,26 @@
       <div class="content-scroll">
 
         <template v-if="activeTab === 'cuenta'">
-          <div class="profile-container">
-        <div class="profile-header">
-          <img v-if="user && user.profile_picture" :src="buildProfilePictureUrl(user.profile_picture)" alt="Profile" class="profile-pic" />
-          <div class="profile-info">
-                <h2 class="username">keyder</h2>
-                <!-- <div class="profile-icons">
-                    <span class="icon verified-icon"></span>
-                    <span class="icon badge-icon"></span>
-                    <span class="icon gear-icon"></span>
-                </div> -->
-            </div>
-        </div>
-        <div class="profile-details">
-            <div class="detail-row">
-                <span class="detail-title">NOMBRE DE USUARIO</span>
-                <span class="detail-value">keyder</span>
-                <button class="edit-button">Editar</button>
-            </div>
-            <div class="detail-row">
-                <span class="detail-title">DESCRIPCION</span>
-                <span class="detail-value">keyderr</span>
-                <button class="edit-button">Editar</button>
-            </div>
-            <div class="detail-row">
-                <span class="detail-title">CORREO ELECTRÓNICO</span>
-                <span class="detail-value">**************@gmail.com</span>
-                <button class="edit-button">Editar</button>
-            </div>
-            <div class="detail-row">
-                <span class="detail-title">NÚMERO DE TELÉFONO</span>
-                <span class="detail-value">*******9163</span>
-                <button class="edit-button">Editar</button>
-            </div>
-        </div>
-    </div>
+          <div class="input-container">
+            <label class="input-label">Nombre de Usuario:</label>
+            <input type="text" id="username" v-model="username" placeholder="Escribe tu nuevo nombre de usuario..."
+              class="username-input" autocomplete="off" />
+          </div>
+          <div class="input-container">
+            <label for="profile-upload" class="input-label">Foto de perfil:</label>
+            <input type="file" id="profile-upload" @change="onFileChange" accept="image/*" class="file-input" />
+            <p v-if="uploadMessage" class="upload-message">{{ uploadMessage }}</p>
+          </div>
+          <div class="description-container">
+            <label for="description" class="input-label">Descripción:</label>
+            <textarea id="description" v-model="description" placeholder="Escribe tu descripción aquí..."
+              class="description-input"></textarea>
+          </div>
+          <div v-if="changesPending" class="save-notification">
+            <p>Tienes cambios sin guardar</p>
+            <span @click="revertChanges" class="revert-text" style="cursor:pointer;">Revertir</span>
+            <button @click="saveChanges" class="save-button">Guardar cambios</button>
+          </div>
         </template>
 
 

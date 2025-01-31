@@ -6,7 +6,7 @@
         <p class="login-description">Introduce tus credenciales para continuar.</p>
 
         <div class="input-group">
-          <label for="email"><i class="fa-regular fa-user"></i> USUARIO</label>
+          <label for="email"><i class="fa-solid fa-user"></i> USUARIO</label>
           <input v-model="username" id="email" placeholder="Usuario" required autocomplete="off" />
         </div>
 

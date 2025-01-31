@@ -10,6 +10,7 @@ export default {
   },
   data() {
     return {
+      searchQuery: '',
       badge: {
         name: '',
         icon: null,
@@ -40,6 +41,13 @@ export default {
         description: ''
       }
     };
+  },
+  computed: {
+    filteredUsers() {
+      return this.users.filter(user => 
+        user.username.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    }
   },
   created() {
     // this.fetchRoles();
