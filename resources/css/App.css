@@ -189,6 +189,20 @@ body {
     color: #e0e0e0;
 }
 
+.username-user-details {
+    margin: 0;
+    color: #e0e0e0;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 10px; 
+    margin-bottom: 10px;
+}
+
 .user-item {
     padding: 0.1rem;
     margin-bottom: 0.5rem;
@@ -356,9 +370,19 @@ body {
     color: #ffffff;
 }
 
+.badge-container {
+    display: flex;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.1); 
+    padding: 4px 6px;
+    border-radius: 6px;
+    width: fit-content;
+}
+
 .badge-icon {
-    margin-left: 5px;
     vertical-align: middle;
+    width: 16px;  
+    height: 16px;
 }
 
 .custom-notice {

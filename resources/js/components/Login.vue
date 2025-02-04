@@ -19,7 +19,7 @@
           {{ alertMessage }}
         </div>
 
-        <p class="register-link">¿Aún no tienes cuenta? <a href="#">Regístrate</a></p>
+        <p class="register-link">¿Aún no tienes cuenta? <a href="/register">Regístrate</a></p>
       </form>
     </div>
   </div>
@@ -34,7 +34,7 @@ export default {
     return {
       username: '',
       password: '',
-      alertMessage: '', 
+      alertMessage: '',
     };
   },
   mounted() {
@@ -42,7 +42,7 @@ export default {
     if (token) {
       this.$router.push('/');
     }
-    
+
     window.addEventListener('keyup', this.handleEnterKey);
   },
   beforeDestroy() {
@@ -64,7 +64,7 @@ export default {
           localStorage.setItem('username', userProfile.username);
           localStorage.setItem('profile_picture', userProfile.profile_picture);
           this.alertMessage = response.data.message;
-          setTimeout(() => window.location.reload(), 1000); 
+          setTimeout(() => window.location.reload(), 1000);
         } else {
           this.alertMessage = 'No se recibió un token.';
         }
@@ -197,20 +197,22 @@ input::placeholder {
 }
 
 .register-link {
-    font-size: 0.9rem;
-    color: #cccccc; /* Gris claro */
-    text-align: center; /* Centra el texto */
-    margin-top: 20px; /* Añade un margen superior para separarlo del formulario */
+  font-size: 0.9rem;
+  color: #cccccc;
+  /* Gris claro */
+  text-align: center;
+  /* Centra el texto */
+  margin-top: 20px;
+  /* Añade un margen superior para separarlo del formulario */
 }
 
 .register-link a {
-    color: #ffffff;
-    font-weight: bold;
-    text-decoration: none;
+  color: #ffffff;
+  font-weight: bold;
+  text-decoration: none;
 }
 
 .register-link a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
-
 </style>

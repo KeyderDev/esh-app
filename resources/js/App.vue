@@ -36,6 +36,10 @@
                         <i class="fas fa-home"></i>
                         <span class="nav-text">Inicio</span>
                     </router-link>
+                    <router-link to="/mensajes" class="nav-link text-white d-flex flex-column align-items-center">
+                        <i class="fa-solid fa-comment-dots"></i>
+                        <span class="nav-text">Mensajes</span>
+                    </router-link>
                     <router-link to="/libreria" class="nav-link text-white d-flex flex-column align-items-center">
                         <i class="fas fa-book"></i>
                         <span class="nav-text">Libreria</span>
@@ -67,7 +71,8 @@
             <!-- Contenido principal -->
             <div class="flex-grow-1" style="background-color: #181818; padding: 1rem">
                 <div class="custom-notice">
-                    <p>Comenzo el nuevo año, y a su vez se retomo el desarrollo de esta app! Unete a nuestro Discord para noticias recientes.
+                    <p>Comenzo el nuevo año, y a su vez se retomo el desarrollo de esta app! Unete a nuestro Discord
+                        para noticias recientes.
                     </p>
                 </div>
                 <div v-if="showReportModal" class="modal-overlay" @click.self="closeModal">
@@ -115,31 +120,25 @@
             <button @click="closeUserDetails" class="close-button"
                 aria-label="Cerrar detalles del usuario">&times;</button>
             <div class="profile-info-details">
-                <img :src="buildProfilePictureUrl(selectedUser.profile_picture)" alt="Profile Picture"
-                    class="profile-pic" />
+                <div class="profile-header">
+                    <img :src="buildProfilePictureUrl(selectedUser.profile_picture)" alt="Profile Picture"
+                        class="profile-pic" />
 
-                <h5 class="username">
-                    {{ selectedUser.username }}
-                    <span v-if="userBadges.length > 0">
-                        <img v-for="badge in userBadges" :key="badge.id"
-                            :src="`https://esh-app.ddns.net/storage/${badge.icon}`.trim()" :alt="badge.name" width="20"
-                            height="20" class="badge-icon" @load="console.log(`Loaded badge icon: ${badge.icon}`)"
-                            @error="console.error(`Error loading badge icon: ${badge.icon}`); console.log('Error loading URL:', `https://esh-app.ddns.net/storage/${badge.icon}`)" />
-                    </span>
-                </h5>
+                    <h5 class="username-user-details">
+                        {{ selectedUser.username }}
+                    </h5>
+                </div>
+                <div v-if="userBadges.length > 0" class="badge-container">
+                    <img v-for="badge in userBadges" :key="badge.id"
+                        :src="`https://esh-app.ddns.net/storage/${badge.icon}`.trim()" :alt="badge.name" width="16"
+                        height="16" class="badge-icon" @load="console.log(`Loaded badge icon: ${badge.icon}`)"
+                        @error="console.error(`Error loading badge icon: ${badge.icon}`); console.log('Error loading URL:', `https://esh-app.ddns.net/storage/${badge.icon}`)" />
+                </div>
 
                 <p class="account-created-date" style="font-size: 0.8rem; color: gray; margin-top: 5px;">
                     Miembro desde: {{ formatDate(selectedUser.created_at) }}
                 </p>
                 <p class="description-details" v-if="selectedUser.description">{{ selectedUser.description }}</p>
-
-                <div v-if="selectedUser.currentSong" class="current-song">
-                    <h6>Escuchando ahora:</h6>
-                    <p><strong>Título:</strong> {{ selectedUser.currentSong.title }}</p>
-                    <p><strong>Artista:</strong> {{ selectedUser.currentSong.artist }}</p>
-                    <p><strong>Álbum:</strong> {{ selectedUser.currentSong.album }}</p>
-                    <img :src="selectedUser.currentSong.albumArtUrl" alt="Album Art" />
-                </div>
             </div>
 
             <button @click="reportUser" class="report-button" aria-label="Reportar usuario">
