@@ -50,7 +50,7 @@
             <div class="icons">
               <div @click="connectSpotify" class="icon spotify"></div>
               <div class="icon github"></div>
-              <div class="icon buymeacoffee"></div>
+              <div class="icon youtube"></div>
               <div class="icon tiktok"></div>
               <div class="icon twitter"></div>
               <div class="icon ebay"></div>

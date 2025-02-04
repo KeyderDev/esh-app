@@ -134,11 +134,11 @@
                         height="16" class="badge-icon" @load="console.log(`Loaded badge icon: ${badge.icon}`)"
                         @error="console.error(`Error loading badge icon: ${badge.icon}`); console.log('Error loading URL:', `https://esh-app.ddns.net/storage/${badge.icon}`)" />
                 </div>
+                <p class="description-details" v-if="selectedUser.description">{{ selectedUser.description }}</p>
 
                 <p class="account-created-date" style="font-size: 0.8rem; color: gray; margin-top: 5px;">
                     Miembro desde: {{ formatDate(selectedUser.created_at) }}
                 </p>
-                <p class="description-details" v-if="selectedUser.description">{{ selectedUser.description }}</p>
             </div>
 
             <button @click="reportUser" class="report-button" aria-label="Reportar usuario">
