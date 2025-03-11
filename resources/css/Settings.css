@@ -461,6 +461,49 @@ a {
   animation: fadeOut 0.5s ease-out forwards; 
 }
 
+.option-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.option-actions button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.option-actions button:hover {
+  transform: translateY(-2px);
+}
+
+.option-actions .btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.option-actions .btn-danger:hover {
+  background-color: #c82333;
+}
+
+.option-actions .btn-primary {
+  background-color: #248045;
+  color: white;
+}
+
+.option-actions .btn-primary:hover {
+  background-color: #1c6838;
+}
+
+.char-counter {
+  font-size: 0.9rem;
+  color: #888;
+  margin-top: 5px;
+}
+
 @keyframes fadeOut {
   0% {
     opacity: 1;

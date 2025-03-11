@@ -11,6 +11,8 @@ use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\ChannelController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\SpotifyController;
+use App\Http\Controllers\ServerInfoController;
+
 
 // Rutas públicas
 Route::post('/register', [AuthController::class, 'register']);
@@ -21,6 +23,13 @@ Route::post('channels', [ChannelController::class, 'store']);
 Route::get('channels/{channel}', [ChannelController::class, 'show']);
 Route::post('/channels/{channel}/upload', [MessageController::class, 'upload']);
 Route::post('/channels/reorder', [ChannelController::class, 'reorderChannels']);
+
+//Common
+Route::get('/ping', function () {
+    return response()->json(['message' => 'pong'], 200);
+});
+Route::get('/disk-space', [ServerInfoController::class, 'getDiskSpace']);
+
 
 // Rutas Privadas
 Route::middleware(['auth.api'])->group(function () {

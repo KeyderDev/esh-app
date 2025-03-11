@@ -6,7 +6,7 @@
         <li :class="{ active: activeTab === 'cuenta' }" @click="setActiveTab('cuenta')">Cuenta</li>
         <li :class="{ active: activeTab === 'conexiones' }" @click="setActiveTab('conexiones')">Conexiones</li>
         <li :class="{ active: activeTab === 'apariencia' }" @click="setActiveTab('apariencia')">Apariencia</li>
-        <li :class="{ active: activeTab === 'accesibilidad' }" @click="setActiveTab('accesibilidad')">Accesibilidad</li>
+        <li :class="{ active: activeTab === 'avanzado' }" @click="setActiveTab('avanzado')">Avanzado</li>
         <li @click="logout" class="logout red">Cerrar Sesión</li>
       </ul>
     </aside>
@@ -32,7 +32,8 @@
           <div class="description-container">
             <label for="description" class="input-label">Descripción:</label>
             <textarea id="description" v-model="description" placeholder="Escribe tu descripción aquí..."
-              class="description-input"></textarea>
+              class="description-input" @input="limitDescription"></textarea>
+              <p class="char-counter">{{ description.length }}/250</p>
           </div>
           <div v-if="changesPending" class="save-notification">
             <p>Tienes cambios sin guardar</p>
@@ -85,7 +86,38 @@
           </div>
         </template>
 
-        <template v-if="activeTab === 'accesibilidad'">
+        <template v-if="activeTab === 'avanzado'">
+          <div class="option-container">
+            <div class="option-header">
+              <h3>Modo desarrollador</h3>
+              <div class="toggle-switch">
+                <input type="checkbox" id="option-toggle">
+                <label for="option-toggle" class="toggle-label"></label>
+              </div>
+            </div>
+            <p>
+              El modo desarrollador muestra elementos del menú contextual que resultan útiles para desarrolladores
+              empleados de Emprende Sin Humo.
+            </p>
+          </div>
+          <div class="option-container">
+            <div class="option-header">
+              <div class="server-info">
+                <p>Ping: {{ serverPing }}</p>
+                <p>Región: US</p>
+                <p>WebSocket: {{ isSocketConnected ? 'Conectado ✅' : 'Desconectado ❌' }}</p>
+                <p>Token en almacenamiento: {{ hasAuthToken ? 'Sí ✅' : 'No ❌' }}</p>
+                <p>Versión Laravel: {{ laravelVersion }}</p>
+                <p>Versión Vue: {{ vueVersion }}</p>
+                <p>Espacio ocupado: {{ diskSpace.used }} GB / {{ diskSpace.total }} GB</p>
+              </div>
+            </div>
+            <div class="option-actions">
+              <button @click="clearCache" class="btn btn-danger">Borrar Caché</button>
+              <button @click="reloadWebSockets" class="btn btn-primary">Recargar WebSockets</button>
+            </div>
+          </div>
+
         </template>
 
       </div>

@@ -12,7 +12,7 @@
                             style="max-width: 200px;background-color: #1e1e1e;border: none;color: #e0e0e0;" />
                     </form>
                     <span class="text-white ms-2 xp" style="margin-right: 1.5rem;">
-                        {{ xp }} <span class="xp-label">puntos</span>
+                        {{ xp }} <span class="xp-label">creditos</span>
                     </span>
                 </div>
                 <div class="navbar-brand mx-auto text-white"
@@ -69,7 +69,7 @@
             </div>
 
             <!-- Contenido principal -->
-            <div class="flex-grow-1" style="background-color: #181818; padding: 1rem">
+            <div class="flex-grow-1" style="background-color: #181818; padding: 1rem;">
                 <div class="custom-notice">
                     <p>Comenzo el nuevo año, y a su vez se retomo el desarrollo de esta app! Unete a nuestro Discord
                         para noticias recientes.
@@ -135,15 +135,20 @@
                         @error="console.error(`Error loading badge icon: ${badge.icon}`); console.log('Error loading URL:', `https://esh-app.ddns.net/storage/${badge.icon}`)" />
                 </div>
                 <p class="description-details" v-if="selectedUser.description">{{ selectedUser.description }}</p>
-
+                
                 <p class="account-created-date" style="font-size: 0.8rem; color: gray; margin-top: 5px;">
                     Miembro desde: {{ formatDate(selectedUser.created_at) }}
                 </p>
             </div>
 
-            <button @click="reportUser" class="report-button" aria-label="Reportar usuario">
+            <!-- <button @click="reportUser" class="report-button" aria-label="Reportar usuario">
                 <i class="fa-solid fa-flag"></i> Reportar
-            </button>
+            </button> -->
+            <div class="btn-container">
+                <button class="btn-primary">
+                    <i class="fa-solid fa-envelope"></i> Enviar Mensaje
+                </button>
+            </div>
         </div>
 
     </div>

@@ -1,4 +1,7 @@
 import axios from "axios";
+import { io } from 'socket.io-client';
+let socket = null;
+
 export default {
   data() {
     return {
@@ -10,11 +13,25 @@ export default {
       authToken: localStorage.getItem("auth_token"),
       activeTab: "cuenta", // Default
       changesPending: false,
-      notificationClass: ''
+      notificationClass: '',
+      serverPing: null,
+      serverRegion: "US",
+      isSocketConnected: false, 
+      laravelVersion: "9.52.16", 
+      vueVersion: "n/a",
+      diskSpace: {
+        used: 0,
+        total: 0,
+        free: 0
+      },
+      description: "",
     };
   },
   mounted() {
     this.fetchUser();
+    this.fetchPing(); 
+    this.checkSocketConnection(); 
+    this.fetchDiskSpace();
   },
   methods: {
     async fetchUser() {
@@ -26,6 +43,33 @@ export default {
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
+    },
+    async fetchDiskSpace() {
+      try {
+        const response = await axios.get('/api/disk-space');
+        this.diskSpace = response.data;
+      } catch (error) {
+        console.error('Error al obtener el espacio en disco:', error);
+      }
+    },
+    limitDescription() {
+      if (this.description.length > 250) {
+        this.description = this.description.substring(0, 250);
+      }
+    },
+    async fetchPing() {
+      const start = performance.now();
+      try {
+        await axios.get("/api/ping", { timeout: 5000 });
+        const end = performance.now();
+        this.serverPing = Math.round(end - start) + "ms"; 
+      } catch (error) {
+        console.error("Error obteniendo el ping:", error);
+        this.serverPing = "N/A"; 
+      }
+    },
+    async checkSocketConnection() {
+      this.isSocketConnected = true; 
     },
     async saveChanges() {
       try {
@@ -57,6 +101,20 @@ export default {
       } catch (error) {
         console.error("Error al guardar los cambios:", error);
         alert("Hubo un error al guardar los cambios.");
+      }
+    },
+    async reloadWebSockets() {
+      try {
+        socket.disconnect();
+        this.isSocketConnected = false;
+        
+        setTimeout(() => {
+          this.connectSocket();
+          alert('¡WebSocket recargado con éxito!');
+        }, 1000); 
+      } catch (error) {
+        console.error('Error al recargar WebSocket:', error);
+        alert('Hubo un error al recargar WebSocket.');
       }
     },
     async revertChanges() {
@@ -192,6 +250,38 @@ export default {
     },
     setActiveTab(tab) {
       this.activeTab = tab;
+    },
+    clearCache() {
+      try {
+        localStorage.clear();
+        console.log('localStorage borrado');
+
+        sessionStorage.clear();
+        console.log('sessionStorage borrado');
+
+        if ('caches' in window) {
+          caches.keys().then((cacheNames) => {
+            cacheNames.forEach((cacheName) => {
+              caches.delete(cacheName).then(() => {
+                console.log(`Cache ${cacheName} eliminada`);
+              });
+            });
+          });
+        }
+
+        document.cookie.split(';').forEach(function (cookie) {
+          const name = cookie.split('=')[0];
+          document.cookie = name + '=;expires=' + new Date().toUTCString() + ';path=/';
+        });
+        console.log('Cookies eliminadas');
+
+        alert("¡Caché borrada con éxito!");
+
+        window.location.reload();
+      } catch (error) {
+        console.error("Error al borrar la caché:", error);
+        alert("Hubo un error al borrar la caché.");
+      }
     },
   },
   watch: {

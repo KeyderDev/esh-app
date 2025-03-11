@@ -254,7 +254,7 @@ body {
     border-radius: 0.5rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     z-index: 1000;
-    width: 250px;
+    width: 270px;
     transition: transform 0.3s ease, opacity 0.3s ease;
     opacity: 0.95;
 }
@@ -298,6 +298,10 @@ body {
     color: #b3b3b3;
     font-size: 0.9rem;
     margin: 0;
+    overflow-wrap: break-word;
+    word-wrap: break-word; 
+    display: block;
+    margin-bottom: 10px;
 }
 
 .user-description {
@@ -377,6 +381,7 @@ body {
     padding: 4px 6px;
     border-radius: 6px;
     width: fit-content;
+    margin-bottom: 10px;
 }
 
 .badge-icon {
@@ -492,6 +497,45 @@ body {
     font-weight: bold;
 }
 
+.btn-primary:hover {
+    background-color: #1a6435; 
+    border-color: #248045;  
+    color: white;
+}
+
+.btn-primary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 0; 
+    font-size: 14px; 
+    border: none;
+    cursor: pointer;
+    border-radius: 6px; 
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    width: 100%; 
+    max-width: 280px; 
+    text-align: center;
+    margin-top: auto; 
+    margin-bottom: 0;
+    background-color: #248045; 
+    border-color: #248045;  
+    color: white;
+}
+
+.btn-primary i {
+    margin-right: 5px;
+}
+
+.btn-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between; 
+    padding: 10px;
+    padding-bottom: 0;
+    gap: 0;
+}
 
 @keyframes ticker {
     from {
