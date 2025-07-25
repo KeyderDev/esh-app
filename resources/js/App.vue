@@ -68,13 +68,13 @@
 
             </div>
 
-            <!-- Contenido principal -->
+            <!-- Contenido principal (PROBLEMA DE LARGO)-->
             <div class="flex-grow-1" style="background-color: #181818; padding: 1rem;">
-                <div class="custom-notice">
+                <!-- <div class="custom-notice">
                     <p>Comenzo el nuevo año, y a su vez se retomo el desarrollo de esta app! Unete a nuestro Discord
                         para noticias recientes.
                     </p>
-                </div>
+                </div> -->
                 <div v-if="showReportModal" class="modal-overlay" @click.self="closeModal">
                     <div class="modal-content">
                         <h3>Reportar Usuario</h3>

@@ -58,6 +58,23 @@ npm run dev
 php artisan serve
 ```
 
+## Websocket Service
+
+```unix
+[Unit]
+Description=WebSocket Server for ESH-App
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/node /var/www/esh-app/server.cjs
+WorkingDirectory=/var/www/esh-app
+Restart=always
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
+```
+
 ## Donaciones
 
 Si consideras este proyecto util, considera comprarme un cafe :)
