@@ -3,7 +3,7 @@ import MarkdownIt from 'markdown-it';
 import { Picker } from 'emoji-mart';
 import DOMPurify from 'dompurify';
 
-const apiKey = import.meta.env.VITE_GIPHY_API_KEY; 
+const apiKey = import.meta.env.VITE_GIPHY_API_KEY;
 
 
 export default {
@@ -32,6 +32,14 @@ export default {
       selectedGif: null,
       gifs: [],
       searchQuery: '',
+
+      colorCodes: {
+        '&1': 'color: #ff6666;', // rojo claro
+        '&2': 'color: #6699ff;', // azul
+        '&3': 'color: #66ff66;', // verde
+        '&4': 'color: #ffff66;', // amarillo
+        '&5': 'color: #ff66ff;', // rosa
+      },
     };
   },
   async created() {
@@ -73,6 +81,8 @@ export default {
         this.scrollToBottom();
       });
     },
+
+
     openImage(image) {
       this.enlargedImageUrl = this.buildImageUrl(image);
       this.isImageOpen = true;
@@ -125,16 +135,38 @@ export default {
     renderMarkdown(content) {
       if (!content) return '';
 
+      const self = this; // referencia al componente
+
+      // 1️⃣ Reemplazar los códigos de color (&1, &2, etc.)
+      const colorRegex = /(&[0-9])([^&]+)/g;
+      content = content.replace(colorRegex, (match, code, text) => {
+        const style = self.colorCodes[code] || '';
+        return `<span style="${style}">${text}</span>`;
+      });
+
+      // 2️⃣ Convertir URLs en links azules
+      const urlRegex = /(?:(https?|ftp):\/\/|www\.)[^\s/$.?#].[^\s]*/g;
+      content = content.replace(urlRegex, (url) => {
+        const href = url.startsWith('http') ? url : `http://${url}`;
+        return `<a href="${href}" target="_blank" rel="noopener noreferrer" style="color:#3399ff;">${url}</a>`;
+      });
+
+      // 3️⃣ Markdown
       let markdownContent = this.md.render(content);
       markdownContent = markdownContent.replace(/<\/?p>/g, '');
       markdownContent = DOMPurify.sanitize(markdownContent);
 
-      if (!/<a\s+href=".*">.*<\/a>/.test(markdownContent)) {
-        markdownContent = this.convertLinksToHyperlinks(markdownContent);
-      }
+      // 4️⃣ Spoilers
+      markdownContent = markdownContent.replace(/\|\|([\s\S]+?)\|\|/g, (match, p1) => {
+        return `<span class="spoiler" onclick="this.classList.toggle('revealed')">${p1}</span>`;
+      });
 
       return markdownContent;
     },
+
+
+
+
 
     renderImage(imageUrl) {
       return `<img src="${imageUrl}" alt="Imagen" class="message-image" />`;
@@ -148,6 +180,7 @@ export default {
       this.$refs.fileInput.click();
       this.$refs.messageInput.focus();
     },
+
 
     async handleFileUpload(event) {
       const file = event.target.files[0];
@@ -248,7 +281,7 @@ export default {
         }
 
         if (content === '' && !this.imageFile && !this.selectedGif) {
-          return; 
+          return;
         }
 
         const token = localStorage.getItem('auth_token');
@@ -486,7 +519,7 @@ export default {
       this.selectedGif = gifUrl;
       this.showGifPicker = false;
       this.$refs.messageInput.focus();
-      this.sendMessage(); 
+      this.sendMessage();
     },
 
     isGifUrl(url) {

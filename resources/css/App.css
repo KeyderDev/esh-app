@@ -537,6 +537,19 @@ body {
     gap: 0;
 }
 
+.spoiler {
+  background-color: #2f3136; 
+  color: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 0 4px;
+  transition: color 0.3s ease;
+}
+
+.spoiler.revealed {
+  color: inherit;
+}
+
 @keyframes ticker {
     from {
         transform: translateX(100%);
