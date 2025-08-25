@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 
-const baseURL = window.appUrl || 'http://localhost'; 
+const baseURL = window.appUrl || 'https://esh-app.ddns.net'; 
 
 const instance = axios.create({
   baseURL: baseURL,

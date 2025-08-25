@@ -172,11 +172,11 @@ export default {
             return date.toLocaleDateString('es-ES', options);
         },
         buildProfilePictureUrl(picture) {
-            const url = picture ?
-                `${window.appUrl}/storage/${picture}` :
-                "/path/to/default/profile_picture.jpg";
-            return url;
+            return picture
+                ? `${window.appUrl}/storage/${picture}`
+                : "/path/to/default/profile_picture.jpg";
         },
+
         fetchUserBadges(userId) {
             axios.get(`/api/user/${userId}/badges`)
                 .then(response => {

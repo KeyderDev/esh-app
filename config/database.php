@@ -142,7 +142,7 @@ return [
 
     'socketio' => [
         'driver' => 'socketio',
-        'host' => env('SOCKETIO_HOST', 'http://localhost'),
+        'host' => env('SOCKETIO_HOST', 'https://esh-app.ddns.net'),
         'port' => env('SOCKETIO_PORT', 6001),
     ],
 

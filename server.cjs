@@ -12,7 +12,7 @@ const credentials = {
 
 const server = https.createServer(credentials, app);
 
-const allowedOrigin = process.env.APP_URL || "http://localhost"; 
+const allowedOrigin = process.env.APP_URL || "https://esh-app.ddns.net"; 
 
 const io = new Server(server, {
     cors: {

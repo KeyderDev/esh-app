@@ -11,9 +11,9 @@
                         <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar"
                             style="max-width: 200px;background-color: #1e1e1e;border: none;color: #e0e0e0;" />
                     </form>
-                    <span class="text-white ms-2 xp" style="margin-right: 1.5rem;">
+                    <!-- <span class="text-white ms-2 xp" style="margin-right: 1.5rem;">
                         {{ xp }} <span class="xp-label">creditos</span>
-                    </span>
+                    </span> -->
                 </div>
                 <div class="navbar-brand mx-auto text-white"
                     style="position: absolute; left: 50%; transform: translateX(-50%)">
@@ -88,7 +88,7 @@
 
             <div class="right-sidebar"
                 style="background-color: #1e1e1e;width: 200px;display: flex;flex-direction: column;padding: 1rem;border-left: 1px solid #1e1e1e;">
-                <h6 class="text-white small-text">En Línea - {{ onlineUsersCount }}</h6>
+                <h6 class="text-white small-text"><i class="fa-solid fa-users"></i> En Línea - {{ onlineUsersCount }}</h6>
                 <div v-for="user in users" :key="user.id" class="user-item d-flex flex-column mb-2 online-user"
                     @click="showUserDetails(user)">
                     <div class="d-flex align-items-center">
@@ -105,7 +105,7 @@
                     </div>
                 </div>
 
-                <h6 class="text-white mt-4 small-text">Desconectados - {{ offlineUsersCount }}</h6>
+                <h6 class="text-white mt-4 small-text"><i class="fa-solid fa-users"></i> Desconectados - {{ offlineUsersCount }}</h6>
                 <div v-for="user in offlineUsers" :key="user.id" class="user-item d-flex flex-column mb-2 offline-user"
                     @click="showUserDetails(user)">
                     <div class="d-flex align-items-center">
