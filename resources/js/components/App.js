@@ -59,6 +59,13 @@ export default {
     },
 
     mounted() {
+        console.log('User in this component:', this.user);
+
+        const picture = localStorage.getItem("profile_picture");
+        if (picture) {
+            this.user.profile_picture = picture; 
+        }
+
         this.loadProfilePicture();
         this.updateTime();
         this.updateOnlineStatus(true);
@@ -113,6 +120,14 @@ export default {
             } catch (error) {
                 console.error("Error al cargar usuarios:", error);
             }
+        },
+        getUserSidebarProfilePicture(user) {
+            // Si el usuario y la foto existen, devuelve la URL completa
+            if (user && user.profile_picture) {
+                return `${window.appUrl}/storage/${user.profile_picture}`;
+            }
+            // Si no hay foto, devuelve null (o una ruta a un avatar por defecto)
+            return null;
         },
         buildBadgeUrl(badgeIcon) {
             const url = `${window.appUrl}/storage/badges/${badgeIcon}`;
@@ -172,9 +187,7 @@ export default {
             return date.toLocaleDateString('es-ES', options);
         },
         buildProfilePictureUrl(picture) {
-            return picture
-                ? `${window.appUrl}/storage/${picture}`
-                : "/path/to/default/profile_picture.jpg";
+            return picture ? `${window.appUrl}/storage/${picture}` : '';
         },
 
         fetchUserBadges(userId) {

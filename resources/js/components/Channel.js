@@ -135,38 +135,30 @@ export default {
     renderMarkdown(content) {
       if (!content) return '';
 
-      const self = this; // referencia al componente
+      const self = this; 
 
-      // 1️⃣ Reemplazar los códigos de color (&1, &2, etc.)
       const colorRegex = /(&[0-9])([^&]+)/g;
       content = content.replace(colorRegex, (match, code, text) => {
         const style = self.colorCodes[code] || '';
         return `<span style="${style}">${text}</span>`;
       });
 
-      // 2️⃣ Convertir URLs en links azules
       const urlRegex = /(?:(https?|ftp):\/\/|www\.)[^\s/$.?#].[^\s]*/g;
       content = content.replace(urlRegex, (url) => {
         const href = url.startsWith('http') ? url : `http://${url}`;
         return `<a href="${href}" target="_blank" rel="noopener noreferrer" style="color:#3399ff;">${url}</a>`;
       });
 
-      // 3️⃣ Markdown
       let markdownContent = this.md.render(content);
       markdownContent = markdownContent.replace(/<\/?p>/g, '');
       markdownContent = DOMPurify.sanitize(markdownContent);
 
-      // 4️⃣ Spoilers
       markdownContent = markdownContent.replace(/\|\|([\s\S]+?)\|\|/g, (match, p1) => {
         return `<span class="spoiler" onclick="this.classList.toggle('revealed')">${p1}</span>`;
       });
 
       return markdownContent;
     },
-
-
-
-
 
     renderImage(imageUrl) {
       return `<img src="${imageUrl}" alt="Imagen" class="message-image" />`;

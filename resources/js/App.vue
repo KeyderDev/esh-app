@@ -22,7 +22,8 @@
                 <div class="navbar-nav d-flex align-items-center">
                     <i style="color: #9e9e9e;margin-right:1.5rem;" class="fa-solid fa-bell"></i>
                     <span class="text-white username">{{ username }}</span>
-                    <img :src="profilePicture" alt="Profile" class="profile-pic" v-if="profilePicture" />
+                    <img v-if="getUserSidebarProfilePicture(user)" :src="getUserSidebarProfilePicture(user)"
+                        alt="Profile" class="profile-pic" />
                 </div>
             </div>
         </nav>
@@ -88,7 +89,8 @@
 
             <div class="right-sidebar"
                 style="background-color: #1e1e1e;width: 200px;display: flex;flex-direction: column;padding: 1rem;border-left: 1px solid #1e1e1e;">
-                <h6 class="text-white small-text"><i class="fa-solid fa-users"></i> En Línea - {{ onlineUsersCount }}</h6>
+                <h6 class="text-white small-text"><i class="fa-solid fa-users"></i> En Línea - {{ onlineUsersCount }}
+                </h6>
                 <div v-for="user in users" :key="user.id" class="user-item d-flex flex-column mb-2 online-user"
                     @click="showUserDetails(user)">
                     <div class="d-flex align-items-center">
@@ -105,7 +107,8 @@
                     </div>
                 </div>
 
-                <h6 class="text-white mt-4 small-text"><i class="fa-solid fa-users"></i> Desconectados - {{ offlineUsersCount }}</h6>
+                <h6 class="text-white mt-4 small-text"><i class="fa-solid fa-users"></i> Desconectados - {{
+                    offlineUsersCount }}</h6>
                 <div v-for="user in offlineUsers" :key="user.id" class="user-item d-flex flex-column mb-2 offline-user"
                     @click="showUserDetails(user)">
                     <div class="d-flex align-items-center">
@@ -135,7 +138,7 @@
                         @error="console.error(`Error loading badge icon: ${badge.icon}`); console.log('Error loading URL:', `https://esh-app.ddns.net/storage/${badge.icon}`)" />
                 </div>
                 <p class="description-details" v-if="selectedUser.description">{{ selectedUser.description }}</p>
-                
+
                 <p class="account-created-date" style="font-size: 0.8rem; color: gray; margin-top: 5px;">
                     Miembro desde: {{ formatDate(selectedUser.created_at) }}
                 </p>
